@@ -10695,7 +10695,7 @@ class admin_setting_configstoredfile extends admin_setting {
             $file = reset($files);
             $filepath = $file->get_filepath().$file->get_filename();
         }
-
+        
         return ($this->config_write($this->name, $filepath) ? '' : get_string('errorsetting', 'admin'));
     }
 
