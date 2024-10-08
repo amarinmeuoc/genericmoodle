@@ -9,10 +9,12 @@ class updateTrainingPlanform extends \moodleform {
     public function definition() {
         global $PAGE, $DB;
         $mform = $this->_form; // Don't forget the underscore!
-        
+        $mform->_attributes['id']="uploadtrainingplanform";
+        $mform->disable_form_change_checker();
         //Se añade javascript
         $PAGE->requires->js('/blocks/itp/js/trainingplan_formJS.js', false);
         
+        $idcustomer = optional_param('customerid', null, PARAM_INT);
         //Se crean los campos
         $list_of_customers=$DB->get_records('customer',null,'','id,name');
         foreach ($list_of_customers as $key => $customer) {
@@ -20,6 +22,35 @@ class updateTrainingPlanform extends \moodleform {
         }
         
         $select=$mform->addElement('select', 'tecustomer', get_string('tecustomer', 'block_itp'), $list_of_customers, '');
+        $mform->setType('tecustomer', PARAM_INT);
+
+        $selected_customer=$idcustomer;
+        
+        if ($idcustomer===null)
+            $selected_customer=array_key_first($list_of_customers);
+        else {
+            
+            $selected_customer=$idcustomer;
+            $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$selected_customer],'','id,name');
+            $list_of_groups=array_values($list_of_groups);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($list_of_groups);
+            exit();
+            
+            
+        }
+        
+        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$selected_customer],'','id,name');
+        foreach ($list_of_groups as $key=>$group){
+            $list_of_groups[$key]=$group->name;
+        }
+        
+        //Añadir al principio de la lista el valor por defecto
+        $list_of_groups=array('0'=>'All Groups')+$list_of_groups;
+        
+        
+        $mform->addElement('select', 'tegroup', get_string('tegroup', 'block_itp'), $list_of_groups, '');
+        $mform->setType('tegroup', PARAM_INT);
 
         $maxbytes=255;
         $mform->addElement(

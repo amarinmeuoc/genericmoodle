@@ -12,10 +12,10 @@ class createcustomerform extends \moodleform {
         //Se añaden javascript y CSS
         //Se añade javascript
         $PAGE->requires->js('/blocks/itp/js/customer_formJS.js', false);
-        $PAGE->requires->css('/blocks/itp/css/styles.css');
+        $PAGE->requires->css('/blocks/itp/css/styles.scss');
         
         $mform = $this->_form; // Don't forget the underscore!
-
+        $mform->disable_form_change_checker();
         //Se configura id de formulario
         $mform->_attributes['id']="customerformid";
 

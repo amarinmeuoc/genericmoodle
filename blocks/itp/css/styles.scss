@@ -1,0 +1,29 @@
+.itp-dl {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0px;
+    justify-content: center;
+}
+.itp-dl div{
+    flex: 0 0 45%;
+    flex-wrap: wrap;
+    min-width: 300px;
+}
+
+
+.itp-dl a, .white, .subtitular a {
+    color: white;
+}
+
+.titular{
+    padding: 1em;
+    color:white;
+}
+
+.subtitular{
+    padding: 1em;
+    background-color: #094681;
+    p {
+        margin: 0;
+    }
+}

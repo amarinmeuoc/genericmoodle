@@ -73,7 +73,7 @@ if ($mform->is_cancelled()) {
     $customerid=$fromform->tecustomer;
 
     // Ahora debería capturar correctamente el valor de `tegroup`
-    $groupid = isset($fromform->tegroup) ? $fromform->tegroup : 0;
+    $groupid = isset($fromform->tegroup) ? intval($fromform->tegroup) : 0;
     
     //Valor de si se manda correo (radiobutton)
     $ifemail=$fromform->email;
@@ -86,17 +86,10 @@ if ($mform->is_cancelled()) {
 
     //Antes de insertar en la base de datos, se borra el cliente seleccionado
     //Si no hay grupo seleccionado se borran todos los registros del cliente.
-    var_dump($mform);
-    die;
-    if ($groupid===0)
-        $result=$DB->delete_records('itptrainee', array('customerid'=>$customerid));
-    else {
-        $result=$DB->delete_records('itptrainee', array('customerid'=>$customerid, 'groupid'=>$groupid));
-    }
-
-
+    
     $separator=$fromform->selectdelimiter;
     $csv_content=$mform->get_file_content('csv_file');
+
 
     $lines = explode(PHP_EOL, $csv_content);
     $header = null;
@@ -109,6 +102,24 @@ if ($mform->is_cancelled()) {
     $cont=2;
 
     $list_of_emails=[];
+
+    //Antes de borrar la tabla, se verifica si el archivo CSV está vacío
+    if ($lines[0]==="" || empty($lines)) {
+        $params[]=array(
+            'type' => 'error',
+            'message' => "Operación cancelada: El archivo CSV está vacío."
+        );
+        $url = new \moodle_url($pageurl, $params[1]);
+        redirect($url);
+    }
+
+    if ($groupid===0)
+        $result=$DB->delete_records('itptrainee', array('customerid'=>$customerid));
+    else {
+        $result=$DB->delete_records('itptrainee', array('customerid'=>$customerid, 'groupid'=>$groupid));
+    }
+
+
     foreach ($lines as $line) {
 
         // Descarta las líneas en blanco y clientes diferentes al seleccionado
@@ -133,6 +144,10 @@ if ($mform->is_cancelled()) {
             $header = $line; // Asume que la primera fila es el encabezado
         } else {
             $data = array_combine($header, $line);
+
+            // Convertir $groupid y $data['group'] a enteros
+            $groupid = intval($groupid);
+            $data['group'] = intval($data['group']);
 
             //Descarta las lineas que no correspondan al grupo seleccionado
             if ($groupid!==0 && $data['group']!==$groupid) {
@@ -170,6 +185,7 @@ if ($mform->is_cancelled()) {
                 continue;
             }
 
+
             //Creamos la lista de correo sin repeteición
             $email=$data['email'];
             if(!in_array($email,$list_of_emails,true))
@@ -199,19 +215,22 @@ if ($mform->is_cancelled()) {
         }
     }
     
+
     // Si hay errores, que me muestre el primer error de la lista
     if (count($params)>1){
         $params[1]['message'].= ". Se han insertado $inserted_count registros en la base de datos.";
         $url = new \moodle_url($pageurl, $params[1]);
     } else {
         if ($inserted_count===0){
-            $params[0]['message']= "Warning: Se han insertado $inserted_count registros en la base de datos. Ten en cuenta que se han borrado todos los registros relativos al cliente seleccionado. Revise el archivo CSV y verifique el el clienteid coincide con el cliente que tiene seleccionado en la lista superior.";
+            $params[0]['message']= "Warning: Se han insertado $inserted_count registros en la base de datos. Ten en cuenta que se han borrado todos los registros relativos al cliente y grupo seleccionados. Revise el archivo CSV y verifique el el clienteid coincide con el cliente que tiene seleccionado en la lista superior.";
             $params[0]['type']="error";
         } else {
             $params[0]['message']= "Operación exitosa: Se han insertado $inserted_count registros en la base de datos.";
             
             //Llegados a este punto nos aseguramos de que todo haya ido bien. Se envia correo a los alumnos afectados
-            sendEmail($list_of_emails,$subject,$editorContent,$customer);
+            if ($ifemail==='yes'){
+                sendEmail($list_of_emails,$subject,$editorContent);
+            }
         }
         
         $url = new \moodle_url($pageurl, $params[0]);
@@ -241,13 +260,18 @@ if ($type=='ok'){
     return $result;
  }
 
- function sendEmail($list_of_emails,$subject,$editorContent,$customer){
-    global $DB,$USER;
+ function sendEmail($list_of_emails,$subject,$editorContent){
+    global $DB;
+
+    // Obtén el objeto de usuario "no-reply" configurado en Moodle
+    $noreplyuser = core_user::get_noreply_user();
+
     if (count($list_of_emails)>0){
         foreach ($list_of_emails as $email) {
            $selectedUser=$DB->get_record('user',['email'=>$email]);
            //To user, from_user, subject, messageText, messageHtml, '', '', true
-           $emailsent=email_to_user($selectedUser,$USER,$subject,'',$editorContent,'',''); 
+           
+           $emailsent=email_to_user($selectedUser,$noreplyuser,$subject,'',$editorContent['text'],'',''); 
         }
     }
 }

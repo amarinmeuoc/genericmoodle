@@ -40,31 +40,62 @@ class block_itp extends block_base {
      * @return string The block HTML.
      */
     public function get_content() {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
+        require_login();
 
-        
         if ($this->content !== null) {
             return $this->content;
         }
+
+        $context=context_block::instance($this->instance->id);
+        if (!has_capability('block/itp:view',$context)){          
+            $this->content->text= "<h1>Error: Access forbidden!!.</h1> <p>Contact with the admin for more information.</p>";          
+            return;
+        }
+
+        //Cargar los campos personalizados
+        profile_load_custom_fields($USER);
+
+        // Acceder al valor del campo personalizado role
+        $role = $USER->profile['role'];
+
+        //Por defecto se carga el formulario de estudiante
+        $mform=new \block_itp\form\filteritpform();
         
-        $show_block=get_config('block_itp','showblock');
+        if (preg_match('/(controller|manager)/i', $role)) {
+            $mform=new \block_itp\form\filteritpform_controller();
+            $this->page->requires->js_call_amd('block_itp/init_con', 'loadITP');
+        } elseif (preg_match('/observer/i', $role)) {
+            $mform=new \block_itp\form\filteritpform_observer();
+            $this->page->requires->js_call_amd('block_itp/init_obv', 'loadITP');
+        } else {
+            $mform=new \block_itp\form\filteritpform();
+            $this->page->requires->js_call_amd('block_itp/init', 'loadITP');
+        }
+
+        $toform=null;
+        
+        // Set anydefault data (if any).
+        $mform->set_data($toform);
+
+        // Display the form.
+        $form_html = $mform->render();
+        
+        
+        
+        
+        
+        $this->page->requires->css('/blocks/itp/css/styles.scss');
 
         $this->content = new stdClass();
         $this->content->footer = '';
 
-        // Add logic here to define your template data or any other content.
-        if ($show_block) {
-            $data = [
-                'text'=>'TEXTO DE PRUEBA'
-            ];
-        } else {
-            $data = [
-                'text'=>'VAMOS BIEN'
-            ];
-        }
-        
+        $data = [ 
+            'form' => $form_html,
+        ];
 
-        $this->content->text = $OUTPUT->render_from_template('block_itp/content', $data);
+
+        $this->content->text = $OUTPUT->render_from_template('block_itp/itp', $data);
 
         return $this->content;
     }

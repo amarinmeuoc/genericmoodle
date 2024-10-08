@@ -1,4 +1,4 @@
-const url=window.location.protocol+'//'+window.location.hostname+'/webservice/rest/server.php';
+const url=M.cfg.wwwroot+'/webservice/rest/server.php';
 
 //Al completar la carga del formulario se eliminan las capas sobrantes
 document.addEventListener('DOMContentLoaded',()=>{

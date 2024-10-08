@@ -30,7 +30,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="customerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="groupid" TYPE="char" LENGTH="10"  DEFAULT="" SEQUENCE="false"/>
-        <FIELD NAME="billid" TYPE="char" LENGTH="15"  DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="billid" TYPE="char" LENGTH="20"  DEFAULT="" SEQUENCE="false"/>
         <FIELD NAME="email" TYPE="char" LENGTH="250"  DEFAULT="" SEQUENCE="false"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="enddate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -53,7 +53,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="customerid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="wbs" TYPE="char" LENGTH="20"  DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="wbs" TYPE="char" LENGTH="40"  DEFAULT="" SEQUENCE="false"/>
         <FIELD NAME="course" TYPE="text" SEQUENCE="false" NOTNULL="true"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="enddate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

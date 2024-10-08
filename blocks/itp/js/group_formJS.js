@@ -1,4 +1,4 @@
-const url=window.location.protocol+'//'+window.location.hostname+'/webservice/rest/server.php';
+const url=M.cfg.wwwroot+'/webservice/rest/server.php';
 
 document.addEventListener('DOMContentLoaded',()=>{
     let boaddnew=document.querySelector('#id_bosubmit');
@@ -164,7 +164,6 @@ const reqHandlerRemoveGroup = (xhr)=> {
     if (xhr.readyState=== 4 && xhr. status === 200){
         if (xhr.response){
             const response=JSON.parse(xhr.response);
-            window.console.log("group removed: ", response);
             if (!response){
                 const errMsg=document.querySelector('#error-message');
                 const msg="No group selected. Please, select a group";

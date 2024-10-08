@@ -1,4 +1,4 @@
-const url=window.location.protocol+'//'+window.location.hostname+'/webservice/rest/server.php';
+const url=M.cfg.wwwroot+'/blocks/itp/admin/updateitp.php';
 
 //Al completar la carga del formulario se eliminan las capas sobrantes
 document.addEventListener('DOMContentLoaded',()=>{
@@ -28,28 +28,61 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     const firstClient = (typeof customerSel[0]!=='undefined' && !isNaN(customerSel.options[0].value))?parseInt(customerSel.options[0].value):0;
 
-    loadGroupOfSelectedCustomer(firstClient,token,url);
+    //loadGroupOfSelectedCustomer(firstClient,token,url);
 
     customerSel.addEventListener('change',(e)=>{
         const selectedValue= e.target.value;
         loadGroupOfSelectedCustomer(selectedValue,token,url);
     });
-
-    
-
-
 });
+
+const requestResetTrainingPlan=(url,token,action)=>{
+    let xhr = new XMLHttpRequest();
+    
+        //Se prepara el objeto a enviar
+        const formData= new FormData();
+        formData.append('wstoken',token);
+        formData.append('wsfunction', 'block_itp_reset_itp');
+        formData.append('moodlewsrestformat', 'json');
+        formData.append('params[0][op]',action);
+        
+        xhr.open('POST',url,true);
+        xhr.send(formData);
+    
+        xhr.onload = (ev)=> {
+            reqHandlerResetTrainingPlan(xhr);
+        }
+    
+        xhr.onerror = ()=> {
+            rejectAnswer(xhr);
+        }
+}
+
+const reqHandlerResetTrainingPlan=(xhr)=>{
+    if (xhr.readyState=== 4 && xhr. status === 200){
+        if (xhr.response){
+            const response=JSON.parse(xhr.response);
+            if (!response){
+                const errMsg=document.querySelector('#error-message');
+                const msg="Something went wrong. The table itp hasn't been reset yet.";
+                showMessage(errMsg,msg);
+            } else {
+                const errMsg=document.querySelector('#error-message');
+                errMsg.classList.remove('alert-danger');
+                errMsg.classList.add('alert-info');
+                const msg="The table has been reset. Operation completed.";
+                showMessage(errMsg,msg);
+            }
+        }
+    }
+}
 
 const loadGroupOfSelectedCustomer=(value,token,url)=>{
     let xhr = new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
     const formData= new FormData();
-    formData.append('wstoken',token);
-    formData.append('wsfunction', 'block_itp_load_groups');
-    formData.append('moodlewsrestformat', 'json');
-    formData.append('params[0][customerid]',value);
-    
+    formData.append('customerid',value);
     xhr.open('POST',url,true);
     xhr.send(formData);
 
@@ -94,4 +127,14 @@ const createOption= (value,text)=>{
     option.value = value;
     option.text = text;
     return option;
+}
+
+const showMessage=(elem,msg)=>{
+    elem.textContent=msg;
+    elem.style.display='block';
+
+    setTimeout(function() {
+        elem.style.display = 'none';
+    }, 3000); // 3000 milisegundos = 3 segundos
+    
 }

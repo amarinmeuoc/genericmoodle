@@ -1,0 +1,138 @@
+{{{form}}}
+
+<div class="itp">
+{{#personaldata}}
+<div class="p-3 mb-2 bg-primary text-white">
+<dl class="itp-dl flex">
+<div class="d-flex justify-content-between w-50 ">
+<dt>Trainee:</dt> <dd  class="mx-3">{{name}}</dd>
+</div>
+<div class="d-flex justify-content-between w-50 ">
+<dt>Billid:</dt> <dd class="mx-3">{{#billid}}{{billid}}{{/billid}}{{^billid}}No billid associated{{/billid}}</dd>
+</div>
+<div class="d-flex justify-content-between w-50 ">
+<dt>Email: </dt><dd class="mx-3"><a href="mailto:{{user.email}}?subject=Message from the LMS">{{email}}</a></dd>
+</div>
+<div class="d-flex justify-content-between w-50 ">
+<dt>Updated on:</dt> <dd class="mx-3"><span class="badge bg-warning text-dark">{{#userdate}} {{lastupdate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</span></dd>
+</div>
+</dl>
+</div>
+{{/personaldata}}
+
+<div class="table-responsive block_itp_table">
+<table class="generaltable table-sm">
+{{#itpState}}
+<thead>
+<tr>
+    <th id="course" scope="col"><a id="c-link" data-activo="{{#orderbycourse}}activo{{/orderbycourse}}" data-orderby="course" href="{{url}}">Course {{#orderbycourse}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbycourse}}</a></th>
+    <th id="duration" scope="col"><a id="d-link" data-activo="{{#orderbyduration}}activo{{/orderbyduration}}" data-orderby="duration" href="{{url}}">Duration {{#orderbyduration}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyduration}}</a></th>
+    <th id="startdate" scope="col"><a id="sd-link" data-activo="{{#orderbystartdate}}activo{{/orderbystartdate}}" data-orderby="startdate" href="{{url}}">Start date {{#orderbystartdate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbystartdate}}</a></th>
+    <th id="enddate" scope="col"><a id="ed-link" data-activo="{{#orderbyenddate}}activo{{/orderbyenddate}}" data-orderby="enddate" href="{{url}}">End date {{#orderbyenddate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyenddate}}</a></th>
+    <th id="location" scope="col">Location</th>
+    <th id="classroom" scope="col">Classroom</th>
+    <th id="schedule" scope="col">Schedule</th>
+    <th id="orderatt" scope="col"><a id="at-link" data-activo="{{#orderbyatt}}activo{{/orderbyatt}}" data-orderby="att"  href="#">Att {{#orderbyatt}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyatt}}</a></th>
+    <th id="orderass" scope="col"><a id="as-link" data-activo="{{#orderbyass}}activo{{/orderbyass}}" data-orderby="ass"  href="#">Ass {{#orderbyass}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyass}}</a></th>
+</tr>
+</thead>
+{{/itpState}}
+<tbody class='itp_detail'>
+{{#itp}}
+<tr data-visible={{visible}} >
+<td headers="course"><a href="{{courseUrl}}">{{coursename}}</a></td>
+<td headers="duration">{{duration}}</td>
+<td headers="startdate">{{#userdate}} {{startdate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+<td headers="enddate">{{#userdate}} {{enddate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+<td headers="location">{{location}}</td>
+<td headers="classroom">{{classroom}}</td>
+<td headers="schedule">{{schedule}}</td>
+<td headers="orderatt">{{#attendance}}<a class='linkatt' data-startdate={{startdate}} data-enddate={{enddate}} data-courseid={{courseid}}  href="">{{attendance}}</a>{{/attendance}}{{^attendance}}-{{/attendance}}</td>
+<td headers="orderass">{{#assessment}}<a class='linkass' data-courseid={{courseid}} href="">{{assessment}}</a>{{/assessment}}{{^assessment}}-{{/assessment}}</td>
+</tr>
+{{/itp}}
+</tbody>
+
+</table>
+</div>
+</div>
+<div>
+{{#itpState.ifcertificate}} <button type="button" id="bocertificate" class='btn btn-success'>Download certificate</button>{{/itpState.ifcertificate}}
+
+</div>
+
+
+{{#js}}
+
+require(['block_itp/downloadpdf','/blocks/itp/js/pdf-lib.min.js'],function(module,PDF){
+
+/*
+    const billid = "EN-111";
+            const firstname = "Alberto";
+            const lastname = "Marín Mendoza";
+            const email = 'albertomarin@gmail.com';
+            const user = {
+                billid: billid,
+                firstname: firstname,
+                lastname: lastname,
+                email: email
+            };
+        const visible = [1,0,0,0,0,0,0,0];
+        const coursenames = ['MATHS','ENGLISH','SCIENCE','HISTORY','GEOGRAPHY','PHYSICS','CHEMISTRY','BIOLOGY'];
+        const coursecodes = ['MATHS','ENGLISH','SCIENCE','HISTORY','GEOGRAPHY','PHYSICS','CHEMISTRY','BIOLOGY'];
+        const coursestartdate = ['1717236590','1717236590','1717236590','1717236590','1717236590','1717236590','1717236590','1717236590'];
+        const courseenddate = ['1717322990', '1717322990' ,'1717322990' ,'1717322990' ,'1717322990' ,'1717322990' ,'1717322990' ,'1717322990'];
+        const courseduration = ['1','1','1','1','1','1','1','1'];
+        const courseatt = ['50','100','65','100','100','100','100','100'];
+        const courseass = ['50','100','65','100','100','100','100','100'];
+      */  
+
+    const billid = '{{personaldata.billid}}';
+    const firstname = '{{personaldata.firstname}}';
+    const lastname = '{{personaldata.lastname}}';
+    const email = '{{personaldata.email}}';
+    const user = {
+        billid: billid,
+        firstname: firstname,
+        lastname: lastname,
+        email: email
+    };
+
+    const visible = [{{#itp}}{{visible}}{{^last}},{{/last}}{{/itp}}];
+    const coursenames = [{{#itp}}"{{coursename}}"{{^last}},{{/last}}{{/itp}}];
+    const coursecodes = [{{#itp}}"{{shortcode}}"{{^last}},{{/last}}{{/itp}}];
+    const coursestartdate = [{{#itp}}"{{startdate}}"{{^last}},{{/last}}{{/itp}}];
+    const courseenddate = [{{#itp}}"{{enddate}}"{{^last}},{{/last}}{{/itp}}];
+    const courseduration = [{{#itp}}{{duration}}{{^last}},{{/last}}{{/itp}}];
+    const courseatt = [
+                        {{#itp}}
+                            {{#attendance}}
+                                {{attendance}}{{^last}},{{/last}}
+                            {{/attendance}}
+                            {{^attendance}}
+                                "-"{{^last}},{{/last}}
+                            {{/attendance}}
+                        {{/itp}}
+                    ];
+    const courseass = [
+        {{#itp}}
+            {{#assessment}}
+                {{assessment}}{{^last}},{{/last}}
+            {{/assessment}}
+            {{^assessment}}
+                "-"{{^last}},{{/last}}
+            {{/assessment}}
+        {{/itp}}
+    ];
+
+        const courses = [visible, coursenames, coursecodes, coursestartdate, courseenddate, courseduration, courseatt, courseass];
+
+        module.init(PDF, user, courses);
+   
+
+    
+});
+
+
+{{/js}}
+

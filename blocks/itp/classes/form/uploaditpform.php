@@ -2,7 +2,7 @@
 namespace block_itp\form;
 
 // moodleform is defined in formslib.php
-require_once("$CFG->libdir/formslib.php");
+require_once("$CFG->libdir/formslib.php"); 
 
 class uploaditpform extends \moodleform {
     // Add elements to form.
@@ -10,11 +10,12 @@ class uploaditpform extends \moodleform {
         global $PAGE, $DB;
         $mform = $this->_form; // Don't forget the underscore!
         $mform->_attributes['id']="uploaditpform";
-        
+        $mform->disable_form_change_checker();
         //Se añade javascript
         $PAGE->requires->js('/blocks/itp/js/uploaditp_formJS.js', false);
         //$PAGE->requires->js_call_amd('block_itp/uploaditp_formJS', 'init');
         
+        $idcustomer = optional_param('customerid', null, PARAM_INT);
         //Se crean los campos
         $list_of_customers=$DB->get_records('customer',null,'','id,name');
         foreach ($list_of_customers as $key => $customer) {
@@ -22,8 +23,35 @@ class uploaditpform extends \moodleform {
         }
         
         $mform->addElement('select', 'tecustomer', get_string('tecustomer', 'block_itp'), $list_of_customers, '');
+        $mform->setType('tecustomer', PARAM_INT);
 
-        $mform->addElement('select', 'tegroup', get_string('tegroup', 'block_itp'), ['0'=>'No Groups'], '');
+        $selected_customer=$idcustomer;
+        
+        if ($idcustomer===null)
+            $selected_customer=array_key_first($list_of_customers);
+        else {
+            
+            $selected_customer=$idcustomer;
+            $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$selected_customer],'','id,name');
+            $list_of_groups=array_values($list_of_groups);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($list_of_groups);
+            exit();
+            
+            
+        }
+        
+        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$selected_customer],'','id,name');
+        foreach ($list_of_groups as $key=>$group){
+            $list_of_groups[$key]=$group->name;
+        }
+        
+        //Añadir al principio de la lista el valor por defecto
+        $list_of_groups=array('0'=>'All Groups')+$list_of_groups;
+        
+        
+        $mform->addElement('select', 'tegroup', get_string('tegroup', 'block_itp'), $list_of_groups, '');
+        $mform->setType('tegroup', PARAM_INT);
 
         $maxbytes=255;
         $mform->addElement(

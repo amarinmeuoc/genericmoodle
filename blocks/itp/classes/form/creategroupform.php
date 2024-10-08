@@ -9,7 +9,7 @@ class creategroupform extends \moodleform {
     public function definition() {
         global $PAGE, $DB;
         $mform = $this->_form; // Don't forget the underscore!
-        
+        $mform->disable_form_change_checker();
         //Se añade javascript
         $PAGE->requires->js('/blocks/itp/js/group_formJS.js', false);
         

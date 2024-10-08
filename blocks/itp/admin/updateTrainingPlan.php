@@ -71,9 +71,8 @@ if ($mform->is_cancelled()) {
 
     $customerid=$fromform->tecustomer;
 
-    //Antes de insertar en la base de datos, se borra el cliente seleccionado
-    $result=$DB->delete_records('trainingplan', array('customerid'=>$customerid));
-    
+    // Ahora debería capturar correctamente el valor de `tegroup`
+    $groupid = isset($fromform->tegroup) ? intval($fromform->tegroup) : 0;
 
     $separator=$fromform->selectdelimiter;
     $csv_content=$mform->get_file_content('csv_file');
@@ -87,6 +86,25 @@ if ($mform->is_cancelled()) {
     $params[]=array('type' => 'ok', 'message' => 'Todo bien.');
 
     $cont=2;
+
+    //Antes de borrar la tabla, se verifica si el archivo CSV está vacío
+    if ($lines[0]==="" || empty($lines)) {
+        $params[]=array(
+            'type' => 'error',
+            'message' => "Operación cancelada: El archivo CSV está vacío."
+        );
+        $url = new \moodle_url($pageurl, $params[1]);
+        redirect($url);
+    }
+    
+    //Antes de insertar en la base de datos, se borra el cliente seleccionado
+    if ($groupid===0)
+        $result=$DB->delete_records('trainingplan', array('customerid'=>$customerid));
+    else {
+        $result=$DB->delete_records('trainingplan', array('customerid'=>$customerid, 'groupid'=>$groupid));
+    }
+    
+
     foreach ($lines as $line) {
 
         // Descarta las líneas en blanco y clientes diferentes al seleccionado
@@ -111,6 +129,16 @@ if ($mform->is_cancelled()) {
             $header = $line; // Asume que la primera fila es el encabezado
         } else {
             $data = array_combine($header, $line);
+
+            // Convertir $groupid y $data['group'] a enteros
+            $groupid = intval($groupid);
+            $data['group'] = intval($data['group']);
+
+            //Descarta las lineas que no correspondan al grupo seleccionado
+            if ($groupid!==0 && $data['group']!==$groupid) {
+                continue;
+                $cont++;
+            }
 
             // Verificar si `customerid` no es nulo o no coincide con el cliente seleccionado.
             if (empty($data['customer']) || $data['customer']!==$customerid) {
@@ -169,7 +197,14 @@ if ($mform->is_cancelled()) {
         $params[1]['message'].= ". Se han insertado $inserted_count registros en la base de datos.";
         $url = new \moodle_url($pageurl, $params[1]);
     } else {
-        $params[0]['message']= "Operación exitosa: Se han insertado $inserted_count registros en la base de datos.";
+        if ($inserted_count===0){
+            $params[0]['message']= "Warning: Se han insertado $inserted_count registros en la base de datos. Ten en cuenta que se han borrado todos los registros relativos al cliente y grupo seleccionados. Revise el archivo CSV y verifique el el clienteid coincide con el cliente que tiene seleccionado en la lista superior.";
+            $params[0]['type']="error";
+        } else {
+            $params[0]['message']= "Operación exitosa: Se han insertado $inserted_count registros en la base de datos.";
+            
+        }
+        
         $url = new \moodle_url($pageurl, $params[0]);
     }
     
