@@ -10,6 +10,7 @@ export const init =() => {
     document.querySelectorAll("tr.cerrado .assignbtn").forEach(link => {
         // Añadir un manejador de eventos para el clic que evita que el evento se propague
         link.addEventListener("click", (event) => {
+            window.console.log("changeAssigment");
             event.stopPropagation(); // Detener la propagación del evento
             event.preventDefault();  // Prevenir cualquier acción predeterminada
         });
@@ -21,7 +22,13 @@ export const init =() => {
 
     assignbtn.forEach((node)=>{
         node.addEventListener('click',(e)=>{
-            showAssigmentFormPopup(e);
+            const fila=e.target.closest('tr');
+            if (!fila.classList.contains('cerrado')){
+                showAssigmentFormPopup(e);
+            } else {
+                e.stopPropagation();
+                e.preventDefault();
+            }
         })
     })
 }

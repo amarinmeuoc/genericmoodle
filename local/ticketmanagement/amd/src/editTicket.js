@@ -5,13 +5,17 @@ import {get_string as getString} from 'core/str';
 
 const url=M.cfg.wwwroot+'/webservice/rest/server.php';
 const token=document.querySelector('input[name="token"]').value;
+let eventoCat="";
+let eventoSubCat="";
+let eventoFile="";
+let eventoPriority="";
 export const init =() => {
     
     const tickets=document.querySelectorAll('.tickets');
 
     tickets.forEach((node)=>{
         node.addEventListener('click',(e)=>{
-            showTicketFormPopup(e);
+                showTicketFormPopup(e);
         })
     })
 }
@@ -46,10 +50,14 @@ const showTicketFormPopup=(e)=>{
     
         // Usa la función areElementsLoaded para esperar hasta que los selectores estén cargados en el DOM
         areElementsLoaded('select[name="category"], select[name="subcategory"]', formElement).then((elements) => {
-
+            
             // Una vez que los selectores están disponibles, los seleccionamos
             const categorySelect = formElement.querySelector('select[name="category"]');
             const subcategorySelect = formElement.querySelector('select[name="subcategory"]');
+            const priority=formElement.querySelector('select[name="priority"]');
+            priority.addEventListener('change',(e)=>{
+                eventoPriority=e.target.value
+            })
     
             // Asegúrate de que ambos selectores existen
             if (categorySelect && subcategorySelect) {
@@ -57,13 +65,34 @@ const showTicketFormPopup=(e)=>{
                 categorySelect.addEventListener('change', (event) => {
                     const selectedCategory = event.target.value;
                     window.console.log(`Categoría seleccionada: ${selectedCategory}`);
-    
+                    eventoCat=event.target.value;
                     // Lógica para actualizar las opciones del selector de subcategorías
                     updateSubcategory(selectedCategory, subcategorySelect,token);
                 });
+
+                subcategorySelect.addEventListener('change',(e)=>{
+                    eventoSubCat=e.target.value;
+                })
             } else {
                 window.console.error('Los selectores de categoría y subcategoría no están disponibles.');
             }
+
+            const closebox=formElement.querySelector("input[type='checkbox'][name='close']");
+            const cancelledbox=formElement.querySelector("input[type='checkbox'][name='cancelled']");
+            const bosave=formElement.querySelector(".btn-primary");
+            
+            if (closebox.checked){
+              bosave.disabled=true;
+              closebox.disabled=true;
+            }
+
+
+            if (cancelledbox.checked){
+              bosave.disabled=true;
+              cancelledbox.disabled=true;
+            }
+
+
             
         }).catch((error) => {
             window.console.error('Error al cargar los elementos select:', error);
@@ -87,6 +116,9 @@ const updateTicket = (obj,token,url)=>{
       formData.append('params[0][priority]',obj.priority);
       formData.append('params[0][closed]',obj.close);
       formData.append('params[0][category]',obj.subcategory);
+      formData.append('params[0][eventoCat]',eventoCat);
+      formData.append('params[0][eventoSubCat]',eventoSubCat);
+      formData.append('params[0][eventoPriority]',eventoPriority);
   
       xhr.open('POST',url,true);
       xhr.send(formData);
@@ -144,6 +176,17 @@ const updateSubcategory= (categoryid,subcategorySelect, token)=>{
     const priority = fila.querySelector('td:nth-child(7)');
     state.textContent=ticket.state;
     priority.textContent=ticket.priority;
+    window.console.log("edicion...");
+    if (ticket.state==='Closed' || ticket.state==='Cancelled'){
+        fila.classList.add("cerrado");
+        const boAssigment=fila.querySelector('.assignbtn');
+        boAssigment.addEventListener("click", (event) => {
+            event.stopPropagation(); // Detener la propagación del evento
+            event.preventDefault();  // Prevenir cualquier acción predeterminada
+        });
+        // Opcional: cambiar el cursor a "not-allowed" para indicar que no es clickeable
+        boAssigment.style.cursor = "not-allowed";
+    }
 
   }
 

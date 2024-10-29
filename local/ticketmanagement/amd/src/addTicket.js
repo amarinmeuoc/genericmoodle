@@ -167,21 +167,40 @@ function addTickettoTemplate(response){
       Templates.appendNodeContents(content,html,js);
       const newTicket=document.querySelectorAll('.tickets')[document.querySelectorAll('.tickets').length-1];
       newTicket.addEventListener('click',(e)=>{
-        showTicketFormPopup(e);
+        
+          showTicketFormPopup(e);
+        
       });
 
       const logs=document.querySelectorAll('.logs')[document.querySelectorAll('.logs').length-1];
 
     
         logs.addEventListener('click',(e)=>{
+          const filaPadre=e.target.closest('tr');
+          
             showTicketActions(e);
+          
         })
    
 
       const assignbtn=document.querySelectorAll('.assignbtn')[document.querySelectorAll('.assignbtn').length-1];
       assignbtn.addEventListener('click',(e)=>{
-        showAssigmentFormPopup(e);
+        const filaPadre=e.target.closest('tr');
+        if (!filaPadre.classList.contains('cerrado')){
+          
+          showAssigmentFormPopup(e);
+        } else {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        
       })
+
+
+      
+
+
+
       
       //En caso de que se superen 25 tickets por página, se crea una nueva página y añade el registro ahí
 
@@ -395,7 +414,7 @@ function addTickettoTemplate(response){
     modalForm.addEventListener(modalForm.events.LOADED, (e)=>{
         // Obtener el formulario modal después de que se ha cargado
         const formElement = e.target;
-    
+        window.console.log("disabled...");
         // Usa la función areElementsLoaded para esperar hasta que los selectores estén cargados en el DOM
         areElementsLoaded('select[name="category"], select[name="subcategory"]', formElement).then((elements) => {
 
@@ -415,6 +434,21 @@ function addTickettoTemplate(response){
                 });
             } else {
                 window.console.error('Los selectores de categoría y subcategoría no están disponibles.');
+            }
+
+            const closebox=formElement.querySelector("input[type='checkbox'][name='close']");
+            const cancelledbox=formElement.querySelector("input[type='checkbox'][name='cancelled']");
+            const bosave=formElement.querySelector(".btn-primary");
+            
+            if (closebox.checked){
+              bosave.disabled=true;
+              closebox.disabled=true;
+            }
+
+
+            if (cancelledbox.checked){
+              bosave.disabled=true;
+              cancelledbox.disabled=true;
             }
             
         }).catch((error) => {
@@ -549,6 +583,17 @@ const updateTemplate=(ticket)=>{
   const priority = fila.querySelector('td:nth-child(7)');
   state.textContent=ticket.state;
   priority.textContent=ticket.priority;
+  window.console.log(fila.querySelector('.assignbtn'));
+    if (ticket.state==='Closed' || ticket.state==='Cancelled'){
+        fila.classList.add("cerrado");
+        const boAssigment=fila.querySelector('.assignbtn');
+        boAssigment.addEventListener("click", (event) => {
+            event.stopPropagation(); // Detener la propagación del evento
+            event.preventDefault();  // Prevenir cualquier acción predeterminada
+        });
+        // Opcional: cambiar el cursor a "not-allowed" para indicar que no es clickeable
+        boAssigment.style.cursor = "not-allowed";
+    }
 
 }
 

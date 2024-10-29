@@ -152,7 +152,7 @@ const reqHandlerGetTicketById=(xhr)=>{
     if (xhr.response){
         const response=JSON.parse(xhr.response);
         loadTemplateSingleTicketfromResponse(response);
-        window.console.log(response);
+        window.console.log("response");
     }
  }
 }
@@ -164,6 +164,11 @@ const loadTemplateSingleTicketfromResponse=(response)=>{
   const content=document.querySelector('#content');
   content.innerHTML='';
     Templates.appendNodeContents(content,html,js);
+
+    const fila=document.querySelector('tbody>tr');
+    if (typeof response.listadoTickets[0]!=='undefined')
+      if (response.listadoTickets[0].state==='Closed' || response.listadoTickets[0].state==='Cancelled')
+        fila.classList.add('cerrado');
     
     //Ahora que se ha cargado la plantilla, se puede añadir el evento a los enlaces de ordenación
     const orderlinks=document.querySelectorAll('.orderby');
