@@ -29,14 +29,56 @@
 
 namespace local_ticketmanagement\form;
 
+
 class TicketFormPopup extends \core_form\dynamic_form {
     // Define the form structure
     public function definition() {
+        global $DB;
         $mform = $this->_form;
 
-        $ticketid=$this->_ajaxformdata['num_ticket'];
+        
 
-        $mform->addElement('static', 'ticketid', get_string('ticketid', 'local_ticketmanagement'), $ticketid);
+        $ticketid=$this->_ajaxformdata['num_ticket'];
+       
+
+        $mform->addElement('static', 'ticketidtitle', get_string('ticketid', 'local_ticketmanagement'), $ticketid);
+        $mform->addElement('hidden', 'ticketid', $ticketid);
+
+        //Se obtiene el id de usuario a partir del ticket
+        $ticket=$DB->get_record('ticket', ['id'=>$ticketid], '*');
+       
+        $userid=$ticket->userid;
+        $subcategory=$ticket->subcategoryid;
+
+         //Se lee de la base de datos
+        $user = $DB->get_record('user', ['id' => $userid], 'id, firstname, lastname, email');
+        $username=$user->firstname . ", ". $user->lastname;
+        $mform->addElement('static',  'user',  get_string('user', 'local_ticketmanagement'), $username);
+
+        //Se obtiene la fecha de la tabla de tickets
+        $date=date('d-m-Y H:i',$ticket->dateticket);
+        $mform->addElement('static',  'date',  get_string('date', 'local_ticketmanagement'), $date);
+
+        
+        $ticket_category_options=$DB->get_records('ticket_category',[],'id ASC','*');
+        $categoryoption=[];
+        foreach ($ticket_category_options as $value => $option) {
+            $categoryoption[$value]=$option->category;
+        }
+
+        $selCategory=$mform->addElement('select', 'category', get_string('category', 'local_ticketmanagement'), $categoryoption);
+        $category=$DB->get_field('ticket_subcategory', 'categoryid', ['id'=>$subcategory]);
+        $selCategory->setSelected($category);
+        
+
+        $ticket_subcategory_options=$DB->get_records('ticket_subcategory',['categoryid'=>$category],'id ASC','*');
+        $subcategoryoption=[];
+        foreach ($ticket_subcategory_options as $value => $option) {
+            $subcategoryoption[$value]=$option->subcategory;
+        }
+
+        $selSubcategory=$mform->addElement('select', 'subcategory', get_string('subcategory', 'local_ticketmanagement'), $subcategoryoption);
+        $selSubcategory->setSelected($subcategory);
 
         // Priority dropdown to allow the user to change the priority
         $priorityoptions = [
@@ -44,22 +86,76 @@ class TicketFormPopup extends \core_form\dynamic_form {
             'Medium' => get_string('medium', 'local_ticketmanagement'),
             'High' => get_string('high', 'local_ticketmanagement'),
         ];
-        $mform->addElement('select', 'priority', get_string('priority', 'local_ticketmanagement'), $priorityoptions);
+        $selPriority=$mform->addElement('select', 'priority', get_string('priority', 'local_ticketmanagement'), $priorityoptions);
         $mform->setDefault('priority', 'Medium');  // Default priority value
+        $selPriority->setSelected($ticket->priority);
+        
+
+        $description=$ticket->description;
 
         // Add any other fields as necessary...
+        $mform->addElement('static',  'description',  get_string('description', 'local_ticketmanagement'), $description);
 
+        $familyid=$ticket->familiarid;
+
+        //Get familiar name
+        $familiar=$DB->get_record('family',['id'=>$familyid],'*');
+        if ($familiar)
+            $familiarString="$familiar->relationship: $familiar->name, $familiar->lastname";
+        else
+            $familiarString="No family issue";
+        // Add any other fields as necessary...
+        $mform->addElement('static',  'familyissue',  get_string('familyissue', 'local_ticketmanagement'), $familiarString);
+
+        
+
+        $mform->addElement(
+            'filemanager',
+            'attachments',
+            get_string('attachment', 'local_ticketmanagement'),
+            null,
+            [
+                'subdirs' => 0,
+                'maxbytes' => $maxbytes,
+                'areamaxbytes' => 10485760,
+                'maxfiles' => 50,
+                'accepted_types' => ['document'],
+                'return_types' => 1 | 2,
+            ]
+        );
+
+        //Se comprueba que el ticket no haya sido cerrado previamente
+        $state='closed';
+
+        $mform->addElement('hidden',  'hiddenstate',  'Open');
+        
+        $mform->addElement('advcheckbox',  'close',  get_string('close', 'local_ticketmanagement'),  'Close the ticket', [],  array(0, 1));
+        
+        // Disable my control when state variable is closed.
+        $mform->disabledIf('close', 'hiddenstate', 'eq', 'closed');
+        $mform->hideIf('cancelled', 'close', 'eq', '1');
+
+        //Se comprueba que el ticket no haya sido anulado previamente
+        $state='cancelled';
+        
+        $mform->addElement('advcheckbox',  'cancelled',  get_string('cancelled', 'local_ticketmanagement'),  'Cancel the ticket', [],  array(0, 1));
+        
+        // Disable my control when state variable is closed.
+        $mform->disabledIf('cancelled', 'hiddenstate', 'eq', 'cancelled');
+        $mform->hideIf('close', 'cancelled', 'eq', '1');
+        
+        $mform->disabledIf('category', 'close', 'checked');
+        $mform->disabledIf('category', 'cancelled', 'checked');
+        $mform->disabledIf('subcategory', 'close', 'checked');
+        $mform->disabledIf('subcategory', 'cancelled', 'checked');
+        $mform->disabledIf('priority', 'close', 'checked');
+        $mform->disabledIf('priority', 'cancelled', 'checked');
         
     }
 
     // This method processes the submitted data
     public function process_data($data) {
         
-
-        // Optionally, handle any other form processing logic here (e.g., sending emails)
-
-        // Close or refresh the modal after processing
-        $this->close();
     }
 
     // Custom validation if needed
@@ -95,6 +191,7 @@ class TicketFormPopup extends \core_form\dynamic_form {
      * @return \context
      */
     protected function get_context_for_dynamic_submission(): \context {
+      
         return \context_system::instance();
     }
 
@@ -105,8 +202,6 @@ class TicketFormPopup extends \core_form\dynamic_form {
      * @throws \coding_exception
      */
     protected function get_options(): array {
-        
-        
         return [];
     }
 
@@ -125,6 +220,8 @@ class TicketFormPopup extends \core_form\dynamic_form {
         return $this->get_data();
     }
 
+    
+
     /**
      * Load in existing data as form defaults
      *
@@ -135,7 +232,57 @@ class TicketFormPopup extends \core_form\dynamic_form {
      *     $this->set_data(get_entity($this->_ajaxformdata['id']));
      */
     public function set_data_for_dynamic_submission(): void {
+        global $DB;
+        $ticketId=$this->_ajaxformdata['num_ticket'];
+        $ticket = $DB->get_record('ticket', ['id' => $ticketId], '*');
+   
+        $userid = $ticket->userid;
+  
+        // Initialize file options for the file manager
+        $fileoptions = [
+            'subdirs' => 0,
+            'maxbytes' => 10485760,  // 10MB limit
+            'maxfiles' => 50,
+        ];
+
+        // Retrieve the files associated with this ticket
+        $context = \context_system::instance();
         
+        $filearea = 'attachments';
+        $component = 'local_ticketmanagement';
+
+        // Get an unused draft itemid which will be used for this form.
+        $draftitemid = $ticket->fileid;
+
+        // Generate a new draft item ID if none exists
+        if (empty($draftitemid)) {
+            $draftitemid = file_get_unused_draft_itemid();
+        }
+        
+        \file_prepare_draft_area(
+            $draftitemid,
+            $context->id,
+            $component,
+            $filearea,
+            $ticketid,
+            $fileoptions
+        );
+
+        
+        
+        // Set the draft item ID to the form data
+        $data = [
+            'attachments' => $draftitemid,
+            // Set other fields as necessary
+            'priority'=> $ticket->priority,
+            'close'=>($ticket->state==='Closed')?1:0,
+            'cancelled'=>($ticket->state==='Cancelled')?1:0,
+            'state'=> $ticket->state,
+            
+        ];
+
+        $this->set_data($data);
+
     }
 
     public function get_description_text_options() : array {
@@ -159,13 +306,8 @@ class TicketFormPopup extends \core_form\dynamic_form {
      * @return \moodle_url
      */
     protected function get_page_url_for_dynamic_submission(): \moodle_url {
-        global $USER;
-        return new \moodle_url('/user/profile.php',['id'=>$USER->id]);
+                
+        return new \moodle_url('/local_ticketmanagement/index.php');
     }
-
-
-   
-
-    
 
 }

@@ -1,0 +1,225 @@
+
+<h2>Daily attendance</h2>
+<p>This page is used to track the attendance of all trainees within the available courses</p>
+<form action="#" id="id_foattendance" name="foattendance">
+    {{#showCustomerSelect}}
+    <div class="form-group">
+    <label for="customerid">Select the customer</label>
+    <select class="form-control" aria-label="Default select example" id="customerid">
+    {{#customer_list.customer_list}}
+    <option value="{{id}}">{{shortname}}</option>
+    {{/customer_list.customer_list}}
+    </select>
+    </div>
+    {{/showCustomerSelect}}
+    {{^showCustomerSelect}}
+    <input type="hidden" value="{{customer_list.first_customer_selected}}" id="customerid">
+    {{/showCustomerSelect}}
+
+<div class="form-row">
+    <div class="col-md-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center ">
+        <label for="selgroupid">Group:</label>
+        <select id="selgroupid" name="selgroup" class="form-control ml-2">
+        {{#group_list}}
+        <option value="{{id}}">{{name}}</option>
+        {{/group_list}}
+        </select>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center ">
+        <label for="startdate" class="mr-2">From:</label><input type="date" value="{{selected_date}}" id="startdate" class="form-control">
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="d-flex  justify-content-between align-items-center">
+        <label for="enddate" class="mr-2">To:</label><input type="date" value="{{selected_date}}" id="enddate" class="form-control">
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3 align-self-center">
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="chkPresent" value="option1" {{#attendance_status.present}}checked{{/attendance_status.present}}>
+        <label class="form-check-label" for="chkPresent">Present</label>
+        </div>
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="chkAbsent" value="option2" {{#attendance_status.absent}}checked{{/attendance_status.absent}}>
+        <label class="form-check-label" for="chkAbsent">Absent</label>
+        </div>
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="chkLate" value="option3" {{#attendance_status.late}}checked{{/attendance_status.late}}>
+        <label class="form-check-label" for="chkLate">Late</label>
+        </div>
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="chkExcused" value="option3" {{#attendance_status.excused}}checked{{/attendance_status.excused}}>
+        <label class="form-check-label" for="chkExcused">Excused</label>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="d-flex  justify-content-between align-items-center">
+        <label for="billid" class="mr-2" style="width:300px;">Search by billid:</label><input type="text" placeholder="EN-XXX" id="billid" class="form-control">
+        </div>
+    </div>
+
+</div>
+<button id="idfilter" type="button" class="btn btn-primary">Filter</button>
+<button id="idexport" type="button" class="btn btn-info">Export to Excel</button>
+</form>
+<hr>
+<div id="content">
+<div class="result table-responsive">
+<div class="loader p-5 hide text-center">
+    {{> core/loading }}
+</div>
+    <table class="generaltable table-sm" >
+        <caption >Attendance list</caption>
+        <thead>
+        <tr>
+        <th><a class="orderby" href="#" data-value="group">Group</a></th>
+        <th><a class="orderby" href="#" data-value="billid">Billid</a></th>
+        <th><a class="orderby" href="#" data-value="Prenom">Name</a></th>
+        <th><a class="orderby" href="#" data-value="Nom">LastName</a></th>
+        <th><a class="orderby" href="#" data-value="Nomducours">WBS</a></th>
+        <th>Course name</th>
+        <th><a class="orderby" href="#" data-value="DateAtt">Date {{#orderbydate}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbydate}}</a></th>
+        <th><a class="orderby" href="#" data-value="description">Attendance</a></th>
+        <th>Feedback</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#attendance_list}}
+        <tr>
+        <td class="group">{{grouptrainee}}</td>
+        <td class="billid">{{billid}}</td>
+        <td>{{prenom}}</td>
+        <td>{{nom}}</td>
+        <td>{{nomducours}}</td>
+        <td>{{namecourse}}</td>
+        <td>{{#userdate}} {{dateatt}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+        <td>{{description}}</td>
+        <td>{{feedback}}</td>
+        </tr>
+        {{/attendance_list}}
+        {{^attendance_list}}
+         <tr><td colspan="9" class="align-center">No results found.</td></tr>
+        {{/attendance_list}}
+        
+        
+        </tbody>
+        </table>
+    <p> Displaying {{num_records}} results from {{num_total_records}}</p>
+</div>
+    <div class="d-flex flex-row-reverse">
+        <nav
+        id="{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}"
+        class="{{#showitemsperpageselector}}ml-auto{{/showitemsperpageselector}}"
+        data-region="paging-bar"
+        data-ignore-control-while-loading="{{ignorecontrolwhileloading}}"
+        data-hide-control-on-single-page="{{hidecontrolonsinglepage}}"
+        {{#activepagenumber}}
+            data-active-page-number="{{.}}"
+        {{/activepagenumber}}
+        {{^activepagenumber}}
+            data-active-page-number="1"
+        {{/activepagenumber}}
+        {{#itemsperpage}}
+            {{#active}}
+                data-items-per-page="{{value}}"
+            {{/active}}
+        {{/itemsperpage}}
+        {{#arialabels.paginationnav}}
+            aria-label="{{.}}"
+        {{/arialabels.paginationnav}}
+        {{^arialabels.paginationnav}}
+            aria-label="{{#str}} pagedcontentnavigation, core {{/str}}"
+        {{/arialabels.paginationnav}}
+        {{#arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="{{.}}"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{^arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="pagedcontentnavigationitem, core"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{#arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="{{.}}"
+        {{/arialabels.paginationactivenavitemcomponents}}
+        {{^arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="pagedcontentnavigationactiveitem, core"
+        {{/arialabels.paginationactivenavitemcomponents}}
+        {{#barsize}}
+            data-bar-size="{{.}}"
+        {{/barsize}}
+    >
+
+        <ul class="pagination mb-0">
+            {{#previous}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}previouspage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
+                        <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
+                    {{/item-content}}
+                    {{$attributes}}data-control="previous"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/previous}}
+            {{#first}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}firstpage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        {{#str}}first{{/str}}
+                    {{/item-content}}
+                    {{$attributes}}data-control="first"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/first}}
+            
+            {{#pages}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$attributes}}data-page="true"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/pages}}
+            
+            {{#last}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}lastpage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        {{#str}}last{{/str}}
+                    {{/item-content}}
+                    {{$attributes}}data-control="last"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/last}}
+            {{#next}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}nextpage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
+                        <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
+                    {{/item-content}}
+                    {{$attributes}}data-control="next"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/next}}
+        </ul>
+    </nav>
+    </div>
+</div>
+
+{{#js}}
+require(['report_dailyattendance/init'], function(module){
+    module.init('{{order}}', '{{orderby}}', {{activepagenumber}}, {{offset}}, {{showCustomerSelect}},'{{token}}');
+});
+{{/js}}
+
+
+{{#js}}
+
+require(['report_dailyattendance/exportExcel','xlsx','filesaver','blobutil'], function(module,XLSX,filesaver,blobutil){
+    module.init(XLSX,filesaver,blobutil,'{{token}}');
+});
+
+{{/js}}
+
+
+
+
+

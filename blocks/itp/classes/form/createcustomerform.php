@@ -11,8 +11,8 @@ class createcustomerform extends \moodleform {
         
         //Se añaden javascript y CSS
         //Se añade javascript
-        $PAGE->requires->js('/blocks/itp/js/customer_formJS.js', false);
-        $PAGE->requires->css('/blocks/itp/css/styles.scss');
+        $PAGE->requires->js(new \moodle_url('/blocks/itp/js/customer_formJS.js'), false);
+        $PAGE->requires->css(new \moodle_url('/blocks/itp/css/styles.scss'));
         
         $mform = $this->_form; // Don't forget the underscore!
         $mform->disable_form_change_checker();

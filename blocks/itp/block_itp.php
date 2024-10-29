@@ -62,7 +62,7 @@ class block_itp extends block_base {
         //Por defecto se carga el formulario de estudiante
         $mform=new \block_itp\form\filteritpform();
         
-        if (preg_match('/(controller|manager)/i', $role)) {
+        if (preg_match('/(controller|manager|logistic)/i', $role)) {
             $mform=new \block_itp\form\filteritpform_controller();
             $this->page->requires->js_call_amd('block_itp/init_con', 'loadITP');
         } elseif (preg_match('/observer/i', $role)) {
@@ -85,7 +85,9 @@ class block_itp extends block_base {
         
         
         
-        $this->page->requires->css('/blocks/itp/css/styles.scss');
+        $this->page->requires->css(new moodle_url('/blocks/itp/css/styles.scss'));
+       
+
 
         $this->content = new stdClass();
         $this->content->footer = '';

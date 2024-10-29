@@ -76,4 +76,5 @@ function xmldb_block_itp_install() {
         // Insertar el usuario en la base de datos
         $DB->insert_record('user', $user);
     }
+
 }

@@ -11,51 +11,133 @@ public function definition() {
     
     //Se añaden javascript y CSS
     //Se añade javascript
-    $PAGE->requires->js('/local/ticketmanagement/js/user_form.js', false);
+    $PAGE->requires->js('/local/ticketmanagement/js/manage_ticket_formJS.js', false);
     $PAGE->requires->css('/local/ticketmanagement/css/styles.scss');
     
     $mform = $this->_form; // Don't forget the underscore!
     $mform->disable_form_change_checker();
+
+    $projects=$DB->get_records('customer', [], 'id ASC', '*');
+    
+    $project_arr=[];
+    foreach ($projects as $key => $project) {
+        # code...
+        $project_arr[$key]=$project->name;
+    }
+
+    $mform->addElement('select', 'project', get_string('selectproject', 'local_ticketmanagement'),$project_arr);
+
+    $keys=array_keys($project_arr);
+    if (isset($keys[0]))
+        $firstprojectid=$keys[0];
+
+    
+    $vessel=$DB->get_records('grouptrainee', ['customer'=>$firstprojectid],'id ASC','id,name');
+
+    $vessel_arr=[];
+    foreach ($vessel as $key => $value) {
+        # code...
+        $vessel_arr[$key]=$value->name;
+    }
+    $keys=array_keys($vessel_arr);
+    if (isset($keys[0]))
+        $firstvesselid=$keys[0];
+    $mform->addElement('select', 'vessel', get_string('selectvessel', 'local_ticketmanagement'),$vessel_arr);
+
     //Se configura id de formulario
     $mform->_attributes['id']="manageticket";
-                                                          
-    $userlist = array('33'=>'C1_EN-111_Mohammed, Almaki','34'=>'C1_EN-112_Hamas, Aleui','44'=>'C2_EN-311_Alowi, Mustafa');                                                                                                       
-                                                                                                                            
-    $options = array(                                                                                                           
-        'multiple' => false,                                                  
-        'noselectionstring' => get_string('allareas', 'search'),                                                                
-    );         
-    $mform->addElement('autocomplete', 'areaids', get_string('searcharea', 'search'), $userlist, $options);
 
-    $category=[
-        '1'=>'Administration',
-        '2'=>'Office',
-        '3'=>'Health insurance',
-        '4'=>'Travel'
-    ];
+    $customer=$projects[$firstprojectid]->shortname;
+    $selected_groupname=$vessel_arr[$firstvesselid];
+    $role='student';
+
     
-    $mform->addElement('select', 'category', get_string('selectCategory', 'local_ticketmanagement'),$category);
+                                                          
+    $trainee_query=$DB->get_records_sql('SELECT u.id,username,firstname, lastname,email,
+        MAX(if (uf.shortname="billid",ui.data,"")) as billid,
+        MAX(if (uf.shortname="group",ui.data,"")) as groupname,
+        MAX(if (uf.shortname="customer",ui.data,"")) as customer,
+        MAX(IF(uf.shortname = "role", ui.data, "")) AS role_name
+        FROM mdl_user AS u
+        INNER JOIN mdl_user_info_data AS ui ON ui.userid=u.id
+        INNER JOIN mdl_user_info_field AS uf ON uf.id=ui.fieldid
+        GROUP by username,firstname, lastname
+        HAVING role_name=:role_name AND customer=:customer AND groupname=:groupname',['role_name'=>$role,'customer'=>$customer, 'groupname'=>$selected_groupname]);
+        $trainee_list=array_values($trainee_query);
 
-    $subcategory=[
-        '1'=>'Registration',
-        '2'=>'Payment of a fine'
-    ];
+        $trainee_array=Array();
+        //$pattern='/(OF-\d+)|(EN-\d+)|(^\d+\s[A-Z][A-Z]$)|(RSNFTT-\d+)/i';
+        $pattern='//i';
+        foreach($trainee_list as $elem){
+        if (preg_match($pattern, $elem->billid)==1)
+        $trainee_array[$elem->id]=$elem->groupname."_".$elem->billid." ".$elem->firstname.", ".$elem->lastname;
+        }
 
-    $mform->addElement('select', 'subcategory', get_string('selectsubcategory', 'local_ticketmanagement'),$subcategory);
+        $options = array(                                                                                                           
+        'multiple' => false,                                                  
+        'noselectionstring' => get_string('nouser', 'local_ticketmanagement'),
+        'placeholder'=>'Write a trainee billid or a name'                                                                
+        );                                                                                                             
+                                                                                                                            
+        
+    $mform->addElement('autocomplete', 'userlist', get_string('user', 'local_ticketmanagement'), $trainee_array, $options);
 
-    $mform->addElement('select', 'wayofcontact',  get_string('wayofcontact', 'local_ticketmanagement'),  ['0'=>'Mobile', '1'=>'Whatsapp','3'=>'Email']);
+    
 
-    $mform->addElement('select', 'familyissue',  get_string('familyissue', 'local_ticketmanagement'),  ['0'=>'No', '1'=>'Yes']);
+    $category=$DB->get_records('ticket_category',[],'id ASC','id,category');
+
+    $category_arr=[];
+    foreach ($category as $key => $cat) {
+        # code...
+        $category_arr[$key]=$cat->category;
+    }
+    
+    $mform->addElement('select', 'category', get_string('selectCategory', 'local_ticketmanagement'),$category_arr);
+
+    
+    $keys=array_keys($category_arr);
+    
+    if (isset($keys[0]))
+        $firstcategoryid=$keys[0];
+
+        
+    $subcategory=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstcategoryid],'id ASC','id,subcategory');
+
+    
+    $subcategory_arr=[];
+    foreach ($subcategory as $key => $value) {
+        # code...
+        $subcategory_arr[$key]=$value->subcategory;
+    }
+    
+
+    $mform->addElement('select', 'subcategory', get_string('selectsubcategory', 'local_ticketmanagement'),$subcategory_arr);
+
+   
+
+    $mform->addElement('select', 'familyissue',  get_string('familyissue', 'local_ticketmanagement'),  ['no'=>'No', 'yes'=>'Yes']);
+
+    reset($trainee_array);
+
+    $selUserid=key($trainee_array);
+
+    $family=$DB->get_records('family',['userid'=>$selUserid],'id ASC','*');
+
+    $family_arr=[];
+    foreach ($family as $key => $value) {
+        # code...
+        $family_arr[$key]="$value->name, $value->lastname";
+    }
 
     // Add the second select box (initially hidden)
-    $mform->addElement('select', 'second_select', 'Select an option:', ['0' => 'Mohammed', '1' => 'Noujou']);
+    $mform->addElement('select', 'familiar', 'Select an option:', $family_arr);
 
     // Use hideIf() to hide the second select box if the first select box is not "Yes"
-    $mform->hideIf('second_select', 'familyissue', 'eq', '0');
+    $mform->hideIf('familiar', 'familyissue', 'eq', 'no');
 
     
-    $mform->addElement('editor', 'fieldname', get_string('editortext', 'local_ticketmanagement'));
-    $mform->setType('fieldname', PARAM_RAW);
+    $mform->addElement('editor', 'description', get_string('editortext', 'local_ticketmanagement'));
+    $mform->setType('description', PARAM_RAW);
 
     $mform->addElement(
         'filemanager',
@@ -71,6 +153,8 @@ public function definition() {
             'return_types' => FILE_INTERNAL | FILE_EXTERNAL,
         ]
     );
+
+    
     
     //Se obtiene el token del usuario y se guarda en un campo oculto
     $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
@@ -80,8 +164,23 @@ public function definition() {
 
     $mform->addElement('hidden', 'token', $token);
     $mform->setType('token',PARAM_TEXT);   
+
+    $order=1;
+
+    $mform->addElement('hidden', 'order', $order);
+    $mform->setType('token',PARAM_INT);   
+
+    $orderby='dateticket';
+
+    $mform->addElement('hidden', 'orderby', $orderby);
+    $mform->setType('token',PARAM_TEXT);
+    
+    $page=1;
+    $mform->addElement('hidden', 'page', $page);
+    $mform->setType('token',PARAM_INT);
     
     $mform->addElement('button', 'bocreate', get_string('create', 'local_ticketmanagement'));
+    
     
 }
 

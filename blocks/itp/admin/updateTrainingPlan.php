@@ -156,6 +156,16 @@ if ($mform->is_cancelled()) {
                 break;
             }
 
+            //Verificar que el campo wbs no sea nulo y mayor que 40 caracteres
+            if (empty($data['wbs']) || strlen($data['wbs'])>40) {
+                $params[]=array(
+                    'type' => 'error',
+                    'message' => "Operación cancelada: Asegurate de que el campo wbs no sea nulo y tenga menos de 40 caracteres. Error en linea: {$cont}. Valor del campo: wbs: {$data['wbs']}"
+                );
+                $cont++;
+                continue;
+            }
+
             // Procesar las fechas
             $startdate = \DateTime::createFromFormat('d/m/Y', $data['startdate']);
             $enddate = \DateTime::createFromFormat('d/m/Y', $data['enddate']);

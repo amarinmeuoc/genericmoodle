@@ -165,7 +165,23 @@ if ($mform->is_cancelled()) {
             if (empty($data['group']) || !grupoExiste($customerid,$data['group'])) {
                 $params[]=array(
                     'type' => 'error',
-                    'message' => "Operación cancelada: Asegurate de que el campo groupid exista y no sea nulo. Error en linea: {$cont}. Valor del campo: group: {$data['group']}"
+                    'message' => "Operación cancelada: Asegurate de que el campo groupid 'group' exista y no sea nulo. Error en linea: {$cont}. Valor del campo: group: {$data['group']}"
+                );
+                $cont++;
+                break;
+            }
+
+            // Verificar que los campos billid y email no sean nulos. Los registros que tengan alguno de estos campos nulos no se insertarán
+            if (empty($data['billid']) || empty($data['email'])) {
+                $cont++;
+                break;
+            }
+
+            //Verificar que el campo wbs no sea nulo y mayoar que 40 caracteres
+            if (empty($data['wbs']) || strlen($data['wbs'])>40) {
+                $params[]=array(
+                    'type' => 'error',
+                    'message' => "Operación cancelada: Asegurate que el campo wbs no sea nulo y tenga menos de 40 caracteres. Error en linea: {$cont}. Valor del campo: wbs: {$data['wbs']}"
                 );
                 $cont++;
                 break;

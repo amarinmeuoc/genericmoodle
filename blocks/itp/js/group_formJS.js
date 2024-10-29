@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     //Reubicando error message
     let errorlayer=document.querySelector('#error-message');
     buttonContainer.parentNode.insertBefore(errorlayer, buttonContainer.nextSibling);
+    document.querySelector('#error-message').style.display='none';
 
     const groupListSel=document.querySelector('#id_tegrouplist');
     groupListSel.classList.add('pr-2');

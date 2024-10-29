@@ -1,4 +1,5 @@
 const url=M.cfg.wwwroot+'/blocks/itp/admin/updateitp.php';
+const urlService=M.cfg.wwwroot+'/webservice/rest/server.php';
 
 //Al completar la carga del formulario se eliminan las capas sobrantes
 document.addEventListener('DOMContentLoaded',()=>{
@@ -15,12 +16,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     const boremove_container=document.querySelector('#button_container');
     boremove_container.classList.remove('flex');
     boremove_container.classList.add('flex-row-reverse');
+    document.querySelector('#error-message').style.display='none';
 
     //Token
     let token=document.querySelector('input[name="token"]').value;
 
     boreset.addEventListener('click',(e)=>{
-        requestResetTrainingPlan(url,token,'reset');
+        requestResetTrainingPlan(urlService,token,'reset');
     });
 
     //Lista de clientes

@@ -1,0 +1,28 @@
+
+<hr>
+<h1>Last Tickets </h1>
+<nav class="navbar navbar-light bg-light">
+<form class="form-inline my-2 my-lg-0">
+    
+        <fieldset style="margin-right:1em;"><legend>Search by dates:</legend>
+            <input class="form-control mr-sm-2" type="date" id="startdate">
+            <input class="form-control mr-sm-2" type="date" id="enddate">
+            <button id="id_bosearchdate" class="btn btn-outline-success my-2 my-sm-0" type="button">Search by date</button>
+        </fieldset>
+        <fieldset><legend>Search by ticket:</legend>
+            <input id="id_tesearch" class="form-control mr-sm-2" type="search" placeholder="Search by Id" aria-label="Search">
+            <button id="id_bosearchbyid" class="btn btn-outline-success my-2 my-sm-0" type="button">Search id</button>
+        </fieldset>
+</form>        
+            <div class="form-inline">
+                <a id="id_exportExcel" class="btn btn-info" href="#">Export to Excel</a>
+            </div>
+        
+        
+    
+
+</nav>
+<div id="content">
+{{>local_ticketmanagement/content_log-ajax}}
+</div>
+

@@ -1,0 +1,10 @@
+.show {
+    display: flex;
+    justify-content: center;
+    visibility: visible;
+}
+
+.hide{
+    display: none;
+    visibility: none;
+}

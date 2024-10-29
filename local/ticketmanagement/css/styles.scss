@@ -1,0 +1,65 @@
+.action {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    border-bottom: thin #8f959e solid;
+}
+
+.qheader {
+    margin: 2em;
+}
+
+.date {
+    flex-basis: 25%;
+    align-content: center;
+}
+.description {
+    text-align: left;
+    flex-basis: 50%;
+    height: 3em;
+    overflow-y: scroll;
+    align-content: center;
+}
+
+.addedby {
+    flex-basis: 25%;
+    text-align: right;
+    align-content: center;
+}
+
+.assignbtn, .removebtn{
+    max-width: 45px;
+    margin-right: 1em;
+}
+
+.generaltable tbody tr.cerrado:nth-of-type(odd) {
+        color:#8e9093;
+        font-style:italic;
+        .assignbtn{
+            background-color: #c9cbcd;
+            border:#c9cbcd;
+        }
+        a {
+            color:#8e9093;
+        }
+}
+
+.generaltable tbody tr.cerrado:nth-of-type(even) {
+    color:#8e9093;
+    font-style:italic;
+    .assignbtn{
+        background-color: #c9cbcd;
+        border:#c9cbcd;
+    }
+    a {
+        color:#8e9093;
+    }
+}
+
+.qheader {
+    overflow-y: scroll;
+    max-height: 300px;
+}
+
+
+
