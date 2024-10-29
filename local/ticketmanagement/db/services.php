@@ -376,27 +376,7 @@ $functions = [
         ]
         
     ],
-    // The name of your web service function, as discussed above.
-    'local_ticketmanagement_add_activity' => [
-        // The name of the namespaced class that the function is located in.
-        'classname'   => '\local_ticketmanagement\external\add_activity',
-
-        // A brief, human-readable, description of the web service function.
-        'description' => 'Add actiity logs.',
-
-        // Options include read, and write.
-        'type'        => 'write',
-
-        // Whether the service is available for use in AJAX calls from the web.
-        'ajax'        => true,
-
-        // An optional list of services where the function will be included.
-        'services' => [
-            'NAVANTIA_SERVICES',
-            MOODLE_OFFICIAL_MOBILE_SERVICE
-        ]
-        
-    ],
+    
 ];
 
 $services = [
@@ -420,7 +400,7 @@ $services = [
             'local_ticketmanagement_edit_family_members',
             'local_ticketmanagement_remove_family_members',
             'local_ticketmanagement_edit_ticket',
-            'local_ticketmanagement_add_activity',
+           
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado
