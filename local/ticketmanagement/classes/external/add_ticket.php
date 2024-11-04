@@ -23,7 +23,6 @@ class add_ticket extends \core_external\external_api {
                    'state' => new external_value(PARAM_TEXT, 'ID del aprendiz'),
                    'priority' => new external_value(PARAM_TEXT, 'ID del aprendiz'),
                    'description' => new external_value(PARAM_RAW, 'ID del aprendiz'),
-                   'fileid'=>new external_value(PARAM_INT, 'IF File'),
                    'familiarid' => new external_value(PARAM_INT, 'ID del familiar o aprendiz (si no hay issue familiar)'),
                 ])
             ) 
@@ -54,11 +53,6 @@ class add_ticket extends \core_external\external_api {
         $next_id = sprintf("TICKET-%s-%06d", $year, ($last_ticket->lastid + 1));
         
         
-        
-    
-
-
-
         // Aquí puedes hacer las operaciones necesarias, como insertar el ticket en la base de datos.
         $record = new \stdClass();
         $record->id=$next_id;
@@ -70,18 +64,18 @@ class add_ticket extends \core_external\external_api {
         $record->userid = $ticket['traineeid']; //ID del usuario afectado 
         $record->familiarid = $ticket['familiarid']; //ID del familiar, sino el usuario que hace el ticket
         $record->assigned=$USER->id; //ID del usuario que lleva el ticket, sino el del operador que lo crea
-        $record->fileid = $ticket['fileid'];
+        
         $record->lastupdate = time();
 
-        
+       
 
         
         // Insertar el nuevo ticket en una tabla personalizada
         
-        $DB->execute("INSERT INTO {ticket} (id, subcategoryid, dateticket, description, state, priority, userid, familiarid, assigned, fileid, lastupdate)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+        $DB->execute("INSERT INTO {ticket} (id, subcategoryid, dateticket, description, state, priority, userid, familiarid, assigned, lastupdate)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
               array($next_id, $record->subcategoryid, $record->dateticket, $record->description, $record->state, $record->priority, 
-                    $record->userid, $record->familiarid, $record->assigned, $record->fileid, $record->lastupdate));
+                    $record->userid, $record->familiarid, $record->assigned, $record->lastupdate));
 
         $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid)
                 VALUES (?,?,?,?)",
@@ -96,6 +90,7 @@ class add_ticket extends \core_external\external_api {
         $affectedUser=$DB->get_record('user', ['id'=>$record->userid], 'username,firstname,lastname');
         $record->username="$affectedUser->firstname, $affectedUser->lastname";
 
+        
         //Send email ticket created
         
         // Retornar una respuesta (ej. el ID del nuevo ticket creado)
@@ -117,7 +112,7 @@ class add_ticket extends \core_external\external_api {
                 'familyissue' => new external_value(PARAM_TEXT, 'Yes/No value'),
                 'familiarid' => new external_value(PARAM_INT, 'ID del familiar o aprendiz'),
                 'assigned'=>new external_value(PARAM_INT, 'ID del operador asignado'),
-                'fileid' => new external_value(PARAM_INT, 'ID del archivo adjunto'),
+                
                 'lastupdate' => new external_value(PARAM_INT, 'Fecha de última actualización')
             )
         );

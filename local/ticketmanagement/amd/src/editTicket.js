@@ -35,10 +35,11 @@ const showTicketFormPopup=(e)=>{
         //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
         const formElement=e.target;
         const subcategoryValue = formElement.querySelector('select[name="subcategory"]')?.value;
-        window.console.log(e.detail);
+        window.console.log(e.detail); 
+        //Se captura el valor subcategory porque como campo de formulario aparece la categoria, pero no la subcategoria
         if (subcategoryValue) {
             e.detail.subcategory = subcategoryValue;
-        }
+        } 
 
 
         updateTicket(e.detail,token,url);

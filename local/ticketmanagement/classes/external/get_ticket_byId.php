@@ -86,7 +86,7 @@ class get_ticket_byId extends \core_external\external_api {
                 'state' => $ticket->state,
                 'description' => strip_tags($ticket->description), // Eliminamos etiquetas HTML
                 'priority' => empty($ticket->priority) ? 'Low' : $ticket->priority,
-                'assigned' => ($userincharge->username==='webserviceuser')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname"
+                'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname"
             ];
         }
         

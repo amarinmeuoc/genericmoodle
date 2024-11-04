@@ -138,7 +138,7 @@ public function definition() {
     
     $mform->addElement('editor', 'description', get_string('editortext', 'local_ticketmanagement'));
     $mform->setType('description', PARAM_RAW);
-
+/*
     $mform->addElement(
         'filemanager',
         'attachments',
@@ -153,13 +153,13 @@ public function definition() {
             'return_types' => FILE_INTERNAL | FILE_EXTERNAL,
         ]
     );
-
+*/
     
     
     //Se obtiene el token del usuario y se guarda en un campo oculto
     $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                         INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                        WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
+                        WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
     $token=$token->token;
 
     $mform->addElement('hidden', 'token', $token);
@@ -183,6 +183,7 @@ public function definition() {
     
     
 }
+
 
 // Custom validation should be added here.
 function validation($data, $files) {

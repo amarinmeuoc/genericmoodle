@@ -135,7 +135,7 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         $data = $this->get_data();
     
         // Verificar que los datos estén disponibles y obtener el ID del usuario y el ID del ticket
-        if ($data) {
+        if ($data && !empty(trim($data->description))) {
             $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid)
                 VALUES (?,?,?,?)",
                 array($data->description,$data->updated,$data->userid,$data->hiddenticketid));

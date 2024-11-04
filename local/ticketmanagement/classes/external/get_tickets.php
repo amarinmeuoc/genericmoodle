@@ -117,7 +117,7 @@ class get_tickets extends \core_external\external_api {
                 'state' => $ticket->state,
                 'description' => strip_tags($ticket->description), // Eliminamos etiquetas HTML
                 'priority' => empty($ticket->priority) ? 'Low' : $ticket->priority,
-                'assigned' => ($userincharge->username==='webserviceuser')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname",
+                'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname",
                 'isClosed' => ($ticket->state==='Closed')?1:0,
                 'isDeactivated' => ($ticket->state==='Cancelled')?1:0,
             ];

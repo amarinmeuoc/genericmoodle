@@ -61,10 +61,10 @@ function xmldb_block_itp_install() {
 
     // Creación del usuario para acceso a servicios webs
     // Verificar si el usuario ya existe
-    if (!$DB->record_exists('user', array('username' => 'webserviceuser'))) {
+    if (!$DB->record_exists('user', array('username' => 'logisticwebservice'))) {
         // Datos del nuevo usuario
         $user = new stdClass();
-        $user->username = 'webserviceuser';
+        $user->username = 'logisticwebservice';
         $user->password = hash_internal_user_password('1_2@#Nav$.!&&%Compl2024@@');
         $user->firstname = 'Webservice User';
         $user->lastname = 'only for web service access';

@@ -238,37 +238,3 @@ const reqHandlerLoadSubcategories=(xhr)=>{
 }
 
 
-/*
-selproject.innerHTML='';
-const optionsData = [{'0':'Project 1'},{'1':'Project 2'}];
-let optionsHTML = '';
-
-optionsData.forEach(optionData => {
-    for (const key in optionData) {
-      optionsHTML += `<option value="${key}">${optionData[key]}</option>`;
-    }
-  });
-  selproject.innerHTML = optionsHTML;
-  
-  const selVessel=document.querySelector('#id_vessel');
-  selVessel.innerHTML='';
-  const optionsVessel = [{'0':'Vessel 1'},{'1':'Vessel 2'}];
-  optionsHTML='';
-  optionsVessel.forEach(optionData=>{
-    for (const key in optionData){
-        optionsHTML += `<option value="${key}">${optionData[key]}</option>`;
-    }
-  })
-  selVessel.innerHTML = optionsHTML;
-
-  const selTrainees=document.querySelector('#id_areaids');
-  selTrainees.innerHTML='';
-  const optionsTrainees = [{'0':'Alumno 1'},{'1':'Alumno 2'}];
-  optionsHTML='';
-  optionsTrainees.forEach(optionData=>{
-    for (const key in optionData){
-        optionsHTML += `<option value="${key}">${optionData[key]}</option>`;
-    }
-  })
-  selTrainees.innerHTML = optionsHTML;
-*/

@@ -376,6 +376,90 @@ $functions = [
         ]
         
     ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_get_tickets_byUserId' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\get_tickets_byUserId',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'List user tickets.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_edit_ticket_byUser' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\edit_ticket_byUser',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Edit a ticket.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_load_actions' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\load_actions',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Load actions.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_get_tickets_excel' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\get_tickets_excel',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Load actions.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
     
 ];
 
@@ -400,6 +484,9 @@ $services = [
             'local_ticketmanagement_edit_family_members',
             'local_ticketmanagement_remove_family_members',
             'local_ticketmanagement_edit_ticket',
+            'local_ticketmanagement_get_tickets_byUserId',
+            'local_ticketmanagement_load_actions',
+            'local_ticketmanagement_get_tickets_excel'
            
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido

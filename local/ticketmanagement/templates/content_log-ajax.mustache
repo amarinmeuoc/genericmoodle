@@ -55,6 +55,26 @@ require(['local_ticketmanagement/addTicket'],function(module){
     module.init();
 });
 
+require.config({
+    paths: {
+        xlsx: '/local/ticketmanagement/js/xlsx.full.min',
+        filesaver: '/local/ticketmanagement/js/FileSaver.min',
+        blobutil: '/local/ticketmanagement/js/blob-util.min'
+    },
+    shim: {
+        xlsx: { exports: 'XLSX' },       // Nombre correcto de la variable global de xlsx
+        filesaver: { exports: 'saveAs' }, // Variable global para FileSaver.js
+        blobutil: { exports: 'blobUtil' } // Variable global de blob-util
+    }
+});
+
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['local_ticketmanagement/exportExcel', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
+    // Inicializar el módulo con las dependencias cargadas
+    module.init(XLSX, saveAs, blobUtil);
+});
+
+
 
 
 {{/js}}

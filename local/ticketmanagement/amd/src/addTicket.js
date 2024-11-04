@@ -8,6 +8,10 @@ import Templates from 'core/templates';
 
 const url=M.cfg.wwwroot+'/webservice/rest/server.php';
 const token=document.querySelector('input[name="token"]').value;
+let eventoCat="";
+let eventoSubCat="";
+let eventoFile="";
+let eventoPriority="";
 
 export const init =() => {
     const bonewticket=document.querySelector("#id_bocreate");
@@ -23,7 +27,7 @@ export const init =() => {
         
         const familyissue=document.querySelector('#id_familyissue').value;
         const description=document.querySelector('textarea[name="description[text]"]').value;
-        const fileid=document.querySelector('#id_attachments').value;
+        //const fileid=document.querySelector('#id_attachments').value;
         let familiar=trainee;
         if (familyissue==='yes'){
           if (document.querySelector('#id_familiar').value!=='')
@@ -38,7 +42,7 @@ export const init =() => {
             state:"Open",
             priority:"Medium",
             description:description,
-            fileid:fileid,
+            //fileid:fileid,
             familiarid:familiar
         };
 
@@ -64,7 +68,6 @@ const createNewTicket=(newTicket)=>{
     formData.append('params[0][state]',newTicket.state);
     formData.append('params[0][priority]',newTicket.priority);
     formData.append('params[0][description]',newTicket.description);
-    formData.append('params[0][fileid]',newTicket.fileid);
     formData.append('params[0][familiarid]',newTicket.familiarid);
 
     xhr.open('POST',url,true);
@@ -421,6 +424,10 @@ function addTickettoTemplate(response){
             // Una vez que los selectores están disponibles, los seleccionamos
             const categorySelect = formElement.querySelector('select[name="category"]');
             const subcategorySelect = formElement.querySelector('select[name="subcategory"]');
+            const priority=formElement.querySelector('select[name="priority"]');
+            priority.addEventListener('change',(e)=>{
+              eventoPriority=e.target.value
+            })
     
             // Asegúrate de que ambos selectores existen
             if (categorySelect && subcategorySelect) {
@@ -428,10 +435,13 @@ function addTickettoTemplate(response){
                 categorySelect.addEventListener('change', (event) => {
                     const selectedCategory = event.target.value;
                     window.console.log(`Categoría seleccionada: ${selectedCategory}`);
-    
+                    eventoCat=event.target.value;
                     // Lógica para actualizar las opciones del selector de subcategorías
                     updateSubcategory(selectedCategory, subcategorySelect,token);
                 });
+                subcategorySelect.addEventListener('change',(e)=>{
+                  eventoSubCat=e.target.value;
+              })
             } else {
                 window.console.error('Los selectores de categoría y subcategoría no están disponibles.');
             }
@@ -548,6 +558,9 @@ const updateTicket = (obj,token,url)=>{
     formData.append('params[0][priority]',obj.priority);
     formData.append('params[0][closed]',obj.close);
     formData.append('params[0][category]',obj.subcategory);
+    formData.append('params[0][eventoCat]',eventoCat);
+    formData.append('params[0][eventoSubCat]',eventoSubCat);
+    formData.append('params[0][eventoPriority]',eventoPriority);
 
     xhr.open('POST',url,true);
     xhr.send(formData);
@@ -595,6 +608,49 @@ const updateTemplate=(ticket)=>{
         boAssigment.style.cursor = "not-allowed";
     }
 
+}
+
+const updateSubcategory= (categoryid,subcategorySelect, token)=>{
+  let xhr = new XMLHttpRequest();
+    
+    //Se prepara el objeto a enviar
+    const formData= new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'local_ticketmanagement_load_subcategories');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[0][categoryid]',categoryid);
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        reqHandlerLoadSubcategories(xhr, subcategorySelect);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const reqHandlerLoadSubcategories=(xhr,subcategorySelect)=>{
+  if (xhr.readyState=== 4 && xhr. status === 200){
+    if (xhr.response){
+        const response=JSON.parse(xhr.response);
+        const selsubcategory=subcategorySelect;
+        if (response){
+          selsubcategory.innerHTML='';
+          const optionsSubcategories = response;
+          
+
+          optionsHTML='';
+          optionsSubcategories.forEach(optionData=>{
+                optionsHTML += `<option value="${optionData.id}">${optionData.subcategory}</option>`;
+          })
+          selsubcategory.innerHTML = optionsHTML;
+        }
+        
+    }
+  }
 }
 
 const areElementsLoaded = (selector, parentElement = document) => {

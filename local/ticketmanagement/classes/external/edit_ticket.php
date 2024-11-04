@@ -34,7 +34,6 @@ class edit_ticket extends \core_external\external_api {
         ]);
     }
 
-
         /**
      * Show Partial Training Plan
      * @param array A list of params for display the table
@@ -54,35 +53,16 @@ class edit_ticket extends \core_external\external_api {
         $record->subcategoryid = $ticket['category'];
         $record->priority = $ticket['priority'];
         
-        $record->lastupdate = time(); // Marca la fecha de actualización
+        //$record->lastupdate = time(); // Marca la fecha de actualización
 
         // Maneja los archivos adjuntos
-        $draftitemid = $ticket['fileid'];
-        $context = \context_system::instance();
-        $filearea = 'attachments';
-        $component = 'local_ticketmanagement';
+        
+        $userid=$DB->get_record('ticket',['id'=>$ticket['ticketid']],'userid')->userid;
+ 
         $ticketid=$ticket['ticketid'];
         $eventoCat=$ticket['eventoCat'];
         $eventoSubCat=$ticket['eventoSubCat'];
         $eventoPriority=$ticket['eventoPriority'];
-
-        
-        // Guarda los archivos en el área de borrador
-        file_save_draft_area_files(
-            $draftitemid,
-            $context->id,
-            $component,
-            $filearea,
-            $ticketid,
-            [
-                'subdirs' => 0,
-                'maxbytes' => 10485760, // 10MB
-                'maxfiles' => 50,
-                'accepted_types' => ['document'], // Solo documentos
-            ]
-        );
-        
-    
 
     // Optionally handle ticket closure or cancellation
     if (!empty($ticket['closed']) && $ticket['closed'] === 1) {

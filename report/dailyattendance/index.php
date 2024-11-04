@@ -101,7 +101,7 @@ $userSessionId=\core\session\manager::get_login_token();
 
 $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
+                            WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
    
 
 echo $OUTPUT->header();

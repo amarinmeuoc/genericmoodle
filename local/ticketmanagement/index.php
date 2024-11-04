@@ -20,6 +20,7 @@ if (preg_match('/(logistic|manager)/i',$role)){
     $mform=new \local_ticketmanagement\form\manageticket_log();
     $PAGE->requires->js_call_amd('local_ticketmanagement/init_log', 'loadTemplate');
 } elseif (preg_match('/student/i',$role)){
+    $PAGE->requires->js_call_amd('local_ticketmanagement/user/init_st', 'loadTemplate');
     //Muestra sistema de gestión de tickets alumno
     $mform=new \local_ticketmanagement\form\manageticket_st();
 } else {
@@ -92,7 +93,7 @@ $data = [
 if (preg_match('/(logistic|manager)/i',$role)){
     $render=$OUTPUT->render_from_template('local_ticketmanagement/content_log', $data);
 } elseif (preg_match('/student/i',$role)){
-    $render=$OUTPUT->render_from_template('local_ticketmanagement/content-user', $data);
+    $render=$OUTPUT->render_from_template('local_ticketmanagement/content_user', $data);
 }
 echo $render;
 

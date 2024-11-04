@@ -1,0 +1,15 @@
+{{#listadoTickets}}
+<tr id="{{ticketnumber}}" class="{{#isClosed}}cerrado{{/isClosed}}{{#isDeactivated}}cerrado{{/isDeactivated}}">
+<td><a href="#" class="tickets">{{ticketnumber}}</a></td>
+<td><a href="#" data-userid="33" class="user">{{username}}</a></td>
+<td>{{familyissue}}</td>
+<td>{{#userdate}} {{date}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+<td>{{state}}</td>
+<td>{{description}}</td>
+<td>{{priority}}</td>
+
+<td><a href="#"  data-ticketid="{{ticketnumber}}"  class="logs">log</a></td>
+<td><span>{{#assigned}}{{assigned}}{{/assigned}}{{^assigned}}Waiting for assigned{{/assigned}}</span></td>
+
+</tr>
+{{/listadoTickets}}
