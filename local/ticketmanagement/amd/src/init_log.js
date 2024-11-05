@@ -140,7 +140,10 @@ const getFirstAndLastDayOfCurrentWeek=()=> {
 const reqHandlerGetTickets=(xhr)=>{
   if (xhr.readyState=== 4 && xhr. status === 200){
     if (xhr.response){
-        const response=JSON.parse(xhr.response);
+      let response=JSON.parse(xhr.response);
+      response.pages=truncateArrayWithActiveMiddle(response.pages,8);
+      window.console.log(response);
+      
         loadTemplatefromResponse(response);
         
     }
@@ -357,3 +360,27 @@ const areElementsLoaded = (selector) => {
         checkElements();
     });
   };
+
+  function truncateArrayWithActiveMiddle(arr, maxLength) {
+    const activeIndex = arr.indexOf(arr.find(item => item.active)); // Combine find and indexOf
+  
+    // Handle cases where there's no active element or less than maxLength elements
+    if (activeIndex === -1 || arr.length <= maxLength) {
+      return arr;
+    }
+  
+    // Similar logic to calculate before and after lengths
+    const halfLength = Math.floor(maxLength / 2);
+    const beforeLength = Math.min(halfLength, activeIndex);
+    const afterLength = Math.min(halfLength, arr.length - activeIndex - 1);
+  
+    // Use a loop to iterate and build the truncated array
+    const truncatedArray = [];
+    for (let i = activeIndex - beforeLength; i <= activeIndex + afterLength; i++) {
+      if (i >= 0 && i < arr.length) { // Ensure we stay within array bounds
+        truncatedArray.push(arr[i]);
+      }
+    }
+  
+    return truncatedArray;
+  }

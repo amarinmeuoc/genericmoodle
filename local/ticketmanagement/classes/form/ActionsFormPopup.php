@@ -53,6 +53,7 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         // Agregar cada acción en un contenedor HTML con los detalles correspondientes
         
         $mform->addElement('text','description','Add a new action:');
+        $mform->addElement('button',  'boExcel',  'Export to Excel');
         
    
     }
