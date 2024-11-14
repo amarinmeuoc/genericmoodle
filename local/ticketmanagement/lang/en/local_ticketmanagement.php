@@ -53,3 +53,4 @@ $string['firstname']="Firstname";
 $string['lastname']="Lastname";
 $string['select']="Select";
 $string['traineedetails']="Trainee detail information:";
+$string['uploadfamilydetailscsv']="Upload family with a csv file";

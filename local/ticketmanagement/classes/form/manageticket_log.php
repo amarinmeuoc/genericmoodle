@@ -7,7 +7,7 @@ require_once("$CFG->libdir/formslib.php");
 class manageticket_log extends \moodleform {
 // Add elements to form.
 public function definition() {
-    global $PAGE, $DB;
+    global $PAGE, $DB,$USER;
     
     //Se añaden javascript y CSS
     //Se añade javascript
@@ -168,16 +168,22 @@ public function definition() {
     $order=1;
 
     $mform->addElement('hidden', 'order', $order);
-    $mform->setType('token',PARAM_INT);   
+    $mform->setType('order',PARAM_INT);   
 
     $orderby='dateticket';
 
     $mform->addElement('hidden', 'orderby', $orderby);
-    $mform->setType('token',PARAM_TEXT);
+    $mform->setType('orderby',PARAM_TEXT);
     
     $page=1;
     $mform->addElement('hidden', 'page', $page);
-    $mform->setType('token',PARAM_INT);
+    $mform->setType('page',PARAM_INT);
+
+    $mform->addElement('hidden', 'role', 'controller');
+    $mform->setType('role',PARAM_TEXT);
+
+    $mform->addElement('hidden',  'gestorid',  $USER->id);
+    $mform->setType('gestorid',PARAM_INT);
     
     $mform->addElement('button', 'bocreate', get_string('create', 'local_ticketmanagement'));
     

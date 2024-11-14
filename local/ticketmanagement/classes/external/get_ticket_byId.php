@@ -48,10 +48,31 @@ class get_ticket_byId extends \core_external\external_api {
         self::validate_context($context);
         require_capability('webservice/rest:use', $context);
         
-        $ticket = $DB->get_record('ticket', ['id'=>$ticketId], '*');
+        //$ticket = $DB->get_record('ticket', ['id'=>$ticketId], '*');
+
+ 
+
+        
+        // Definir el patrón de búsqueda para coincidencia aproximada
+        $searchPattern = "%{$ticketId}%";
+
+        // Validar y sanitizar $orderby y $order para evitar SQL Injection
+        $validOrderColumns = ['id', 'assigned', 'dateticket','state','priority','familiarid']; // Lista de columnas permitidas para ordenar
+        $orderby = in_array($orderby, $validOrderColumns) ? $orderby : 'id'; // Columnas válidas, por defecto 'id'
+        $order = ($order === 'ASC' || $order === 'DESC') ? $order : 'ASC'; // Dirección válida, por defecto 'ASC'
+
+        // Crear la consulta SQL dinámica
+        $sql = "SELECT * FROM {ticket} WHERE id LIKE :ticketid ORDER BY $orderby $order";
+
+        // Ejecutar la consulta con los parámetros de búsqueda
+        $tickets = $DB->get_records_sql($sql, ['ticketid' => $searchPattern],0,25);
+
+        // $tickets contendrá los resultados ordenados y con coincidencias aproximadas
         
          // Obtener el número total de tickets (para la paginación)
-         $num_total_records = ($ticket)?1:0;
+         $num_total_records = ($tickets)?count($tickets):0;
+
+        
            
 
         // **Validación importante para evitar el error cuando no hay registros**
@@ -65,30 +86,36 @@ class get_ticket_byId extends \core_external\external_api {
         //Numero total registros por paginas
         $num_records=1;
 
-        $pages=[
-            (object)[
-                'page'=>1,
-                'active'=>($i === $activePage)
-            ]
-        ];
-      
-
-        $formatted_tickets=[];
-        if ($ticket){
-            //Check the username of the person in charge
-            $userincharge=$DB->get_record('user', ['id'=>$ticket->assigned], 'username,firstname,lastname');
-            $user=$DB->get_record('user', ['id'=>$ticket->userid], 'username,firstname,lastname');
-            $formatted_tickets[] = [
-                'ticketnumber' => $ticket->id,
-                'username' => "$user->firstname, $user->lastname",
-                'familyissue' => ($ticket->familiarid!==$ticket->userid) ? 'Yes' : 'No', // Si tiene un familiar asignado
-                'date' => (int) $ticket->dateticket,
-                'state' => $ticket->state,
-                'description' => strip_tags($ticket->description), // Eliminamos etiquetas HTML
-                'priority' => empty($ticket->priority) ? 'Low' : $ticket->priority,
-                'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname"
+        $pages=[];
+        for ($i = 1; $i <= $num_pages; $i++) {
+            $pages[] = (object)[
+                'page' => $i,
+                'active' => ($i === $activePage) // Set the first page as active
             ];
         }
+
+        
+
+        $formatted_tickets=[];
+
+        foreach ($tickets as $ticket) {
+            if ($ticket){
+                //Check the username of the person in charge
+                $userincharge=$DB->get_record('user', ['id'=>$ticket->assigned], 'username,firstname,lastname');
+                $user=$DB->get_record('user', ['id'=>$ticket->userid], 'username,firstname,lastname');
+                $formatted_tickets[] = [
+                    'ticketnumber' => $ticket->id,
+                    'username' => "$user->firstname, $user->lastname",
+                    'familyissue' => ($ticket->familiarid!==$ticket->userid) ? 'Yes' : 'No', // Si tiene un familiar asignado
+                    'date' => (int) $ticket->dateticket,
+                    'state' => $ticket->state,
+                    'description' => strip_tags($ticket->description), // Eliminamos etiquetas HTML
+                    'priority' => empty($ticket->priority) ? 'Low' : $ticket->priority,
+                    'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname"
+                ];
+            }
+        }
+        
         
         
         $tickets=[

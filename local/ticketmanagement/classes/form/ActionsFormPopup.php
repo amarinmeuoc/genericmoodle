@@ -43,16 +43,23 @@ class ActionsFormPopup extends \core_form\dynamic_form {
 
         $mform->addElement('hidden',  'hiddenticketid',  $ticketid);
 
+        $ticket = $DB->get_record('ticket',['id'=>$ticketid],'state');
+        
         $actions = $DB->get_records('ticket_action', ['ticketid' => $ticketid], 'dateaction DESC', '*', 0, 1);
         $action=reset($actions);
         $updated=time();
 
         $mform->addElement('hidden','updated',$updated);
         $mform->addElement('hidden',  'userid',  $action->userid);
+        $mform->addElement('hidden','state',$ticket->state);
         
         // Agregar cada acción en un contenedor HTML con los detalles correspondientes
         
         $mform->addElement('text','description','Add a new action:');
+
+        
+
+
         $mform->addElement('button',  'boExcel',  'Export to Excel');
         
    

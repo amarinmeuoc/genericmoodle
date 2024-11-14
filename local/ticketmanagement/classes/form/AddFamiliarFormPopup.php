@@ -32,7 +32,7 @@ namespace local_ticketmanagement\form;
 class AddFamiliarFormPopup extends \core_form\dynamic_form {
     // Define the form structure
     public function definition() {
-        
+        global $USER;
 
         $mform = $this->_form;
         
@@ -63,6 +63,8 @@ class AddFamiliarFormPopup extends \core_form\dynamic_form {
         $mform->addElement('text',  'firstname',  get_string('firstname', 'local_ticketmanagement'),  $attributes); 
 
         $mform->addElement('text',  'lastname',  get_string('lastname', 'local_ticketmanagement'),  $attributes); 
+
+        $mform->addElement('hidden', 'gestorid', $USER->id);
     }
 
     

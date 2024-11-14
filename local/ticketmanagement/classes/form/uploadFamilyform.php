@@ -7,7 +7,7 @@ require_once("$CFG->libdir/formslib.php");
 class uploadFamilyform extends \moodleform {
     // Add elements to form.
     public function definition() {
-        global $PAGE, $DB;
+        global $PAGE, $DB, $USER;
         
         //Se añaden javascript y CSS
         //Se añade javascript
@@ -53,6 +53,7 @@ class uploadFamilyform extends \moodleform {
     $selected_groupname=$vessel_arr[$firstvesselid];
     $role='student';
 
+    $mform->addElement('hidden',  'gestorid',  $USER->id);
     
                                                           
     $trainee_query=$DB->get_records_sql('SELECT u.id,username,firstname, lastname,email,

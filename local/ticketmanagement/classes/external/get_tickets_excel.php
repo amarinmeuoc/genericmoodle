@@ -6,6 +6,9 @@ use \core_external\external_multiple_structure as external_multiple_structure;
 use \core_external\external_single_structure as external_single_structure;
 use \core_external\external_value as external_value;
 
+
+
+
 class get_tickets_excel extends \core_external\external_api {
 /**
      * Returns description of method parameters
@@ -68,9 +71,21 @@ class get_tickets_excel extends \core_external\external_api {
         foreach ($tickets as $ticket) {
             //Check the username of the person in charge
             $userincharge=$DB->get_record('user', ['id'=>$ticket->assigned], 'username,firstname,lastname');
-            $user=$DB->get_record('user', ['id'=>$ticket->userid], 'username,firstname,lastname');
+            $user=$DB->get_record('user', ['id'=>$ticket->userid], 'id,username,firstname,lastname');
+            if (!empty($user->id)) {
+                profile_load_custom_fields($user);
+            }
+            
+            $subcategory=$DB->get_record('ticket_subcategory', ['id'=>$ticket->subcategoryid]);
+            $category=$DB->get_record('ticket_category', ['id'=>$subcategory->categoryid],'category');
+            $subcategory=$subcategory->subcategory;
             $formatted_tickets[] = [
                 'ticketnumber' => $ticket->id,
+                'category'=>$category->category,
+                'subcategory'=>$subcategory,
+                'customer'=>$user->profile['customer'],
+                'vessel'=>$user->profile['group'],
+                'billid'=>$user->profile['billid'],
                 'username' => "$user->firstname, $user->lastname",
                 'familyissue' => ($ticket->familiarid!==$ticket->userid) ? 'Yes' : 'No', // Si tiene un familiar asignado
                 'date' => (int) $ticket->dateticket,
@@ -85,6 +100,7 @@ class get_tickets_excel extends \core_external\external_api {
             'listadoTickets'=>$formatted_tickets,
         ];  
 
+        
         // Retornar una respuesta (ej. el ID del nuevo ticket creado)
         return $tickets;
     }
@@ -97,6 +113,11 @@ class get_tickets_excel extends \core_external\external_api {
                     new external_single_structure(
                         array(
                             'ticketnumber' => new external_value(PARAM_TEXT, 'Número del ticket'),
+                            'category' => new external_value(PARAM_TEXT, 'Category ticket'),
+                            'subcategory' => new external_value(PARAM_TEXT, 'Subcategory ticket'),
+                            'customer' => new external_value(PARAM_TEXT, 'customer user ticket'),
+                            'vessel' => new external_value(PARAM_TEXT, 'customer user ticket'),
+                            'billid' => new external_value(PARAM_TEXT, 'customer user ticket'),
                             'username' => new external_value(PARAM_TEXT, 'Nombre de usuario'),
                             'familyissue' => new external_value(PARAM_TEXT, 'Yes/No'),
                             'date' => new external_value(PARAM_INT, 'Fecha del ticket (timestamp)'),

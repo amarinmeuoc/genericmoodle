@@ -16,6 +16,7 @@ class get_family_members extends \core_external\external_api {
             'params'=>new external_multiple_structure(
                 new external_single_structure([
                    'userid' => new external_value(PARAM_INT, 'User id'),
+                   'gestorid'=> new external_value(PARAM_INT, 'User id'),
                 ])
             ) 
         ]);
@@ -35,6 +36,7 @@ class get_family_members extends \core_external\external_api {
         $request=self::validate_parameters(self::execute_parameters(), ['params'=>$params]);
         
         $userid=$request['params'][0]['userid'];   
+        $gestorid=$request['params'][0]['gestorid'];  
    
         
         // now security checks
@@ -58,10 +60,14 @@ class get_family_members extends \core_external\external_api {
 
         $user=$DB->get_record('user',['id'=>$userid],'id,firstname,lastname');
         
+        $gestor=$DB->get_record('user',['id'=>$gestorid],'id,firstname,lastname');
+        profile_load_custom_fields($gestor);
+        
         $family=[
             'listadoFamily'=>$formatted_familymembers,
             'user'=>"$user->firstname, $user->lastname",
-            'userid' => $user->id
+            'userid' => $user->id,
+            'gestor_role'=>$gestor->profile['role']
         ];
         
             
@@ -86,6 +92,7 @@ class get_family_members extends \core_external\external_api {
                 ),
                 'user' => new external_value(PARAM_TEXT, 'Username'),
                 'userid' => new external_value(PARAM_INT, 'userid'),
+                'gestor_role' => new external_value(PARAM_TEXT, 'gestor role'),
             )
         );
     }

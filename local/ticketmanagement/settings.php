@@ -47,6 +47,8 @@ if ($hassiteconfig) {
      $urluploadfamily=new moodle_url('/local/ticketmanagement/admin/upload_family.php',[]);
      $settingspageuploadfamily = new admin_externalpage('local_ticketmanagement_uploadfamily', new lang_string('uploadfamilydetails','local_ticketmanagement'),$urluploadfamily);
      
+     $urluploadfamilycsv=new moodle_url('/local/ticketmanagement/admin/upload_familycsv.php',[]);
+     $settingspageuploadfamilycsv = new admin_externalpage('local_ticketmanagement_uploadfamilycsv', new lang_string('uploadfamilydetailscsv','local_ticketmanagement'),$urluploadfamilycsv);
 
     //$ADMIN->add('blocksettingitp', $settingitp);
 
@@ -54,7 +56,7 @@ if ($hassiteconfig) {
     $ADMIN->add('localpluginsticketmanagement', $settingspagecategory);
     $ADMIN->add('localpluginsticketmanagement', $settingspagesubcategory);
     $ADMIN->add('localpluginsticketmanagement', $settingspageuploadfamily);
-    
+    $ADMIN->add('localpluginsticketmanagement', $settingspageuploadfamilycsv);
     
 
     

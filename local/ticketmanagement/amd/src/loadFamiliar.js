@@ -14,12 +14,14 @@ export const init =() => {
 
     const boSelect=document.querySelector('#id_bosubmit');
 
+    const gestorid=document.querySelector('input[name="gestorid"]').value;
+
     boSelect.addEventListener('click',()=>{
         const selectedUser=document.querySelector('#id_userlist').value;
         if (selectedUser==='')
             Notification.addNotification({message:'Error: No trainee selected. Please select an availabe trainee.',type:'error'});
         else {
-            loadFamiliyfromUserId(selectedUser,token,url);
+            loadFamiliyfromUserId(selectedUser,gestorid,token,url);
         }
     })
 
@@ -28,11 +30,11 @@ export const init =() => {
         return;
     } else {
         window.console.log('loading...');
-        loadFamiliyfromUserId(selectedUser,token,url);
+        loadFamiliyfromUserId(selectedUser,gestorid,token,url);
     }
 }
 
-const loadFamiliyfromUserId=(userid,token,url)=>{
+const loadFamiliyfromUserId=(userid,gestorid,token,url)=>{
     let xhr = new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -41,6 +43,7 @@ const loadFamiliyfromUserId=(userid,token,url)=>{
     formData.append('wsfunction', 'local_ticketmanagement_get_family_members');
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][userid]',userid);
+    formData.append('params[0][gestorid]',gestorid);
     
 
     xhr.open('POST',url,true);
@@ -74,9 +77,12 @@ const loadFamiliyTemplate=(response)=>{
           Templates.appendNodeContents(content,html,js);
         })
         .catch((error)=>displayException(error));
-
+        let template='local_ticketmanagement/tr_family';
+        if (response.gestor_role==='logistic'){
+            template='local_ticketmanagement/tr_family-log'
+        }
         //Render the choosen mustache template by Javascript
-        Templates.renderForPromise('local_ticketmanagement/tr_family',response)
+        Templates.renderForPromise(template,response)
         .then(({html,js})=>{
         const content=document.querySelector('#tablebody');
         content.innerHTML='';

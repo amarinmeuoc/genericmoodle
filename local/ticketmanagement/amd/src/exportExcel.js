@@ -114,6 +114,11 @@ const createExcelFromJSON = (res, op) => {
     // Convertir cada objeto a un array de valores y añadirlo al listado
     const ticketsArray = res.listadoTickets.map(ticket => [
         ticket.ticketnumber,
+        ticket.category,
+        ticket.subcategory,
+        ticket.customer,
+        ticket.vessel,
+        ticket.billid,
         ticket.username,
         ticket.familyissue,
         formatUnixToDateTime(ticket.date),

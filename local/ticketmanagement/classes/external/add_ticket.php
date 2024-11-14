@@ -1,5 +1,6 @@
 <?php
 namespace local_ticketmanagement\external;
+require_once($CFG->dirroot . '/user/profile/lib.php');
 
 use \core_external\external_function_parameters as external_function_parameters;
 use \core_external\external_multiple_structure as external_multiple_structure;
@@ -24,6 +25,7 @@ class add_ticket extends \core_external\external_api {
                    'priority' => new external_value(PARAM_TEXT, 'ID del aprendiz'),
                    'description' => new external_value(PARAM_RAW, 'ID del aprendiz'),
                    'familiarid' => new external_value(PARAM_INT, 'ID del familiar o aprendiz (si no hay issue familiar)'),
+                   'gestorid' => new external_value(PARAM_INT, 'Ticket made by...'),
                 ])
             ) 
         ]);
@@ -42,15 +44,39 @@ class add_ticket extends \core_external\external_api {
         // Validate parameters
         $request=self::validate_parameters(self::execute_parameters(), ['params'=>$params]);
         $ticket=$request['params'][0];
+        $userid=$ticket['traineeid'];
+        $userCreatedTicket=$ticket['gestorid'];
+
+        $madeby=$DB->get_record('user', ['id'=>$userCreatedTicket], 'firstname,lastname');
+
+        //Nombre y apellidos del usuario afectado
+        $affectedUser=$DB->get_record('user', ['id'=>$userid], 'id,username,firstname,lastname');
+        
+        if ($affectedUser) {
+            \profile_load_custom_fields($affectedUser);
+            $customer = $affectedUser->profile['customer'] ?? '';
+            $vessel = $affectedUser->profile['group'] ?? '';
+            $billid = $affectedUser->profile['billid'] ?? '';
+        } else {
+            throw new \invalid_parameter_exception("El usuario con ID $userid no existe.");
+        }
+        
+
         
 
         $year = date("Y");
-        $last_ticket = $DB->get_record_sql("SELECT SUBSTRING_INDEX(MAX(id), '-', -1) as lastid FROM {ticket}");
+        $last_ticket = $DB->get_record_sql("
+            SELECT SUBSTRING_INDEX(MAX(id), '-', -1) as lastid 
+            FROM {ticket} 
+            WHERE id LIKE CONCAT(?, '-', ?, '-%')
+        ", array($customer, $vessel));
+        
         
         if (is_null($last_ticket->lastid))
             $last_ticket->lastid=0;
         
-        $next_id = sprintf("TICKET-%s-%06d", $year, ($last_ticket->lastid + 1));
+        $unique_suffix = time();
+        $next_id = sprintf("%s-%s-%s-%06d", $customer, $vessel, $unique_suffix, ($last_ticket->lastid + 1));
         
         
         // Aquí puedes hacer las operaciones necesarias, como insertar el ticket en la base de datos.
@@ -79,15 +105,13 @@ class add_ticket extends \core_external\external_api {
 
         $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid)
                 VALUES (?,?,?,?)",
-                array("ticket created",$record->lastupdate,$record->assigned,$next_id));
+                array("ticket created by: $madeby->firstname, $madeby->lastname",$record->lastupdate,$record->assigned,$next_id));
 
         //Borramos etiquetas HTML
         $record->description=strip_tags($record->description);
 
         $record->familyissue=($record->userid!==$record->familiarid)?'Yes':'No';
 
-        //Nombre y apellidos del usuario afectado
-        $affectedUser=$DB->get_record('user', ['id'=>$record->userid], 'username,firstname,lastname');
         $record->username="$affectedUser->firstname, $affectedUser->lastname";
 
         

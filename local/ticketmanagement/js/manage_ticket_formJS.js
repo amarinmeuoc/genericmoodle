@@ -30,14 +30,15 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     selUserlist.addEventListener('change',(e)=>{
       const userid=e.target.value;
-      updateFamilyMembersSelectBox(userid);
+      const gestorid=document.querySelector('input[name="gestorid"]').value;
+      updateFamilyMembersSelectBox(userid,gestorid);
     })
 
   
     
 })
 
-const updateFamilyMembersSelectBox=(userid)=>{
+const updateFamilyMembersSelectBox=(userid,gestorid)=>{
   window.console.log(userid);
   let xhr = new XMLHttpRequest();
     
@@ -47,6 +48,7 @@ const updateFamilyMembersSelectBox=(userid)=>{
     formData.append('wsfunction', 'local_ticketmanagement_get_family_members');
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][userid]',userid);
+    formData.append('params[0][gestorid]',gestorid);
 
     xhr.open('POST',url,true);
     xhr.send(formData);

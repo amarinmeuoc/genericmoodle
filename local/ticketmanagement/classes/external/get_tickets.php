@@ -42,7 +42,7 @@ class get_tickets extends \core_external\external_api {
         $orderby=$request['params'][0]['orderby'];
         $page=$request['params'][0]['page'];   
         $startdate=$request['params'][0]['startdate'];
-        $enddate=$request['params'][0]['enddate'];     
+        $enddate=$request['params'][0]['enddate']+86400; //Se suma un dia completo para que cuente     
         $activePage=$request['params'][0]['activePage'];
         $perpage=25; //Estos son los registros por pagina
         $offset = ($page-1) * $perpage;

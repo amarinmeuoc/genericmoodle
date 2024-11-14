@@ -37,7 +37,8 @@ const showAddFamilyPopup=(userid,fullname)=>{
         const relationship=e.detail.selrelationship;
         const firstname=e.detail.firstname;
         const lastname=e.detail.lastname;
-        addFamiliar(userid,relationship,firstname,lastname,token,url);
+        const gestorid=e.detail.gestorid;
+        addFamiliar(userid,gestorid,relationship,firstname,lastname,token,url);
     });
 
     modalForm.addEventListener(modalForm.events.LOADED, (e)=>{
@@ -50,7 +51,7 @@ const showAddFamilyPopup=(userid,fullname)=>{
     modalForm.show();
 }
 
-const addFamiliar=(userid,relationship,firstname,lastname,token,url)=>{
+const addFamiliar=(userid,gestorid,relationship,firstname,lastname,token,url)=>{
     let xhr = new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -62,6 +63,7 @@ const addFamiliar=(userid,relationship,firstname,lastname,token,url)=>{
     formData.append('params[0][relationship]',relationship);
     formData.append('params[0][firstname]',firstname);
     formData.append('params[0][lastname]',lastname);
+    formData.append('params[0][gestorid]',gestorid);
     
 
     xhr.open('POST',url,true);
@@ -89,8 +91,11 @@ const reqHandlerAddFamiliar=(xhr)=>{
 }
 
 const addFamiliarToTemplate=(response)=>{
-    
-    Templates.renderForPromise('local_ticketmanagement/tr_family',response)
+    let template='local_ticketmanagement/tr_family';
+        if (response.listadoFamily.gestor_role==='logistic'){
+            template='local_ticketmanagement/tr_family-log'
+        }
+    Templates.renderForPromise(template,response)
         .then(({html,js})=>{
         const content=document.querySelector('#tablebody');
         
