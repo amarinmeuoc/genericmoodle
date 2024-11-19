@@ -6,6 +6,7 @@ export const init=(XLSX, filesaver,blobutil)=>{
     const boexport=document.querySelector('#id_exportExcel');
     boexport.addEventListener('click',(e)=>{
         exportToExcel(e,XLSX,filesaver,blobutil, url);
+        
     });
 }
 
@@ -24,10 +25,15 @@ const exportToExcel=(e,XLSX,filesaver,blobutil, url)=>{
 
     // Obtén el valor en formato Unix (milisegundos desde 1970) y conviértelo a segundos
     const enddate_unixTimestamp = Math.floor(enddateValue.getTime() / 1000);
+
+    const selstate=document.querySelector('#id_state').value;
+    const gestorvalue=document.querySelector('#id_logistic').value;
     
     const data={
         startdate:startdate_unixTimestamp,
         enddate:enddate_unixTimestamp,
+        state:selstate,
+        gestor:gestorvalue
     }
     prepareDataToSend(data, url,token);
 }
@@ -43,6 +49,8 @@ const prepareDataToSend=(data, url,token)=>{
     formData.append('moodlewsrestformat','json');
     formData.append('params[0][startdate]',data.startdate);
     formData.append('params[0][enddate]',data.enddate);
+    formData.append('params[0][state]',data.state);
+    formData.append('params[0][gestor]',data.gestor);
     
     
     setTimeout(()=>{
@@ -54,33 +62,31 @@ const prepareDataToSend=(data, url,token)=>{
     }
 
     xhr.onloadstart=(event)=>{
-        //showLoader(event);
+        showLoader(event);
     }
 
     xhr.onprogress = (event)=>{
-        //onProgressFunction(event);
+        onProgressFunction(event);
     } 
     xhr.onloadend=(event)=>{
-        //hideLoader(event);
+        hideLoader(event);
     }
     xhr.onerror = function() {
         window.console.log("Solicitud fallida");
     };
     const showLoader=(event)=>{
-        const loader=document.querySelector('.loader');
-        const table=document.querySelector('.generaltable');
+        const loader=document.querySelector('.excel_loader');
         loader.classList.remove('hide');
         loader.classList.add('show');
-        table.classList.add('hide');
-      
+        const boExcel=document.querySelector('#id_exportExcel').disabled=true;
       }
       
       const hideLoader=(event)=>{
-        const loader=document.querySelector('.loader');
-        const table=document.querySelector('.generaltable');
+        const loader=document.querySelector('.excel_loader');
         loader.classList.remove('show');
         loader.classList.add('hide');
-        table.classList.remove('hide');
+        const boExcel=document.querySelector('#id_exportExcel').disabled=false;
+        
       }
 
 }
@@ -121,6 +127,8 @@ const createExcelFromJSON = (res, op) => {
         ticket.billid,
         ticket.username,
         ticket.familyissue,
+        ticket.familiarname,
+        ticket.familiar_role,
         formatUnixToDateTime(ticket.date),
         ticket.state,
         ticket.description,

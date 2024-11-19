@@ -254,7 +254,8 @@ define(['core/modal',
             xhr.send(formData);
         
             xhr.onload = (ev)=> {
-                reqHandlerLoadActions(xhr);
+                
+                funcionesComunes.reqHandlerLoadActions(xhr);
             }
         
             xhr.onerror = ()=> {
@@ -262,70 +263,7 @@ define(['core/modal',
             }
         }
         
-        const reqHandlerLoadActions=(xhr)=>{
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                if (xhr.response) {
-                    const response = JSON.parse(xhr.response);
-                    loadActionsTemplate(response);
-                    window.console.log(response);
-                }
-            }
-        }
-        
-        const loadActionsTemplate=(response)=>{
-            const modalContent = `
-              <div class="modal-body">
-                <p>This is the list of actions ordered by date</p>
-            </div>
-            <div class="table-responsive" style="max-height:300px">
-                <table class="generaltable table-sm">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Task</th>
-                            <th>Done by</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ` + 
-                        response.map(action => {
-                            
-                            return `
-                                <tr>
-                                    <td>${action.dateaction}</td>
-                                    <td>${action.action}</td>
-                                    <td>${action.user}</td>
-                                </tr>
-                            `;
-                        }).join('') + // Unir todas las filas generadas
-                        `</tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-action="confirm">Accept</button>
-            </div>`;
-        
-            ModalFactory.create({
-                title: 'Actions history',
-                body: modalContent,
-                size: 'modal-xl'
-            }).then(modal => {
-                window.console.log(modal);
-                // Manejar el clic en Aceptar
-                modal.getRoot()[0].querySelector('[data-action="confirm"]').onclick = function() {
-                    
-                    modal.hide(); // Cierra el modal
-                };
-                modal.show(); // Muestra el modal
-            });
-        }
-
-
- 
-
-  
-
-          
+             
 
           return {
             init:init

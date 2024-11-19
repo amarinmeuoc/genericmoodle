@@ -1,7 +1,8 @@
 define([
     'core_form/modalform',
-    'local_ticketmanagement/funciones_comunes'
-], function(ModalForm, funcionesComunes){
+    'local_ticketmanagement/funciones_comunes',
+    'core/toast'
+], function(ModalForm, funcionesComunes, addToast){
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
     const token=document.querySelector('input[name="token"]').value;
     const init =() => {
@@ -29,6 +30,7 @@ define([
    
         modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
             //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
+            addToast.add(`Ticket: ${e.detail.hiddenticketid} has been updated.`);
         });
     
         // Listen for the modal LOADED event
@@ -119,7 +121,7 @@ define([
         if (myXhr.readyState===4 && myXhr.status===200){
             const res=JSON.parse(myXhr.response);
             
-            createExcelFromJSON(res,'logsReport');
+            createExcelFromJSON(res.result,'logsReport');
             window.console.log(res);
             
         }
@@ -136,6 +138,7 @@ define([
         const actionArray = res.map(action => [
             action.id,
             action.action,
+            action.hiddenmessage,
             parseDate(action.dateaction),
             action.user,
             action.ticketid,
@@ -166,7 +169,7 @@ define([
     
         // Generar y descargar el archivo
         const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-        const nameFile = `LogsReport-${listado[1].ticketid}.xlsx`;
+        const nameFile = `LogsReport-${listado[1][5]}.xlsx`;
         saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), nameFile);
     };
     

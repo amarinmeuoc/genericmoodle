@@ -21,6 +21,8 @@ class get_tickets extends \core_external\external_api {
                    'startdate' => new external_value(PARAM_INT, 'ID del aprendiz'),
                    'enddate' => new external_value(PARAM_INT, 'ID del aprendiz'),
                    'activePage' => new external_value(PARAM_INT, 'Pagina activa'),
+                   'state'=>new external_value(PARAM_TEXT,'Estado del ticket'),
+                   'gestor'=>new external_value(PARAM_INT,'Gestor encargado del ticket')
                 ])
             ) 
         ]);
@@ -46,6 +48,8 @@ class get_tickets extends \core_external\external_api {
         $activePage=$request['params'][0]['activePage'];
         $perpage=25; //Estos son los registros por pagina
         $offset = ($page-1) * $perpage;
+        $state=$request['params'][0]['state'];
+        $gestor=$request['params'][0]['gestor'];
 
         
         // now security checks
@@ -53,21 +57,41 @@ class get_tickets extends \core_external\external_api {
         self::validate_context($context);
         require_capability('webservice/rest:use', $context);
 
-    
+        // Inicializa la consulta base
+        $sql = "SELECT * FROM {ticket}
+        WHERE dateticket >= :startdate AND dateticket <= :enddate";
 
-        //Listado total de tickets necesario para hacer la paginación
-        $sqlTotal="SELECT * FROM {ticket}
-                WHERE dateticket >= :startdate AND dateticket <= :enddate
-                    ORDER BY $orderby $order";
+        // Añadir el filtro de 'assigned' solo si es necesario (gestor != 0)
+        if ($gestor != 0) {
+        $sql .= " AND assigned = :assigned";
+        }
 
-        
+        // Añadir el filtro de 'state' solo si es necesario (stateval != 'all')
+        if ($state != 'all') {
+        $sql .= " AND state = :stateval";
+        }
 
-        //Listado de tickets según la paginación seleccionada
-        $sql="SELECT * FROM {ticket}
-                WHERE dateticket >= :startdate AND dateticket <= :enddate
-                    ORDER BY $orderby $order LIMIT $perpage OFFSET $offset";
+        $sqlTotal=$sql. "ORDER BY $orderby $order";
 
-        $params_array=['startdate'=>$startdate, 'enddate'=>$enddate];
+        // Ordenar y limitar los resultados
+        $sql .= " ORDER BY $orderby $order LIMIT $perpage OFFSET $offset";
+
+        // Construir el array de parámetros dinámicamente
+        $params_array = [
+        'startdate' => $startdate,
+        'enddate' => $enddate,
+        'assigned' => ($gestor != 0) ? $gestor : null, // Solo asignar el valor si 'gestor' no es 0
+        'stateval' => ($state != 'all') ? $state : null, // Solo asignar el valor si 'state' no es 'all'
+        ];
+
+        // No pasar 'gestor' ni 'state' si no se necesitan en la consulta
+        if ($gestor == 0) {
+        unset($params_array['assigned']); // Eliminar 'assigned' si no es necesario
+        }
+
+        if ($state == 'all') {
+        unset($params_array['stateval']); // Eliminar 'state' si no es necesario
+        }
         
         // Obtener el número total de tickets (para la paginación)
         $num_total_records = 0;
@@ -75,6 +99,7 @@ class get_tickets extends \core_external\external_api {
         $total_records = $DB->get_records_sql($sqlTotal, $params_array);
         $num_total_records=count($total_records);
            
+
 
         // **Validación importante para evitar el error cuando no hay registros**
         if ($num_total_records === null || $num_total_records === '') {
@@ -108,10 +133,12 @@ class get_tickets extends \core_external\external_api {
         foreach ($tickets as $ticket) {
             //Check the username of the person in charge
             $userincharge=$DB->get_record('user', ['id'=>$ticket->assigned], 'username,firstname,lastname');
-            $user=$DB->get_record('user', ['id'=>$ticket->userid], 'username,firstname,lastname');
+            $user=$DB->get_record('user', ['id'=>$ticket->userid], 'id,username,firstname,lastname');
+            $profile_url=new \moodle_url('/user/profile.php', array('id' => $user->id));
             $formatted_tickets[] = [
                 'ticketnumber' => $ticket->id,
                 'username' => "$user->firstname, $user->lastname",
+                'profile_url'=>$profile_url->out(),
                 'familyissue' => ($ticket->familiarid!==$ticket->userid) ? 'Yes' : 'No', // Si tiene un familiar asignado
                 'date' => (int) $ticket->dateticket,
                 'state' => $ticket->state,
@@ -120,6 +147,8 @@ class get_tickets extends \core_external\external_api {
                 'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname",
                 'isClosed' => ($ticket->state==='Closed')?1:0,
                 'isDeactivated' => ($ticket->state==='Cancelled')?1:0,
+                'communication' => $ticket->communication,
+                'color'=>($userincharge->username==='logisticwebservice')?1:0
             ];
         }
         
@@ -132,6 +161,7 @@ class get_tickets extends \core_external\external_api {
             'orderbyassigned'=>$orderby==='assigned'?true:false,
             'orderbydate'=>$orderby==='dateticket'?true:false,
             'orderbystate'=>$orderby==='state'?true:false,
+            'orderbycommunication'=>$orderby==='communication'?true:false,
             'order'=>($order==='ASC')?1:0,
             'hidecontrolonsinglepage'=>false,
             'activepagenumber'=>$activePage,
@@ -173,6 +203,7 @@ class get_tickets extends \core_external\external_api {
                         array(
                             'ticketnumber' => new external_value(PARAM_TEXT, 'Número del ticket'),
                             'username' => new external_value(PARAM_TEXT, 'Nombre de usuario'),
+                            'profile_url' => new external_value(PARAM_TEXT, 'Profile url'),
                             'familyissue' => new external_value(PARAM_TEXT, 'Yes/No'),
                             'date' => new external_value(PARAM_INT, 'Fecha del ticket (timestamp)'),
                             'state' => new external_value(PARAM_TEXT, 'Open/Assigned/Cancelled/Closed'),
@@ -181,6 +212,8 @@ class get_tickets extends \core_external\external_api {
                             'assigned' => new external_value(PARAM_TEXT, 'ID del usuario asignado'),
                             'isClosed' => new external_value(PARAM_INT, 'Si cerrado'),
                             'isDeactivated' => new external_value(PARAM_INT, 'Si Anulado'),
+                            'communication' => new external_value(PARAM_INT, '1 permite que el alumno hable // 0 no permite interacción'),
+                            'color'=>new external_value(PARAM_BOOL,'yellow/black')
                         )
                     )
                 ),
@@ -191,6 +224,7 @@ class get_tickets extends \core_external\external_api {
                 'orderbyassigned' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por asignado'),
                 'orderbydate' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por fecha'),
                 'orderbystate' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por estado'),
+                'orderbycommunication' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por estado'),
                 'order'=> new external_value(PARAM_INT, 'Indica si es orden ascendente o descendente'),
                 'hidecontrolonsinglepage' => new external_value(PARAM_BOOL, 'Control para ocultar la navegación en una sola página'),
                 'activepagenumber' => new external_value(PARAM_INT, 'Número de página actual'),

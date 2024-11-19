@@ -42,7 +42,8 @@ define(['core_form/modalform',
                           priority:"Medium",
                           description:description,
                           gestorid:gestorid,
-                          familiarid:familiar
+                          familiarid:familiar,
+                
                       };
               
                       if (category!==0 && subcategory!==0)
@@ -122,7 +123,8 @@ define(['core_form/modalform',
                                     assigned: 'Waiting to be assigned.',
                                     date: response.dateticket,
                                     description: response.description,
-                                    familyissue: response.familyissue
+                                    familyissue: response.familyissue,
+                                    color:'yellow'
                                 }],
                                 num_records: numRecords,
                                 num_total_records: numRecords,
@@ -238,6 +240,8 @@ define(['core_form/modalform',
                   
                           const startdateUnixFormat=funcionesComunes.truncateDateToDay(new Date(startdate.value));
                           const enddateUnixFormat=funcionesComunes.truncateDateToDay(new Date(enddate.value));
+                          const selstate=document.querySelector('#id_state').value;
+                          const gestorvalue=document.querySelector('#id_logistic').value;
 
                           const obj={
                             activePage:activePage,
@@ -246,6 +250,8 @@ define(['core_form/modalform',
                             order:parseInt(order),
                             orderby:orderby,
                             page:parseInt(page.value),
+                            state:selstate,
+                            gestor:gestorvalue
                           }
                           
                           funcionesComunes.requestDataToServer(obj, token, url,'controller');

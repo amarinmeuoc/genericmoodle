@@ -460,6 +460,48 @@ $functions = [
         ]
         
     ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_update_ticket_communication' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\update_ticket_communication',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Activate/Desactivate users communication.',
+
+        // Options include read, and write.
+        'type'        => 'write',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_get_logistic_users' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\get_logistic_users',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Getting all logistic users.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
     
 ];
 
@@ -486,12 +528,13 @@ $services = [
             'local_ticketmanagement_edit_ticket',
             'local_ticketmanagement_get_tickets_byUserId',
             'local_ticketmanagement_load_actions',
-            'local_ticketmanagement_get_tickets_excel'
-           
+            'local_ticketmanagement_get_tickets_excel',
+            'local_ticketmanagement_update_ticket_communication',
+            'local_ticketmanagement_get_logistic_users'
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado
-        'shortname' => "NAVANTIA_SERVICES",
+        'shortname' => 'NAVANTIA_SERVICES',
         'downloadfiles' => 0, // Permitir la descarga de archivos
         'uploadfiles' => 0, // No permitir la subida de archivos
     ],

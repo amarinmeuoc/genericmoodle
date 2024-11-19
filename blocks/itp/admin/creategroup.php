@@ -49,6 +49,7 @@
  echo $OUTPUT->header();
 
  echo $OUTPUT->heading(get_string('creategroup', 'block_itp'));
+ $toform='';
 
  // Form processing and displaying is done here.
 if ($mform->is_cancelled()) {

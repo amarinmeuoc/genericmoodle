@@ -49,6 +49,9 @@ const showAssigmentFormPopup=(e)=>{
         //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
         
         const ticket=e.detail.ticket;
+        const tr=document.querySelector(`td a.assignbtn[data-ticketid="ALTR-G1-1731586030-000012"]`).closest('tr');
+        //Se borra la clase amarillo, ya que se asigna un gestor
+        tr.classList.remove('yellow');
         const td=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).parentElement;
         const link=document.querySelector(`a.assignbtn[data-ticketid="${ticket.id}"]`)
         const span = link.nextElementSibling; 

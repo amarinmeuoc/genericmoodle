@@ -2,21 +2,35 @@
 <hr>
 <h1>Last Tickets </h1>
 <nav class="navbar navbar-light bg-light">
-<form class="form-inline my-2 my-lg-0">
+<form class="form-inline my-2 my-lg-0 align-items-baseline">
     
         <fieldset style="margin-right:1em;"><legend>Search by dates:</legend>
             <input class="form-control mr-sm-2" type="date" id="startdate">
             <input class="form-control mr-sm-2" type="date" id="enddate">
+            <select name="sel_logistic" class="form-control mr-sm-2" id="id_logistic">
+            <option value="all">All</option>
+            </select>
+            <select name="sel_state" class="form-control mr-sm-2" id="id_state">
+            <option value="all">All</option>
+            <option value="open">Open</option>
+            <option value="assigned">Assigned</option>
+            <option value="closed">Closed</option>
+            <option value="cancelled">Cancelled</option>
+            </select>
             <button id="id_bosearchdate" class="btn btn-outline-success my-2 my-sm-0" type="button">Search by date</button>
+            <div class="mt-2">
+            <button id="id_exportExcel" class="btn btn-info my-2 my-sm-0" type="button">Export to Excel</button>
+            <span class="excel_loader p-5 hide">
+                Waiting {{> core/loading }}
+            </span>
+            </div>
         </fieldset>
         <fieldset><legend>Search by ticket:</legend>
             <input id="id_tesearch" class="form-control mr-sm-2" type="search" placeholder="Search by Id" aria-label="Search">
             <button id="id_bosearchbyid" class="btn btn-outline-success my-2 my-sm-0" type="button">Search id</button>
         </fieldset>
 </form>        
-            <div class="form-inline">
-                <a id="id_exportExcel" class="btn btn-info" href="#">Export to Excel</a>
-            </div>
+            
         
         
     
@@ -26,3 +40,24 @@
 {{>local_ticketmanagement/content_log-ajax}}
 </div>
 
+{{#js}}
+require.config({
+    paths: {
+        xlsx: '/local/ticketmanagement/js/xlsx.full.min',
+        filesaver: '/local/ticketmanagement/js/FileSaver.min',
+        blobutil: '/local/ticketmanagement/js/blob-util.min'
+    },
+    shim: {
+        xlsx: { exports: 'XLSX' },       // Nombre correcto de la variable global de xlsx
+        filesaver: { exports: 'saveAs' }, // Variable global para FileSaver.js
+        blobutil: { exports: 'blobUtil' } // Variable global de blob-util
+    }
+});
+
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['local_ticketmanagement/exportExcel', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
+    // Inicializar el módulo con las dependencias cargadas
+    module.init(XLSX, saveAs, blobUtil);
+});
+
+{{/js}}

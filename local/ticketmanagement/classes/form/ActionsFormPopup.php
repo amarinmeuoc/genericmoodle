@@ -32,25 +32,26 @@ namespace local_ticketmanagement\form;
 class ActionsFormPopup extends \core_form\dynamic_form {
     // Define the form structure
     public function definition() {
-        global $DB;
+        global $DB,$USER;
 
         $mform = $this->_form;
         
 
         $ticketid=$this->_ajaxformdata['num_ticket'];
+        $role=$this->_ajaxformdata['role'];
 
         $mform->addElement('static', 'ticketid', get_string('ticketid', 'local_ticketmanagement'), $ticketid);
 
         $mform->addElement('hidden',  'hiddenticketid',  $ticketid);
 
-        $ticket = $DB->get_record('ticket',['id'=>$ticketid],'state');
+        $ticket = $DB->get_record('ticket',['id'=>$ticketid],'state,assigned');
         
         $actions = $DB->get_records('ticket_action', ['ticketid' => $ticketid], 'dateaction DESC', '*', 0, 1);
         $action=reset($actions);
         $updated=time();
 
         $mform->addElement('hidden','updated',$updated);
-        $mform->addElement('hidden',  'userid',  $action->userid);
+        $mform->addElement('hidden',  'userid',  ($role==='student')?$USER->id:$ticket->assigned);
         $mform->addElement('hidden','state',$ticket->state);
         
         // Agregar cada acción en un contenedor HTML con los detalles correspondientes
@@ -59,9 +60,11 @@ class ActionsFormPopup extends \core_form\dynamic_form {
 
         
 
-
-        $mform->addElement('button',  'boExcel',  'Export to Excel');
-        
+        profile_load_custom_fields($USER);
+        if (!preg_match('/^(student|observer)$/i', $USER->profile['role'])) {
+            $mform->addElement('text','internal','Internal message:');
+            $mform->addElement('button', 'boExcel', 'Export to Excel');
+        }
    
     }
 
@@ -144,10 +147,12 @@ class ActionsFormPopup extends \core_form\dynamic_form {
     
         // Verificar que los datos estén disponibles y obtener el ID del usuario y el ID del ticket
         if ($data && !empty(trim($data->description))) {
-            $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid)
-                VALUES (?,?,?,?)",
-                array($data->description,$data->updated,$data->userid,$data->hiddenticketid));
+            $DB->execute("INSERT INTO {ticket_action} (action, internal, dateaction, userid, ticketid)
+                VALUES (?,?,?,?,?)",
+                array($data->description,$data->internal,$data->updated,$data->userid,$data->hiddenticketid));
         }
+
+        return $data;
     }
 
     /**
@@ -160,8 +165,10 @@ class ActionsFormPopup extends \core_form\dynamic_form {
      *     $this->set_data(get_entity($this->_ajaxformdata['id']));
      */
     public function set_data_for_dynamic_submission(): void {
-        global $DB;
+        global $DB, $USER;
         $ticketid=$this->_ajaxformdata['num_ticket'];
+        $role=$this->_ajaxformdata['role'];
+
 
         $actions=$DB->get_records('ticket_action',['ticketid'=>$ticketid],'dateaction ASC','*');
 
@@ -174,13 +181,32 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         // Agregar cada acción en un contenedor HTML con los detalles correspondientes
         $mform->addElement('html', '<div id="' . $action->id . '" class="action">');
         $mform->addElement('html', '<div class="date"><strong>' . $formatted_date . '</strong></div>');
-        $mform->addElement('html', '<div class="description">' . $action->action . '</div>');
+        // Crea el campo de descripción
+$description = '<div class="description">';
+$description .= $action->action;  // Esto es el texto de la descripción
+
+// Si no es un estudiante ni un observador, agrega el valor de 'internal' en un tooltip
+if (!preg_match('/^(student|observer)$/i', $USER->profile['role'])) {
+    if ($action->internal){
+            $description .= '<span class="hiddenmessage" data-tooltip="' . $action->internal . '">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+        </span>';
+    }
+    
+}
+
+$description .= '</div>';
+
+// Añadir el campo de descripción al formulario
+$mform->addElement('html', $description);
+
+
         $mform->addElement('html', '<div class="addedby">Added by: ' . $user->firstname . '</div>');
         $mform->addElement('html', '</div>');
     }
     $mform->addElement('html', '</div>');
 
-    
+
 
     }
 

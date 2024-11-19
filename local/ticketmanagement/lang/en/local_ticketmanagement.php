@@ -54,3 +54,10 @@ $string['lastname']="Lastname";
 $string['select']="Select";
 $string['traineedetails']="Trainee detail information:";
 $string['uploadfamilydetailscsv']="Upload family with a csv file";
+$string['edituserprofile'] = 'Edit user profile';
+$string['profilefield_customer'] = 'Customer';
+$string['profilefield_group'] = 'Group';
+$string['savechanges'] = 'Save changes';
+$string['profilesaved'] = 'Profile updated successfully!';
+$string['editprofile'] = 'Edit profile only some fields';
+

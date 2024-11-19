@@ -57,7 +57,7 @@ class get_ticket_byId extends \core_external\external_api {
         $searchPattern = "%{$ticketId}%";
 
         // Validar y sanitizar $orderby y $order para evitar SQL Injection
-        $validOrderColumns = ['id', 'assigned', 'dateticket','state','priority','familiarid']; // Lista de columnas permitidas para ordenar
+        $validOrderColumns = ['id', 'assigned', 'dateticket','state','priority','familiarid','communication']; // Lista de columnas permitidas para ordenar
         $orderby = in_array($orderby, $validOrderColumns) ? $orderby : 'id'; // Columnas válidas, por defecto 'id'
         $order = ($order === 'ASC' || $order === 'DESC') ? $order : 'ASC'; // Dirección válida, por defecto 'ASC'
 
@@ -111,7 +111,11 @@ class get_ticket_byId extends \core_external\external_api {
                     'state' => $ticket->state,
                     'description' => strip_tags($ticket->description), // Eliminamos etiquetas HTML
                     'priority' => empty($ticket->priority) ? 'Low' : $ticket->priority,
-                    'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname"
+                    'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname",
+                    'isClosed' => ($ticket->state==='Closed')?1:0,
+                    'isDeactivated' => ($ticket->state==='Cancelled')?1:0,
+                    'communication' => $ticket->communication,
+                    'color'=>($userincharge->username==='logisticwebservice')?1:0
                 ];
             }
         }
@@ -127,6 +131,7 @@ class get_ticket_byId extends \core_external\external_api {
             'orderbyassigned'=>$orderby==='assigned'?true:false,
             'orderbydate'=>$orderby==='dateticket'?true:false,
             'orderbystate'=>$orderby==='state'?true:false,
+            'orderbycommunication'=>$orderby==='communication'?true:false,
             'order'=>($order==='ASC')?1:0,
             'hidecontrolonsinglepage'=>true,
             'activepagenumber'=>$activePage,
@@ -174,6 +179,10 @@ class get_ticket_byId extends \core_external\external_api {
                             'description' => new external_value(PARAM_TEXT, 'Descripción del problema'),
                             'priority' => new external_value(PARAM_TEXT, 'High/Medium/Low'),
                             'assigned' => new external_value(PARAM_TEXT, 'ID del usuario asignado'),
+                            'isClosed' => new external_value(PARAM_INT, 'Si cerrado'),
+                            'isDeactivated' => new external_value(PARAM_INT, 'Si Anulado'),
+                            'communication' => new external_value(PARAM_INT, '1 permite que el alumno hable // 0 no permite interacción'),
+                            'color'=>new external_value(PARAM_BOOL,'yellow/black')
                         )
                     )
                 ),
@@ -184,6 +193,8 @@ class get_ticket_byId extends \core_external\external_api {
                 'orderbyassigned' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por asignado'),
                 'orderbydate' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por fecha'),
                 'orderbystate' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por estado'),
+                'orderbycommunication' => new external_value(PARAM_BOOL, 'Indica si los tickets están ordenados por estado'),
+                
                 'order'=> new external_value(PARAM_INT, 'Indica si es orden ascendente o descendente'),
                 'hidecontrolonsinglepage' => new external_value(PARAM_BOOL, 'Control para ocultar la navegación en una sola página'),
                 'activepagenumber' => new external_value(PARAM_INT, 'Número de página actual'),

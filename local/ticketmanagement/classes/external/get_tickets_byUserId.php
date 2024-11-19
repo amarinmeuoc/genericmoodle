@@ -108,10 +108,12 @@ class get_tickets_byUserId extends \core_external\external_api {
         foreach ($tickets as $ticket) {
             //Check the username of the person in charge
             $userincharge=$DB->get_record('user', ['id'=>$ticket->assigned], 'username,firstname,lastname');
-            $user=$DB->get_record('user', ['id'=>$ticket->userid], 'username,firstname,lastname');
+            $user=$DB->get_record('user', ['id'=>$ticket->userid], 'id,username,firstname,lastname');
+            $profile_url=new \moodle_url('/user/profile.php', array('id' => $user->id));
             $formatted_tickets[] = [
                 'ticketnumber' => $ticket->id,
                 'username' => "$user->firstname, $user->lastname",
+                'profile_url'=>$profile_url->out(),
                 'familyissue' => ($ticket->familiarid!==$ticket->userid) ? 'Yes' : 'No', // Si tiene un familiar asignado
                 'date' => (int) $ticket->dateticket,
                 'state' => $ticket->state,
@@ -173,6 +175,7 @@ class get_tickets_byUserId extends \core_external\external_api {
                         array(
                             'ticketnumber' => new external_value(PARAM_TEXT, 'Número del ticket'),
                             'username' => new external_value(PARAM_TEXT, 'Nombre de usuario'),
+                            'profile_url' => new external_value(PARAM_TEXT, 'Profile url'),
                             'familyissue' => new external_value(PARAM_TEXT, 'Yes/No'),
                             'date' => new external_value(PARAM_INT, 'Fecha del ticket (timestamp)'),
                             'state' => new external_value(PARAM_TEXT, 'Open/Assigned/Cancelled/Closed'),

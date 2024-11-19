@@ -38,8 +38,12 @@ class load_actions extends \core_external\external_api {
          self::validate_context($context);
          require_capability('webservice/rest:use', $context);
 
+         //Se obtiene valor 0: El usuario no puede enviar feedback, ó 1: El usuario puede enviar feedback
+         $allowfeedback=$DB->get_field('ticket', 'communication', ['id'=>$ticketid], IGNORE_MISSING);
+         
+
          //Se listan todos los grupos del cliente seleccionado
-         $result=$DB->get_records('ticket_action', ['ticketid'=>$ticketid], 'dateaction ASC', 'id,action,dateaction,userid,ticketid');
+         $result=$DB->get_records('ticket_action', ['ticketid'=>$ticketid], 'dateaction ASC', 'id,action,internal,dateaction,userid,ticketid');
          
          // Recorrer cada acción del resultado
         foreach ($result as $key => $action) {
@@ -52,29 +56,37 @@ class load_actions extends \core_external\external_api {
             // Añadir los datos formateados al nuevo array
             $formatedResult[] = [
                 'id' => $action->id,
-                'action' => $action->action,
-                'dateaction' => $formattedDate,
+                'action' => strip_tags($action->action),
+                'hiddenmessage'=>strip_tags($action->internal),
+                'dateaction' => strip_tags($formattedDate),
                 'user' => isset($user) ? $user->firstname . ' ' . $user->lastname : 'Usuario desconocido', // Manejar caso de usuario no encontrado
                 'ticketid' => $action->ticketid
             ];
         }
 
-        return $formatedResult;
+        return [
+                'result'=>$formatedResult,
+                'allowfeedback'=> $allowfeedback
+            ];
 
         
     }
 
 
     public static function execute_returns() {
-        //Must show the WBS, Coursename, Start, End, Num Trainees, Assignation, Location, Provider, Download CSV, Send Email
-        return new external_multiple_structure(
-            new external_single_structure([
-                'id'=> new external_value(PARAM_INT,'Group id'),
-                'action'=>new external_value(PARAM_TEXT,'action name'),
-                'dateaction'=>new external_value(PARAM_TEXT,'date '),
-                'user'=>new external_value(PARAM_TEXT,'username name'),
-                'ticketid'=>new external_value(PARAM_TEXT,'ticket ID')
-            ])
-        );
+        return new external_single_structure([
+            'result' => new external_multiple_structure(
+                new external_single_structure([
+                    'id' => new external_value(PARAM_INT, 'Group id'),
+                    'action' => new external_value(PARAM_TEXT, 'Action name'),
+                    'hiddenmessage' => new external_value(PARAM_TEXT, 'hidden message'),
+                    'dateaction' => new external_value(PARAM_TEXT, 'Date of action'),
+                    'user' => new external_value(PARAM_TEXT, 'Username'),
+                    'ticketid' => new external_value(PARAM_TEXT, 'Ticket ID')
+                ])
+            ),
+            'allowfeedback' => new external_value(PARAM_BOOL, 'Whether feedback is allowed (0 or 1)')
+        ]);
     }
+    
 }

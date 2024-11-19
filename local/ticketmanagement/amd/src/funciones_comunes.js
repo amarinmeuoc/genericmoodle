@@ -1,4 +1,4 @@
-define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
+define(['core/modal','core/templates','core_form/modalform','core/toast'],function(ModalFactory,Templates,ModalForm,addToast) {
     let eventoCat="";
     let eventoSubCat="";
     let eventoFile="";
@@ -117,6 +117,8 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
                         if (role==='controller'){
                             const startdateUnixFormat=this.truncateDateToDay(new Date(startdate.value));
                             const enddateUnixFormat=this.truncateDateToDay(new Date(enddate.value));
+                            const selstate=document.querySelector('#id_state').value;
+                            const gestorvalue=document.querySelector('#id_logistic').value;
                             const obj={
                                 activePage:1,
                                 firstDayOfWeek:startdateUnixFormat,
@@ -124,6 +126,8 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
                                 order:parseInt(order.value),
                                 orderby:orderby.value,
                                 page:1,
+                                state:selstate,
+                                gestor:gestorvalue
                               }
                             self.requestDataToServer(obj, token.value, url,role);
                         } else if (role==='student'){
@@ -172,6 +176,8 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
                         if (role==='controller'){
                             const startdateUnixFormat=this.truncateDateToDay(new Date(startdate.value));
                             const enddateUnixFormat=this.truncateDateToDay(new Date(enddate.value));
+                            const selstate=document.querySelector('#id_state').value;
+                            const gestorvalue=document.querySelector('#id_logistic').value;
                             const obj={
                                 activePage:activePage,
                                 firstDayOfWeek:startdateUnixFormat,
@@ -179,6 +185,8 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
                                 order:parseInt(order),
                                 orderby:orderby,
                                 page:parseInt(page.value),
+                                state:selstate,
+                                gestor:gestorvalue
                               }
                               self.requestDataToServer(obj, token.value, url,role);
                         } else if (role==='student'){
@@ -197,6 +205,17 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
                         
                     });
                 });
+
+                const chk_communication=document.querySelectorAll("#tablebody input[type='checkbox']");
+
+                chk_communication.forEach((chk)=>{
+                    chk.addEventListener('click',(e)=>{
+                    const ticket=e.target.dataset.ticketid;
+                    const value=(e.target.checked)?1:0;
+                    const token = document.querySelector('input[name="token"]').value;
+                    this.updateCommunication(ticket,value,token,url);
+                    })
+                })
             
             })
             .catch((error)=>displayException(error));
@@ -219,8 +238,6 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
 
                 const service= (role==='student')?'local_ticketmanagement_get_tickets_byUserId':'local_ticketmanagement_get_tickets';
 
-
-
                 //Se prepara el objeto a enviar
                 const formData= new FormData();
                 formData.append('wstoken',token);
@@ -239,19 +256,71 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
                     formData.append('params[0][startdate]',obj.firstDayOfWeek);
                     formData.append('params[0][enddate]',obj.lastDayOfWeek);
                     formData.append('params[0][activePage]',obj.activePage);
+                    formData.append('params[0][state]',obj.state);
+                    formData.append('params[0][gestor]',obj.gestor);
                 }
                 
-                
                 xhr.open('POST',url,true);
-                xhr.send(formData);
+                //xhr.send(formData);
+
+                setTimeout(()=>{
+                    xhr.send(formData);
+                },100);
             
                 xhr.onload = (ev)=> {
                     self.reqHandlerGetTickets(xhr);
                 }
+
+                xhr.onloadstart=(event)=>{
+                    self.showLoader(event);
+                  }
+            
+                xhr.onprogress = (event)=>{
+                    self.onProgressFunction(event);
+                } 
+                xhr.onloadend=(event)=>{
+                    self.hideLoader(event);
+                }
             
                 xhr.onerror = ()=> {
-                    rejectAnswer(xhr);
+                    self.rejectAnswer(xhr);
                 }
+        },
+
+        showLoader: function (event){
+            const loader=document.querySelector('.loader');
+            const table=document.querySelector('.generaltable');
+            loader.classList.remove('hide');
+            loader.classList.add('show');
+            table.classList.add('hide');
+            const bosearch=document.querySelector('#id_bosearchdate');
+            const bosearchbyID=document.querySelector('#id_bosearchbyid');
+            if (bosearch)
+                bosearch.disabled=true;
+            if (bosearchbyID)
+                bosearchbyID.disabled=true;
+            
+          },
+          
+          hideLoader:function(event){
+            const loader=document.querySelector('.loader');
+            const table=document.querySelector('.generaltable');
+            loader.classList.remove('show');
+            loader.classList.add('hide');
+            table.classList.remove('hide');
+            const bosearch=document.querySelector('#id_bosearchdate');
+            const bosearchbyID=document.querySelector('#id_bosearchbyid');
+            if (bosearch)
+                bosearch.disabled=false;
+            if (bosearchbyID)
+                bosearchbyID.disabled=false;
+          },
+      
+          onProgressFunction:function(event) {
+            console.log(`Uploaded ${event.loaded} of ${event.total}`);
+            const loader=document.querySelector('.loader');
+            loader.classList.remove('.hide');
+            loader.classList.add('.show');
         },
         showTicketFormPopup: function (e,role){
             const self=this;
@@ -390,8 +459,8 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
         },
         updateTemplate: function(ticket){
             const fila = document.querySelector(`#${ticket.ticketid}`);
-            const state = fila.querySelector('td:nth-child(5)');
-            const priority = fila.querySelector('td:nth-child(7)');
+            const state = fila.querySelector('td:nth-child(6)');
+            const priority = fila.querySelector('td:nth-child(8)');
             state.textContent=ticket.state;
             priority.textContent=ticket.priority;
             window.console.log("edicion...");
@@ -448,6 +517,145 @@ define(['core/templates','core_form/modalform'],function(Templates,ModalForm) {
                     
                 }
             }
+        },
+
+        updateCommunication: function(ticketid, value, token, url){
+            const self=this;
+            let xhr = new XMLHttpRequest();
+            const service='local_ticketmanagement_update_ticket_communication';
+            //Se prepara el objeto a enviar
+            const formData= new FormData();
+            formData.append('wstoken',token);
+            formData.append('wsfunction', service);
+            formData.append('moodlewsrestformat', 'json');
+            formData.append('params[0][ticketid]',ticketid);
+            formData.append('params[0][value]',value);
+            
+        
+            xhr.open('POST',url,true);
+            xhr.send(formData);
+        
+            xhr.onload = (ev)=> {
+                self.reqHandlerUpdateCommunication(xhr);
+            }
+        
+            xhr.onerror = ()=> {
+                rejectAnswer(xhr);
+            }
+        },
+
+        reqHandlerUpdateCommunication: function(xhr){
+            if (xhr.readyState=== 4 && xhr. status === 200){
+                if (xhr.response){
+                    const response=JSON.parse(xhr.response);
+                    window.console.log(response);
+                    addToast.add(`Now user attached to the ticket: ${response.ticket.ticketid} is ${response.ticket.communication === true ? 'allowed' : 'not allowed'} to update messages in the ticket.`);
+
+                    
+                }
+            }
+        },
+
+        reqHandlerLoadActions: function(xhr) {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                if (xhr.response) {
+                    const response = JSON.parse(xhr.response);
+                    if (!response.allowfeedback)
+                        this.loadActionsTemplate(response.result);
+                    else
+                        this.showTicketActionsWithFeedback(response.result)
+        
+                    window.console.log(response);
+                }
+            }
+        },
+        loadActionsTemplate: function (response){
+            const modalContent = `
+              <div class="modal-body">
+                <p>This is the list of actions ordered by date</p>
+            </div>
+            <div class="table-responsive" style="max-height:300px">
+                <table class="generaltable table-sm">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Task</th>
+                            <th>Done by</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ` + 
+                        response.map(action => {
+                            
+                            return `
+                                <tr>
+                                    <td>${action.dateaction}</td>
+                                    <td>${action.action}</td>
+                                    <td>${action.user}</td>
+                                </tr>
+                            `;
+                        }).join('') + // Unir todas las filas generadas
+                        `</tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-action="confirm">Accept</button>
+            </div>`;
+        
+            ModalFactory.create({
+                title: 'Actions history',
+                body: modalContent,
+                size: 'modal-xl'
+            }).then(modal => {
+                window.console.log(modal);
+                // Manejar el clic en Aceptar
+                modal.getRoot()[0].querySelector('[data-action="confirm"]').onclick = function() {
+                    
+                    modal.hide(); // Cierra el modal
+                };
+                modal.show(); // Muestra el modal
+            });
+        },
+        
+        
+        showTicketActionsWithFeedback:function (arr){
+            const ticketId=arr[0].ticketid;
+            const modalForm=new ModalForm({
+                formClass: "\\local_ticketmanagement\\form\\ActionsFormPopup",
+                args: {num_ticket: ticketId,role:'student'},
+                modalConfig: {title: `Ticket details: #${ticketId}`},
+                returnFocus:e.target
+            });
+        
+            modalForm.show();
+        
+            modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
+                //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
+                addToast.add(`Ticket: ${e.detail.hiddenticketid} has been updated. Your message has been recieved by the support team.`);
+            });
+        
+            // Listen for the modal LOADED event
+            modalForm.addEventListener(modalForm.events.LOADED, (e) => {
+                // Get the button after the modal is fully loaded
+                // Get the modal element after it is loaded
+                const formElement=e.target;
+        
+                this.areElementsLoaded('button[name="boExcel"],input[name="description"],input[name="state"]', formElement).then((elements) => {
+                    const state=formElement.querySelector('input[name="state"]').value;
+        
+                    if (state==='Cancelled' || state==='Closed'){
+                        const teDescription=formElement.querySelector('input[name="description"]');
+                        teDescription.disabled=true;
+                        const boSave=formElement.querySelector('button[data-action="save"]');
+                        boSave.disabled=true;
+                    }
+                    
+                    const boexport=formElement.querySelector('button[name="boExcel"]');
+                    //boexport.remove();
+                }).catch((error) => {
+                    window.console.error('Error al cargar los elementos:', error);
+                });
+            });
         }
     }
 })

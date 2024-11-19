@@ -3,6 +3,7 @@
 <table class="generaltable table-sm">
 <thead>
 <tr>
+    <th><a class="orderby" href="#" data-activo="{{#orderbycommunication}}activo{{/orderbycommunication}}" data-orderby="communication">Activate Chat {{#orderbycommunication}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbycommunication}}</a></th>
     <th><a class="orderby" href="#" data-activo="{{#orderbyticket}}activo{{/orderbyticket}}" data-orderby="id">ticketnumber {{#orderbyticket}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyticket}}</a></th>
     <th><a class="orderby" href="#" data-activo="{{#orderbyuser}}activo{{/orderbyuser}}" data-orderby="userid">user {{#orderbyuser}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyuser}}</a></th>
     <th><a class="orderby" href="#" data-activo="{{#orderbyfamilyissue}}activo{{/orderbyfamilyissue}}" data-orderby="familiarid">family issue {{#orderbyfamilyissue}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyfamilyissue}}</a></th>
@@ -24,6 +25,9 @@
 
 </tbody>
 </table>
+<div class="loader p-5 hide">
+    {{> core/loading }}
+</div>
 
 </div>
 
@@ -55,24 +59,7 @@ require(['local_ticketmanagement/addTicket'],function(module){
     module.init();
 });
 
-require.config({
-    paths: {
-        xlsx: '/local/ticketmanagement/js/xlsx.full.min',
-        filesaver: '/local/ticketmanagement/js/FileSaver.min',
-        blobutil: '/local/ticketmanagement/js/blob-util.min'
-    },
-    shim: {
-        xlsx: { exports: 'XLSX' },       // Nombre correcto de la variable global de xlsx
-        filesaver: { exports: 'saveAs' }, // Variable global para FileSaver.js
-        blobutil: { exports: 'blobUtil' } // Variable global de blob-util
-    }
-});
 
-// Cargar el módulo de exportación y las dependencias de la biblioteca
-require(['local_ticketmanagement/exportExcel', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
-    // Inicializar el módulo con las dependencias cargadas
-    module.init(XLSX, saveAs, blobUtil);
-});
 
 
 

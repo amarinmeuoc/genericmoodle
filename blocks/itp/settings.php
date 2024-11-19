@@ -33,7 +33,7 @@ if ($hassiteconfig) {
     //Si la categoria 'blocksettingitp' ya está creada
     if (!$ADMIN->locate('blocksettingitp')) {
         //Crea una nueva categoría en la administración para el bloque
-        $ADMIN->add('blocksettings', new admin_category('blocksettingitp', new lang_string('pluginname', 'block_itp')));
+        $ADMIN->add('blocksettings', new admin_category('blocksettingitp2', new lang_string('pluginname', 'block_itp')));
     }
     
      //Crea una nueva página de configuración dentro de la categoria creada.
@@ -58,13 +58,13 @@ if ($hassiteconfig) {
 
     //$ADMIN->add('blocksettingitp', $settingitp);
 
-    $ADMIN->add('blocksettingitp', $settingspagecreatecustomer);
+    $ADMIN->add('blocksettingitp2', $settingspagecreatecustomer);
     
-    $ADMIN->add('blocksettingitp', $settingspagecreategroups);
+    $ADMIN->add('blocksettingitp2', $settingspagecreategroups);
     
-    $ADMIN->add('blocksettingitp', $settingspageupdateitp);
+    $ADMIN->add('blocksettingitp2', $settingspageupdateitp);
 
-    $ADMIN->add('blocksettingitp', $settingspageupdateTrainingPlan);
+    $ADMIN->add('blocksettingitp2', $settingspageupdateTrainingPlan);
     // Incluye el archivo JavaScript
     //$PAGE->requires->js_call_amd('block_itp/settings', 'init');
 
