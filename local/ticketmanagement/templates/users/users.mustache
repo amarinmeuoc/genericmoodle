@@ -1,0 +1,51 @@
+<hr>
+<h1>Users </h1>
+<nav class="navbar navbar-light bg-light">
+<form class="form-inline my-2 my-lg-0 align-items-baseline">
+    
+        <fieldset style="margin-right:1em;"><legend>Filter by:</legend>
+            <input class="form-control mr-sm-2" type="search" id="tebillid" placeholder="billid">
+            <input class="form-control mr-sm-2" type="search" id="tenombre" placeholder="Name...">
+            <input class="form-control mr-sm-2" type="search" id="teapellidos" placeholder="Lastname">
+            
+            <button id="id_bosearchdate" class="btn btn-outline-success my-2 my-sm-0" type="button">Search</button>
+            <div class="mt-2">
+            <button id="id_exportExcel" class="btn btn-info my-2 my-sm-0" type="button">Export to Excel</button>
+            <span class="excel_loader p-5 hide">
+                Waiting {{> core/loading }}
+            </span>
+            </div>
+        </fieldset>
+        
+</form>        
+            
+        
+        
+    
+
+</nav>
+<div id="content">
+{{>local_ticketmanagement/users/table-users-ajax}}
+</div>
+
+{{#js}}
+require.config({
+    paths: {
+        xlsx: '/local/ticketmanagement/js/xlsx.full.min',
+        filesaver: '/local/ticketmanagement/js/FileSaver.min',
+        blobutil: '/local/ticketmanagement/js/blob-util.min'
+    },
+    shim: {
+        xlsx: { exports: 'XLSX' },       // Nombre correcto de la variable global de xlsx
+        filesaver: { exports: 'saveAs' }, // Variable global para FileSaver.js
+        blobutil: { exports: 'blobUtil' } // Variable global de blob-util
+    }
+});
+
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['local_ticketmanagement/usermanagement/exportExcel', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
+    // Inicializar el módulo con las dependencias cargadas
+    module.init(XLSX, saveAs, blobUtil);
+});
+
+{{/js}}

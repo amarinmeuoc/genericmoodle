@@ -13,46 +13,56 @@ define(['core_form/modalform',
               
               const init =() => {
                   const bonewticket=document.querySelector("#id_bocreate");
-                  bonewticket.addEventListener('click',(e)=>{
-                      e.preventDefault();
-                      e.stopImmediatePropagation();
-                      const project=document.querySelector('#id_project').value;
-                      const vessel=document.querySelector('#id_vessel').value;
-                      const trainee=document.querySelector('#id_userlist').value;
-                      const category=(document.querySelector('#id_category').value)?document.querySelector('#id_category').value:0;
-                      const subcategory=(document.querySelector('#id_subcategory').value)?document.querySelector('#id_subcategory').value:0;
-                      
-                      
-                      const familyissue=document.querySelector('#id_familyissue').value;
-                      const description=document.querySelector('textarea[name="description[text]"]').value;
-                      const gestorid=document.querySelector('input[name="gestorid"]').value;
-                      //const fileid=document.querySelector('#id_attachments').value;
-                      let familiar=trainee;
-                      if (familyissue==='yes'){
-                        if (document.querySelector('#id_familiar').value!=='')
-                          familiar=document.querySelector('#id_familiar').value;
-                      }
-                      const newTicket={
-                          projectid:project,
-                          vesselid:vessel,
-                          traineeid:trainee,
-                          categoryid:category,
-                          subcategoryid:subcategory,
-                          state:"Open",
-                          priority:"Medium",
-                          description:description,
-                          gestorid:gestorid,
-                          familiarid:familiar,
+
+                  if (bonewticket){
+                      bonewticket.addEventListener('click',(e)=>{
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        const project=document.querySelector('#id_project').value;
+                        const vessel=document.querySelector('#id_vessel').value;
+                        let trainee=document.querySelector('#id_userlist').value;
+                        if (trainee==='' || typeof trainee==='undefined'){
+                          if (document.querySelector('#id_userlist').length>0)
+                            trainee=document.querySelector('#id_userlist')[0].value;
+                          else
+                            trainee=-1;
+                        }
+                        const category=(document.querySelector('#id_category').value)?document.querySelector('#id_category').value:0;
+                        const subcategory=(document.querySelector('#id_subcategory').value)?document.querySelector('#id_subcategory').value:0;
+                        
+                        
+                        const familyissue=document.querySelector('#id_familyissue').value;
+                        const description=document.querySelector('textarea[name="description[text]"]').value;
+                        const gestorid=document.querySelector('input[name="gestorid"]').value;
+                        //const fileid=document.querySelector('#id_attachments').value;
+                        let familiar=trainee;
+                        if (familyissue==='yes'){
+                          if (document.querySelector('#id_familiar').value!=='')
+                            familiar=document.querySelector('#id_familiar').value;
+                        }
+                        const newTicket={
+                            projectid:project,
+                            vesselid:vessel,
+                            traineeid:trainee,
+                            categoryid:category,
+                            subcategoryid:subcategory,
+                            state:"Open",
+                            priority:"Medium",
+                            description:description,
+                            gestorid:gestorid,
+                            familiarid:familiar,
+                  
+                        };
                 
-                      };
-              
-                      if (category!==0 && subcategory!==0)
-                        createNewTicket(newTicket);
-                      else{
-                        Notification.addNotification({message:'Error: No categories have been defined yet. No ticket has been inserted',type:'error'});
-                      }
-              
-                  })
+                        if (category!==0 && subcategory!==0)
+                          createNewTicket(newTicket);
+                        else{
+                          Notification.addNotification({message:'Error: No categories have been defined yet. No ticket has been inserted',type:'error'});
+                        }
+                
+                      })
+                  }
+                 
               }
               
               const createNewTicket=(newTicket)=>{
@@ -88,7 +98,7 @@ define(['core_form/modalform',
                     if (xhr.response) {
                         const response = JSON.parse(xhr.response);
               
-                        if (response) {
+                        if (response.id) {
                             window.console.log("alberto");
                             addToast.add('Ticket created successfully: ' + response.id);
               
@@ -150,7 +160,11 @@ define(['core_form/modalform',
               
                             addTickettoTemplate(formattedResponse);
                         } else {
-                            addToast.add('Something went wrong. No ticket created');
+                            addToast.add(`No ticket created. There is some missing information, please check the form.`, 
+                                        {
+                                            type: 'warning',
+                                        }
+                            );
                         }
                     }
                 }
@@ -261,7 +275,9 @@ define(['core_form/modalform',
                       });
                       
                     }).catch((error)=>displayException(error));
-                  }).catch((error)=>displayException(error));
+                  }).catch((error)=>{
+                    addToast.add("En el formulario falta por rellenar alguna opción. Operación no completada");
+                  });
                 }
                 
               const showAssigmentFormPopup=(e)=>{

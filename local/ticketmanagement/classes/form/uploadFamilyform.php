@@ -41,6 +41,7 @@ class uploadFamilyform extends \moodleform {
         # code...
         $vessel_arr[$key]=$value->name;
     }
+    $vessel_arr=[0=>'PCO']+$vessel_arr;
     $keys=array_keys($vessel_arr);
     if (isset($keys[0]))
         $firstvesselid=$keys[0];
@@ -51,10 +52,13 @@ class uploadFamilyform extends \moodleform {
 
     $customer=$projects[$firstprojectid]->shortname;
     $selected_groupname=$vessel_arr[$firstvesselid];
-    $role='student';
+    if ($selected_groupname==='PCO')
+        $role='observer';
+    else
+        $role='student';
 
     $mform->addElement('hidden',  'gestorid',  $USER->id);
-    
+    $mform->settype('gestorid',PARAM_INT);
                                                           
     $trainee_query=$DB->get_records_sql('SELECT u.id,username,firstname, lastname,email,
         MAX(if (uf.shortname="billid",ui.data,"")) as billid,

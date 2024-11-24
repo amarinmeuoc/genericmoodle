@@ -91,7 +91,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
 
     boremove.addEventListener('click',(e)=>{
-        removeProyect(selectText.value, token,url);
+        //removeProyect(selectText.value, token,url);
+        window.console.log("Pendiente de implementar");
     });
 
     boaddnew.addEventListener('click',(e)=>{
@@ -226,40 +227,7 @@ const getSubcategories=(xhr)=>{
     }
 }
 
-const removeProyect = (value,token, url)=>{
-    let xhr = new XMLHttpRequest();
-    
-    //Se prepara el objeto a enviar
-    const formData= new FormData();
-    formData.append('wstoken',token);
-    formData.append('wsfunction', 'block_itp_remove_client');
-    formData.append('moodlewsrestformat', 'json');
-    formData.append('params[0][shortname]',value);
 
-    xhr.open('POST',url,true);
-    xhr.send(formData);
-
-    xhr.onload = (ev)=> {
-        reqHandlerDropElem(xhr);
-    }
-
-    xhr.onerror = ()=> {
-        rejectAnswer(xhr);
-    }
-    
-}
-
-const reqHandlerDropElem=(xhr)=>{
-    if (xhr.readyState=== 4 && xhr. status === 200){
-        if (xhr.response){
-            const response=JSON.parse(xhr.response);
-            if (response){
-                const selectText=document.querySelector('#id_type');
-                selectText.remove(selectText.selectedIndex);
-            }
-        }
-    }
-}
 
 const addproyect=(subcategoryname, categoryid, token, url)=>{
     let xhr=new XMLHttpRequest();

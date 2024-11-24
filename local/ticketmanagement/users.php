@@ -5,7 +5,8 @@ require_login();
 
 global $USER;
 $PAGE->set_url(new moodle_url('/local/ticketmanagement/index.php'));
-$PAGE->set_context(context_system::instance());
+$context=context_system::instance();
+$PAGE->set_context($context);
 //$PAGE->set_pagelayout('standard');
 //Si es estudiante o cualquier otro rol cargamos un formulario de creación de ticket
 //Si es logistico cargamos un formulario de creación de ticket y de búsqueda de tickets
@@ -15,7 +16,7 @@ $role=$USER->profile['role'];
 if (preg_match('/(logistic|manager)/i',$role) && has_capability('local/ticketmanagement:edituserprofile',$context)){
     //Muestra formulario para logistic
     $mform=new \local_ticketmanagement\form\user_form();
-    $PAGE->requires->js_call_amd('local_ticketmanagement/init_log', 'loadTemplate');
+    $PAGE->requires->js_call_amd('local_ticketmanagement/usermanagement/init', 'loadTemplate');
 }  else {
     echo $OUTPUT->header();       
     $message="<h1><strong>Error 403.</strong> You don't have permission to access to this content.</h1> <p>Contact with the admin for more information.</p>";
@@ -85,10 +86,8 @@ $data = [
                 */
 ];
 if (preg_match('/(logistic|manager)/i',$role)){
-    $render=$OUTPUT->render_from_template('local_ticketmanagement/content_log', $data);
-} elseif (preg_match('/student|observer/i',$role)){
-    $render=$OUTPUT->render_from_template('local_ticketmanagement/content_user', $data);
-}
+    $render=$OUTPUT->render_from_template('local_ticketmanagement/users/users', $data);
+} 
 echo $render;
 
 

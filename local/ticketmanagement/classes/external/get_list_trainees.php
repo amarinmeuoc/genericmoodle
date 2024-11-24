@@ -21,6 +21,7 @@ class get_list_trainees extends \core_external\external_api {
                     'groupid'=>new external_value(PARAM_TEXT,'Group name'),
                     'customerid'=>new external_value(PARAM_TEXT,'Customer shortname'),
                     'role'=>new external_value(PARAM_TEXT,'Role, in general student'),
+                    
                 ])
             ) 
         ]);
@@ -39,6 +40,9 @@ class get_list_trainees extends \core_external\external_api {
         $groupid = $request['params'][0]['groupid'];
         $customerid = $request['params'][0]['customerid'];
         $role = $request['params'][0]['role'];
+        
+
+        
     
         // Security checks
         $context = \context_system::instance();
@@ -47,12 +51,13 @@ class get_list_trainees extends \core_external\external_api {
 
         $customer=$DB->get_field('customer','shortname',['id'=>$customerid]);
     
-        
-        $groupname=$DB->get_field('grouptrainee','name',['id'=>$groupid]);
+        if ($groupid!=='0')
+            $groupname=$DB->get_field('grouptrainee','name',['id'=>$groupid]);
+        else
+            $groupname='PCO';
 
         
-    
-        // Fetch user and course data
+        
         //List all trainees in the LMS
         $trainee_query=$DB->get_records_sql('SELECT u.id,username,firstname, lastname,email,
                 MAX(if (uf.shortname="billid",ui.data,"")) as billid,
@@ -65,6 +70,8 @@ class get_list_trainees extends \core_external\external_api {
                 GROUP by username,firstname, lastname
                 HAVING role_name=:role_name AND customer=:customer AND groupname=:groupname',['role_name'=>$role,'customer'=>$customer, 'groupname'=>$groupname]);
                 $trainee_list=array_values($trainee_query);
+        
+        
         
         return $trainee_list;
     }

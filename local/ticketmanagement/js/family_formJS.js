@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     selvessel.addEventListener('change',(e)=>{
       customerid=selproject.options[selproject.selectedIndex].value;
       vesselid=e.target.options[e.target.selectedIndex].value;
-      role="student";
+      role=(vesselid==="0")?"observer":"student";
       
       
       updateListofUsers(customerid, vesselid, role, token);
@@ -64,7 +64,7 @@ const reqHandlerLoadGroups=(xhr)=>{
         
         customerid=selproject.options[selproject.selectedIndex].value;
         vesselid=selVessel.options[selVessel.selectedIndex].value;
-        role="student";
+        role="observer";
         
         
         updateListofUsers(customerid, vesselid, role, token);
@@ -123,8 +123,27 @@ const reqHandlerGetListTrainees=(xhr)=>{
               activeSpan.innerHTML+= optionsUsers[0].groupname+"_"+optionsUsers[0].billid+" "+optionsUsers[0].firstname+", "+optionsUsers[0].lastname;
           } else {
             //Asegurarse de que el select no tenga elementos seleccionados
+            const padre=document.querySelector('#fitem_id_userlist .felement .form-autocomplete-selection');
+            padre.innerHTML='';
+            const newSpan=document.createElement('span');
+            if (optionsUsers[0]){
+              const span=document.createElement('span');
+              span.setAttribute('aria-hidden',true);
+              span.textContent="× "
+              newSpan.innerHTML="";
+              newSpan.dataset.value=optionsUsers[0].id;
+              newSpan.setAttribute('data-active-selection',true);
+              newSpan.setAttribute('role','option');
+              newSpan.setAttribute('aria-selected',true);
+              newSpan.style.fontSize='100%';
+              newSpan.appendChild(span);
+              newSpan.classList.add('badge','bg-secondary','text-dark','m-1');
+              newSpan.innerHTML+= optionsUsers[0].groupname+"_"+optionsUsers[0].billid+" "+optionsUsers[0].firstname+", "+optionsUsers[0].lastname;
+            } else {
+              newSpan.innerHTML="No user selected";
+            }
             
-            activeSpan.innerHTML="No user selected";
+            padre.appendChild(newSpan);
             selUserlist.selectedIndex=-1;
           }
 

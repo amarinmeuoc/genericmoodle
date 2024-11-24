@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     selvessel.addEventListener('change',(e)=>{
       customerid=selproject.options[selproject.selectedIndex].value;
       vesselid=e.target.options[e.target.selectedIndex].value;
-      role="student";
+      role=(vesselid==="0")?"observer":"student";
+          
       
       
       updateListofUsers(customerid, vesselid, role, token);
@@ -30,16 +31,14 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     selUserlist.addEventListener('change',(e)=>{
       const userid=e.target.value;
-      const gestorid=document.querySelector('input[name="gestorid"]').value;
-      updateFamilyMembersSelectBox(userid,gestorid);
+      
+      updateFamilyMembersSelectBox(userid);
     })
 
-  
-    
 })
 
-const updateFamilyMembersSelectBox=(userid,gestorid)=>{
-  window.console.log(userid);
+const updateFamilyMembersSelectBox=(userid)=>{
+  const gestorid=document.querySelector('input[name="gestorid"]').value;
   let xhr = new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -66,14 +65,17 @@ const reqHandlerLoadFamilyMembers=(xhr)=>{
   if (xhr.readyState=== 4 && xhr. status === 200){
     if (xhr.response){
       const response=JSON.parse(xhr.response);
-      const listadoFamily=response.listadoFamily;
-      const selFamily=document.querySelector('#id_familiar');
-      selFamily.innerHTML="";
-      let optionsHTML="";
-      listadoFamily.forEach(elem=>{
-        optionsHTML += `<option value="${elem.id}">${elem.name}, ${elem.lastname}</option>`;
-      });
-      selFamily.innerHTML=optionsHTML;
+      if (response.listadoFamily){
+        const listadoFamily=response.listadoFamily;
+        const selFamily=document.querySelector('#id_familiar');
+        selFamily.innerHTML="";
+        let optionsHTML="";
+        listadoFamily.forEach(elem=>{
+          optionsHTML += `<option value="${elem.id}">${elem.name}, ${elem.lastname}</option>`;
+        });
+        selFamily.innerHTML=optionsHTML;
+      }
+      
 
       
     }
@@ -119,10 +121,22 @@ const reqHandlerLoadGroups=(xhr)=>{
           selVessel.innerHTML = optionsHTML;
         }
         const selproject=document.querySelector('#id_project');
+        if (selproject.selectedIndex===-1){
+          selproject.innerHTML='<option>No project registered yet</option>'
+          customerid=-1
+        } else {
+          customerid=selproject.options[selproject.selectedIndex].value;
+        }
         
-        customerid=selproject.options[selproject.selectedIndex].value;
-        vesselid=selVessel.options[selVessel.selectedIndex].value;
-        role="student";
+
+        if (selVessel.selectedIndex===-1){
+          selVessel.innerHTML='<option>No Vessel registered yet</option>'
+          vesselid=-1;
+        } else {
+          vesselid=selVessel.options[selVessel.selectedIndex].value;
+        }
+        //Es observer porque el primer grupo por defecto es la pco
+        role="observer";
         
         
         updateListofUsers(customerid, vesselid, role, token);
@@ -181,8 +195,27 @@ const reqHandlerGetListTrainees=(xhr)=>{
               activeSpan.innerHTML+= optionsUsers[0].groupname+"_"+optionsUsers[0].billid+" "+optionsUsers[0].firstname+", "+optionsUsers[0].lastname;
           } else {
             //Asegurarse de que el select no tenga elementos seleccionados
+            const padre=document.querySelector('#fitem_id_userlist .felement .form-autocomplete-selection');
+            padre.innerHTML='';
+            const newSpan=document.createElement('span');
+            if (optionsUsers[0]){
+              const span=document.createElement('span');
+              span.setAttribute('aria-hidden',true);
+              span.textContent="× "
+              newSpan.innerHTML="";
+              newSpan.dataset.value=optionsUsers[0].id;
+              newSpan.setAttribute('data-active-selection',true);
+              newSpan.setAttribute('role','option');
+              newSpan.setAttribute('aria-selected',true);
+              newSpan.style.fontSize='100%';
+              newSpan.appendChild(span);
+              newSpan.classList.add('badge','bg-secondary','text-dark','m-1');
+              newSpan.innerHTML+= optionsUsers[0].groupname+"_"+optionsUsers[0].billid+" "+optionsUsers[0].firstname+", "+optionsUsers[0].lastname;
+            } else {
+              newSpan.innerHTML="No user selected";
+            }
             
-            activeSpan.innerHTML="No user selected";
+            padre.appendChild(newSpan);
             selUserlist.selectedIndex=-1;
           }
           if (typeof selUserlist.options[selUserlist.selectedIndex]!=='undefined'){

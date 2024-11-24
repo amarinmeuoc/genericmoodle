@@ -1,0 +1,48 @@
+
+<div class="table-responsive">
+<table class="generaltable table-sm">
+<thead>
+<tr>
+    
+    <th><a class="orderby" href="#" data-activo="{{#orderbyvessel}}activo{{/orderbyvessel}}" data-orderby="groupname">Vessel {{#orderbyvessel}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyvessel}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbybillid}}activo{{/orderbybillid}}" data-orderby="billid">Billid {{#orderbybillid}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbybillid}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbyemail}}activo{{/orderbyemail}}" data-orderby="email">email {{#orderbyemail}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyemail}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbyfirstname}}activo{{/orderbyfirstname}}" data-orderby="firstname">firstname {{#orderbyfirstname}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyfirstname}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbylastname}}activo{{/orderbylastname}}" data-orderby="lastname">lastname {{#orderbylastname}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbylastname}}</a></th>
+    <th>Personal Email</th>
+    <th>phone1</th>
+    <th>phone2 </th>
+    <th>address </th>
+    <th>city </th>
+    <th>edit </th>
+    <th>family </th>
+    
+</tr>
+</thead>
+<tbody id="tablebody">
+{{>local_ticketmanagement/users/tr-users-ajax}}
+
+</tbody>
+</table>
+<div class="loader p-5 hide">
+    {{> core/loading }}
+</div>
+
+</div>
+
+<div id="pagination" class="d-flex justify-content-between flex-wrap">
+    
+    {{>local_ticketmanagement/users/pagebar-users-ajax}}
+    
+</div>
+
+
+{{#js}}
+require(['local_ticketmanagement/usermanagement/editUser'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/usermanagement/addFamily'],function(module){
+    module.init();
+});
+{{/js}}

@@ -9,42 +9,45 @@ define(['core/modal',
         const token=document.querySelector('input[name="token"]').value;
         const init =() => {
             const bonewticket=document.querySelector("#id_bocreate");
-            bonewticket.addEventListener('click',(e)=>{
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                
-                const trainee=document.querySelector('input[type="hidden"][name="user"]').value;
-                const category=(document.querySelector('#id_category').value)?document.querySelector('#id_category').value:0;
-                const subcategory=(document.querySelector('#id_subcategory').value)?document.querySelector('#id_subcategory').value:0;
-                
-                const gestorid=document.querySelector('input[name="gestorid"]').value;
-                const familyissue=document.querySelector('#id_familyissue').value;
-                const description=document.querySelector('textarea[name="description[text]"]').value;
-                
-                let familiar=trainee;
-                if (familyissue==='yes'){
-                  if (document.querySelector('#id_familiar').value!=='')
-                    familiar=document.querySelector('#id_familiar').value;
-                }
-                const newTicket={
-                    
-                    traineeid:trainee,
-                    categoryid:category,
-                    subcategoryid:subcategory,
-                    state:"Open",
-                    priority:"Medium",
-                    description:description,
-                    gestorid:gestorid,
-                    familiarid:familiar
-                };
 
-                if (category!==0 && subcategory!==0)
-                  createNewTicket(newTicket);
-                else{
-                  Notification.addNotification({message:'Error: No categories have been defined yet. No ticket has been inserted',type:'error'});
-                }
+            if (bonewticket){
+                bonewticket.addEventListener('click',(e)=>{
+                  e.preventDefault();
+                  e.stopImmediatePropagation();
+                  
+                  const trainee=document.querySelector('input[type="hidden"][name="user"]').value;
+                  const category=(document.querySelector('#id_category').value)?document.querySelector('#id_category').value:0;
+                  const subcategory=(document.querySelector('#id_subcategory').value)?document.querySelector('#id_subcategory').value:0;
+                  
+                  const gestorid=document.querySelector('input[name="gestorid"]').value;
+                  const familyissue=document.querySelector('#id_familyissue').value;
+                  const description=document.querySelector('textarea[name="description[text]"]').value;
+                  
+                  let familiar=trainee;
+                  if (familyissue==='yes'){
+                    if (document.querySelector('#id_familiar').value!=='')
+                      familiar=document.querySelector('#id_familiar').value;
+                  }
+                  const newTicket={
+                      
+                      traineeid:trainee,
+                      categoryid:category,
+                      subcategoryid:subcategory,
+                      state:"Open",
+                      priority:"Medium",
+                      description:description,
+                      gestorid:gestorid,
+                      familiarid:familiar
+                  };
 
-            })
+                  if (category!==0 && subcategory!==0)
+                    createNewTicket(newTicket);
+                  else{
+                    Notification.addNotification({message:'Error: No categories have been defined yet. No ticket has been inserted',type:'error'});
+                  }
+              })
+            }
+            
         }
 
         const createNewTicket=(newTicket)=>{

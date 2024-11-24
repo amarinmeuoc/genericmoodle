@@ -18,6 +18,7 @@ $context=context_system::instance();
  echo $OUTPUT->header();
 
  echo $OUTPUT->heading(get_string('createcategory', 'local_ticketmanagement'));
+ $toform='';
 
  // Form processing and displaying is done here.
 if ($mform->is_cancelled()) {

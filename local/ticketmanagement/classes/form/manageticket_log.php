@@ -22,7 +22,7 @@ public function definition() {
     $project_arr=[];
     foreach ($projects as $key => $project) {
         # code...
-        $project_arr[$key]=$project->name;
+        $project_arr[$project->id]=$project->name;
     }
 
     $mform->addElement('select', 'project', get_string('selectproject', 'local_ticketmanagement'),$project_arr);
@@ -37,11 +37,15 @@ public function definition() {
     $vessel_arr=[];
     foreach ($vessel as $key => $value) {
         # code...
-        $vessel_arr[$key]=$value->name;
+        $vessel_arr[$value->id]=$value->name;
     }
+
+    $vessel_arr=[0=>'PCO']+$vessel_arr;
     $keys=array_keys($vessel_arr);
     if (isset($keys[0]))
         $firstvesselid=$keys[0];
+
+
     $mform->addElement('select', 'vessel', get_string('selectvessel', 'local_ticketmanagement'),$vessel_arr);
 
     //Se configura id de formulario
@@ -49,7 +53,10 @@ public function definition() {
 
     $customer=$projects[$firstprojectid]->shortname;
     $selected_groupname=$vessel_arr[$firstvesselid];
-    $role='student';
+    if ($selected_groupname==='PCO')
+        $role='observer';
+    else
+        $role='student';
 
     
                                                           
@@ -99,6 +106,8 @@ public function definition() {
     
     if (isset($keys[0]))
         $firstcategoryid=$keys[0];
+    else
+        $firstcategoryid=0;
 
         
     $subcategory=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstcategoryid],'id ASC','id,subcategory');

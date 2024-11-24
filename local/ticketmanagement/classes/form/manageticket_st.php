@@ -17,7 +17,8 @@ public function definition() {
     $mform = $this->_form; // Don't forget the underscore!
     $mform->disable_form_change_checker();
 
-    $mform->addElement('hidden',  'user',  $USER->id);                                                        
+    $mform->addElement('hidden',  'user',  $USER->id);  
+    $mform->settype('user',PARAM_INT)                                                      ;
                                                                                                                             
     $category=$DB->get_records('ticket_category',[],'id ASC','id,category');
 
@@ -34,6 +35,8 @@ public function definition() {
     
     if (isset($keys[0]))
         $firstcategoryid=$keys[0];
+    else
+        $firstcategoryid=0;
 
         
     $subcategory=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstcategoryid],'id ASC','id,subcategory');
