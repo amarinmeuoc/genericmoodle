@@ -47,7 +47,7 @@ class EditFamiliarFormPopup extends \core_form\dynamic_form {
         $relationshipOptions=[
             'Wife'=>'Wife',
             'Son'=>'Son',
-            'Daughter'=>'Daugther'
+            'Daugther'=>'Daugther'
         ];
         $mform->addElement('select',  'selrelationship',  get_string('relationship', 'local_ticketmanagement'),  $relationshipOptions);
         $mform->setDefault('selrelationship',$familiar->relationship);

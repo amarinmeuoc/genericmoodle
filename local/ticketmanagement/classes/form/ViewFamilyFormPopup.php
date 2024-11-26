@@ -30,68 +30,12 @@
 namespace local_ticketmanagement\form;
 
 
-class FamilyFormPopup extends \core_form\dynamic_form {
+class ViewFamilyFormPopup extends \core_form\dynamic_form {
     // Define the form structure
     public function definition() {
         global $DB;
         $mform = $this->_form;
-        $mform->setAttributes(['id' => 'family_form']);
     
-        $userid = $this->_ajaxformdata['userid'];
-    
-        // Obtener información del usuario
-        $selecteduser = $DB->get_record('user', ['id' => $userid, 'suspended'=>1], 'id, email, firstname, lastname, phone1, phone2, address, city');
-       
-        $mform->addElement('static', 'useridtitle', get_string('showuser', 'local_ticketmanagement'), $selecteduser->firstname);
-        
-        $mform->addElement('hidden', 'userid', $userid);
-        $mform->setType('userid', PARAM_INT);
-    
-        //Show all family members of the selected user in a grid
-        $families = $DB->get_records('family', ['userid' => $userid]);
-
-        if ($families) {
-            $table_html = '<div class="table-responsive-xl">
-            <table class="table generaltable family-table">
-                <thead>
-                    <tr>
-                        <th>' . get_string('role', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('name', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('lastname', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('actions', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('view', 'local_ticketmanagement') . '</th>
-                    </tr>
-                </thead>
-                <tbody>';
-            
-            foreach ($families as $family) {
-                $table_html .= '<tr id="family_'.$family->id.'">
-                    <td>
-                    <select class="custom-select" name="selrole"> 
-                        <option value="Wife" '.(($family->relationship == 'Wife')?'selected':'').'>Wife</option>
-                        <option value="Son" '.(($family->relationship == 'Son')?'selected':'').'>Son</option>
-                        <option value="Daughter"  '.(($family->relationship == 'Daughter')?'selected':'').'>Daughter</option>
-                    </select></td>
-                    <td><input class="form-control" type="text" name="tefaname" value="' . s($family->name) . '"></td>
-                    <td><input class="form-control" type="text" name="tefalastname" value="' . s($family->lastname) . '"></td>
-                    
-                    <td>
-                        <button type="button" class="edit-family btn btn-secondary" data-id="' . $family->id . '">' . get_string('Save', 'local_ticketmanagement') . '</button>
-                    </td>
-                    <td>
-                        <button type="button" class="view-family btn btn-info" data-id="' . $family->id . '">' . get_string('View', 'local_ticketmanagement') . '</button>
-                    </td>
-                </tr>';
-            }
-        
-            $table_html .= '</tbody></table></div>';
-        
-            $mform->addElement('html', $table_html);
-        } else {
-            $mform->addElement('static', 'nofamily', '', get_string('nofamilymembers', 'local_ticketmanagement'));
-        }
-
-        $mform->addElement('header', 'addfamilyheader', get_string('addnewfamily', 'local_ticketmanagement'));
 
         $mform->addElement('select', 'role', get_string('role', 'local_ticketmanagement'), [
             'Wife' => get_string('wife', 'local_ticketmanagement'),
@@ -136,10 +80,10 @@ class FamilyFormPopup extends \core_form\dynamic_form {
         $mform->addElement('hidden', 'token', $token);
         $mform->setType('token',PARAM_TEXT);   
 
-        
-        
+        $familiarid = $this->_ajaxformdata['userid'] ?? null;
+        $mform->addElement('hidden', 'familiarid',  $familiarid);
+        $mform->settype('familiarid',PARAM_INT);
 
-        
     }
     
 
@@ -150,8 +94,48 @@ class FamilyFormPopup extends \core_form\dynamic_form {
 
     // Custom validation if needed
     public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        // Add any custom validation if necessary
+        $errors = [];
+
+        // Validar que el rol es obligatorio
+        if (empty($data['role'])) {
+            $errors['role'] = get_string('required', 'local_ticketmanagement');
+        }
+
+        // Validar que el nombre no esté vacío y tenga al menos 2 caracteres
+        if (empty($data['name']) || strlen($data['name']) < 2) {
+            $errors['name'] = get_string('namerequired', 'local_ticketmanagement');
+        }
+
+        // Validar que el apellido no esté vacío
+        if (empty($data['lastname'])) {
+            $errors['lastname'] = get_string('lastnamerequired', 'local_ticketmanagement');
+        }
+
+        // Validar NIE (puede incluir longitud o formato específico)
+        if (empty($data['nie']) || !preg_match('/^[A-Z0-9]+$/i', $data['nie'])) {
+            $errors['nie'] = get_string('nierequired', 'local_ticketmanagement');
+        }
+
+        // Validar que la fecha de nacimiento no sea futura
+        if (!empty($data['birthdate']) && $data['birthdate'] > time()) {
+            $errors['birthdate'] = get_string('birthdateinvalid', 'local_ticketmanagement');
+        }
+
+        // Validar el email
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = get_string('emailinvalid', 'local_ticketmanagement');
+        }
+
+        // Validar número de teléfono
+        if (!empty($data['phone1']) && !preg_match('/^[0-9]{9}$/', $data['phone1'])) {
+            $errors['phone1'] = get_string('phoneinvalid', 'local_ticketmanagement');
+        }
+
+        // Validar que la fecha de llegada sea anterior a la de salida
+        if (!empty($data['arrival']) && !empty($data['departure']) && $data['arrival'] > $data['departure']) {
+            $errors['departure'] = get_string('departureinvalid', 'local_ticketmanagement');
+        }
+
         return $errors;
     }
 
@@ -210,10 +194,10 @@ class FamilyFormPopup extends \core_form\dynamic_form {
 
         $data = $this->get_data();
 
-        if (!empty($data->role) && !empty($data->name)) {
+        
             // Insertar un nuevo miembro de familia
-            $DB->insert_record('family', [
-                'userid' => $data->userid,
+            $updated=$DB->update_record('family', [
+                'id' => $data->familiarid,
                 'relationship' => $data->role,
                 'name' => $data->name,
                 'lastname' => $data->lastname,
@@ -227,13 +211,24 @@ class FamilyFormPopup extends \core_form\dynamic_form {
                 'notes' => $data->notes,
             ]);
 
-            return $this->get_data();
-        } else { //En caso de que no se actualice
-            return false;
-        }
-
-        // Aquí puedes manejar lógica para edición y eliminación si se envían datos relacionados
-        // por ejemplo, identificadores de familiares para editar o eliminar.
+            if ($updated) {
+                // Recuperar los datos actualizados para devolverlos
+                $updated_record = $DB->get_record('family', ['id' => $data->familiarid]);
+        
+                // Retornar los datos como un objeto
+                return [
+                    'status' => 'success',
+                    'message' => get_string('update_success', 'local_ticketmanagement'),
+                    'data' => $updated_record
+                ];
+            } else {
+                // Retornar un mensaje de error en caso de fallo
+                return [
+                    'status' => 'error',
+                    'message' => get_string('update_failed', 'local_ticketmanagement')
+                ];
+            }
+    
         
     }
 
@@ -251,23 +246,37 @@ class FamilyFormPopup extends \core_form\dynamic_form {
     public function set_data_for_dynamic_submission(): void {
         global $DB;
 
-        // Obtener el userid desde los datos proporcionados
-        $userid = $this->_ajaxformdata['userid'];
+        $mform = $this->_form;
+        // Si el formulario ya fue enviado, no ejecutamos esta lógica.
+        // Si el formulario ya fue enviado, obtener el ticketid desde los datos del formulario
+        if ($this->is_submitted()) {
+            $data = $this->get_data();
+            $familiarid = $data->familiarid ?? null;
+        } else {
+            // Si el formulario se está cargando por primera vez, obtener el ticketid desde _ajaxformdata
+            $familiarid = $this->_ajaxformdata['userid'] ?? null;
+        }
 
-        if ($userid) {
+
+        if ($familiarid) {
             // Consultar los datos del usuario en la base de datos
-            $selecteduser = $DB->get_record('user', ['id' => $userid], 'firstname, lastname');
+            $selecteduser = $DB->get_record('family', ['id' => $familiarid], '*');
 
-            if ($selecteduser) {
-                // Concatenar nombre y apellidos para mostrar
-                $fullname = $selecteduser->firstname . ' ' . $selecteduser->lastname;
-
-                // Modificar dinámicamente el valor del campo estático
-                $this->_form->getElement('useridtitle')->setValue($fullname);
-            } else {
-                // En caso de que no se encuentre el usuario, mostrar un mensaje genérico
-                $this->_form->getElement('useridtitle')->setValue(get_string('usernotfound', 'local_ticketmanagement'));
-            }
+            $this->set_data([
+                'role'=>$selecteduser->relationship,
+                'name'=>$selecteduser->name,
+                'lastname'=>$selecteduser->lastname,
+                'nie'=>$selecteduser->nie,
+                'birthdate'=>$selecteduser->birthdate,
+                'adeslas'=>$selecteduser->adeslas,
+                'phone1'=>$selecteduser->phone1,
+                'email'=>$selecteduser->email,
+                'arrival'=>$selecteduser->arrival,
+                'departure'=>$selecteduser->departure,
+                'notes'=>$selecteduser->notes,
+                
+            
+            ]);
         }
 
     }
