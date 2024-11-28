@@ -10,7 +10,8 @@
             
             <button id="id_bosearchdate" class="btn btn-outline-success my-2 my-sm-0" type="button">Search</button>
             <div class="mt-2">
-            <button id="id_exportExcel" class="btn btn-info my-2 my-sm-0" type="button">Export to Excel</button>
+            <button id="id_exportExcel" class="btn btn-info my-2 my-sm-0" type="button">Export Users</button>
+            <button id="id_exportExcelFamily" class="btn btn-info my-2 my-sm-0" type="button">Export Families</button>
             <span class="excel_loader p-5 hide">
                 Waiting {{> core/loading }}
             </span>
@@ -44,6 +45,11 @@ require.config({
 
 // Cargar el módulo de exportación y las dependencias de la biblioteca
 require(['local_ticketmanagement/usermanagement/exportExcel', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
+    // Inicializar el módulo con las dependencias cargadas
+    module.init(XLSX, saveAs, blobUtil);
+});
+
+require(['local_ticketmanagement/usermanagement/exportExcelFamily', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
     // Inicializar el módulo con las dependencias cargadas
     module.init(XLSX, saveAs, blobUtil);
 });

@@ -16,7 +16,8 @@ class edit_ticketcategory extends \core_external\external_api {
             'params'=>new external_multiple_structure(
                 new external_single_structure([
                     'category'=>new external_value(PARAM_TEXT,'Category name'),
-                    'id'=>new external_value(PARAM_INT,'Category id')
+                    'id'=>new external_value(PARAM_INT,'Category id'),
+                    'ifhidden'=>new external_value(PARAM_INT,'if category is hidden')
                 ])
             ) 
         ]);
@@ -35,6 +36,7 @@ class edit_ticketcategory extends \core_external\external_api {
         $request=self::validate_parameters(self::execute_parameters(), ['params'=>$params]);
         $categoryname=strtoupper($request['params'][0]['category']);
         $categoryid=$request['params'][0]['id'];
+        $ifhidden=$request['params'][0]['ifhidden'];
         
         
         if (trim($categoryname)==='' || trim($categoryname)===''){
@@ -46,7 +48,7 @@ class edit_ticketcategory extends \core_external\external_api {
          require_capability('webservice/rest:use', $context);
          
 
-         $dataobject=(object)['id'=>$categoryid, 'category'=>$categoryname];
+         $dataobject=(object)['id'=>$categoryid, 'category'=>$categoryname, 'hidden'=>$ifhidden];
 
          $result=$DB->update_record('ticket_category', $dataobject);
          

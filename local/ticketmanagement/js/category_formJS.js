@@ -19,6 +19,17 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     //Se seleccionan capas y controles para que al cargar el formulario podamos eliminar las que dificulten la apariencia
     let categoryname=document.querySelector('#id_categoryname');
+
+    let checkbox=document.getElementById('id_hiddencategory'); 
+    let ifhidden=0;
+
+    checkbox.addEventListener('change', function() {
+        if (checkbox.checked) {
+            ifhidden=checkbox.value;
+        } else {
+            ifhidden=0;
+        }
+    });
     
     let form=document.querySelector('#categoryformid');
     let selectContainer=document.querySelector('#fitem_id_categorySelect');
@@ -72,13 +83,37 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     const categoryList=document.querySelector('#id_categorySelect');
 
-    categoryList.addEventListener('click',(e)=>{
-        if (typeof e.target.text!=='undefined'){
-            categoryname.value=e.target.text;
-            boedit.disabled=false;
-        } else
-            categoryname.value="";
+    const options=document.querySelectorAll('#id_categorySelect option').forEach((option)=>{
+        const hiddenValue=option.dataset.hidden;
+        if (hiddenValue==1){
+            option.classList.add('bg-warning');
+        }
+    })
+
+    // Listener para clic en el select
+    categoryList.addEventListener('click', (e) => {
+        const index = categoryList.selectedIndex;
+        handleCategoryChange(index);
     });
+
+    // Listener para interacción con teclado
+    categoryList.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            // Asegurarnos de que el cambio se refleje con las teclas
+            setTimeout(() => {
+                const index = categoryList.selectedIndex;
+                handleCategoryChange(index);
+            }, 0); // Espera breve para permitir que el navegador actualice el índice seleccionado
+        }
+    });
+
+    // Listener para cambio explícito con teclado (confirmación)
+    categoryList.addEventListener('change', (e) => {
+        const index = categoryList.selectedIndex;
+        handleCategoryChange(index);
+    });
+
+    
 
     boremove.addEventListener('click',(e)=>{
         //removeProyect(selectText.value, token,url);
@@ -93,10 +128,13 @@ document.addEventListener('DOMContentLoaded',()=>{
             hasErrors=true;
         }
         
-          
+        
         //Si no hay errores se añade el cliente
-        if (!hasErrors)
-            addticketcategory(categoryname.value,token, url);
+        if (!hasErrors){
+            window.console.log(ifhidden);
+            addticketcategory(ifhidden,categoryname.value,token, url);
+        }
+            
     })
 
     boedit.addEventListener('click',(e)=>{
@@ -112,15 +150,37 @@ document.addEventListener('DOMContentLoaded',()=>{
         if (!hasErrors){
             const index=document.querySelector('#id_categorySelect').selectedIndex;
             const categoryid=document.querySelector('#id_categorySelect').options[index].value;
-            editticketcategory(categoryid,categoryname.value,token, url);
+            //const ifhidden=document.querySelector('#id_categorySelect').options[index].dataset.hidden;
+            
+            editticketcategory(categoryid,ifhidden,categoryname.value,token, url);
         }
             
     })
 })
 
+function handleCategoryChange(e) {
+    const checkbox=document.getElementById('id_hiddencategory'); 
+    const categoryList=document.querySelector('#id_categorySelect');
+    const categoryname = document.querySelector('#id_categoryname');
+    const boedit=document.querySelector('#id_boedit');
+    const index = categoryList.selectedIndex;
+    
+
+    if (index >= 0) {
+        const selectedOption = categoryList.options[index];
+        const categoryid = selectedOption.value;
+        const ifhidden = parseInt(selectedOption.dataset.hidden);
+
+        checkbox.checked = ifhidden === 1;
+        categoryname.value = selectedOption.text;
+        boedit.disabled = false;
+    } else {
+        categoryname.value = "";
+    }
+}
 
 
-const addticketcategory=(categoryname,token, url)=>{
+const addticketcategory=(ifhidden,categoryname,token, url)=>{
     let xhr=new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -129,6 +189,7 @@ const addticketcategory=(categoryname,token, url)=>{
     formData.append('wsfunction', 'local_ticketmanagement_add_ticketcategory');
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][category]',categoryname);
+    formData.append('params[0][ifhidden]',ifhidden);
     
 
     xhr.open('POST',url,true);
@@ -147,7 +208,7 @@ const processAnswer=(xhr,categoryname)=>{
     if (xhr.readyState=== 4 && xhr. status === 200){
         if (xhr.response){
             const response=JSON.parse(xhr.response);
-            if (response===0){
+            if (response.ok===0){
                 const errMsg=document.querySelector('#error-message');
                 const msg="Operation has not been completed. Verify that the category name is not duplicated.";
                 const categoryname=document.querySelector('#id_categoryname');
@@ -158,14 +219,18 @@ const processAnswer=(xhr,categoryname)=>{
                 const selectText=document.querySelector('#id_categorySelect');
                 const option=document.createElement('option');
                 option.text=categoryname.toUpperCase();
-                option.value=response;
+                option.value=response.ok;
+                option.dataset.hidden=response.ifhidden;
+                if (response.ifhidden===1){
+                    option.classList.add('bg-warning');
+                }
                 selectText.add(option);
             }
         }
     }
 }
 
-const editticketcategory=(categoryid,categoryname,token, url)=>{
+const editticketcategory=(categoryid,ifhidden,categoryname,token, url)=>{
     let xhr=new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -175,6 +240,7 @@ const editticketcategory=(categoryid,categoryname,token, url)=>{
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][category]',categoryname);
     formData.append('params[0][id]',categoryid);
+    formData.append('params[0][ifhidden]',ifhidden);
     
 
     xhr.open('POST',url,true);
@@ -205,6 +271,18 @@ const processEditAnswer=(xhr,categoryid,categoryname)=>{
                 const selectText=document.querySelector('#id_categorySelect');
                 const selectedOption=selectText.options[selectText.selectedIndex];
                 selectedOption.text=categoryname.toUpperCase();
+                const checkbox=document.getElementById('id_hiddencategory');
+                if (checkbox.checked) {
+                    ifhidden=checkbox.value;
+                } else {
+                    ifhidden=0;
+                }
+                selectedOption.dataset.hidden=ifhidden;
+                if (ifhidden==="1"){
+                    selectedOption.classList.add('bg-warning');
+                } else {
+                    selectedOption.classList.remove('bg-warning');
+                }
                 selectedOption.value=categoryid;
                 
             }

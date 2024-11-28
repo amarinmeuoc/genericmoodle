@@ -94,3 +94,4 @@ $string['actions'] = 'Quick edit';
 $string['view'] = 'View in detail';
 $string['Save'] = 'Save';
 $string['View'] = 'View...';
+$string['hiddencategory'] = 'Hidden/Show category';

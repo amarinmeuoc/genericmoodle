@@ -16,6 +16,7 @@ class load_subcategories extends \core_external\external_api {
             'params'=>new external_multiple_structure(
                 new external_single_structure([
                     'categoryid'=>new external_value(PARAM_INT,'Category id'),
+                    'role'=>new external_value(PARAM_TEXT,'role user: controller or student'),
                 ])
             ) 
         ]);
@@ -32,6 +33,7 @@ class load_subcategories extends \core_external\external_api {
         // Validate parameters
         $request=self::validate_parameters(self::execute_parameters(), ['params'=>$params]);
         $categoryid=$request['params'][0]['categoryid'];
+        $role=$request['params'][0]['role'];
         
          // now security checks
          $context = \context_system::instance();
@@ -39,7 +41,12 @@ class load_subcategories extends \core_external\external_api {
          require_capability('webservice/rest:use', $context);
 
          //Se listan todos los grupos del cliente seleccionado
-         $result=$DB->get_records('ticket_subcategory', ['categoryid'=>$categoryid], 'id ASC', 'id,subcategory');
+         if ($role==='controller'){
+            $result=$DB->get_records('ticket_subcategory', ['categoryid'=>$categoryid], 'id ASC', 'id,subcategory');
+         } elseif ($role==='student') {
+            $result=$DB->get_records('ticket_subcategory', ['categoryid'=>$categoryid,'hidden'=>0], 'id ASC', 'id,subcategory');
+         }
+         
          
         return $result;
     }

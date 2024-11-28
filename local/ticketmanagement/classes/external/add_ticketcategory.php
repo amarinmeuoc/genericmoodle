@@ -15,6 +15,7 @@ class add_ticketcategory extends \core_external\external_api {
         return new external_function_parameters([
             'params'=>new external_multiple_structure(
                 new external_single_structure([
+                    'ifhidden'=>new external_value(PARAM_INT,'show/hide category'),
                     'category'=>new external_value(PARAM_TEXT,'Category name'),
                 ])
             ) 
@@ -33,6 +34,7 @@ class add_ticketcategory extends \core_external\external_api {
         // Validate parameters
         $request=self::validate_parameters(self::execute_parameters(), ['params'=>$params]);
         $categoryname=strtoupper($request['params'][0]['category']);
+        $ifhidden=$request['params'][0]['ifhidden'];
         
         
         if (trim($categoryname)==='' || trim($categoryname)===''){
@@ -47,22 +49,31 @@ class add_ticketcategory extends \core_external\external_api {
          //Se comprueba que la categoria sea unica
          $result=$DB->get_record('ticket_category',['category'=>$categoryname]);
 
-         $dataobject=(object)['category'=>$categoryname];
+         $dataobject=(object)['category'=>$categoryname,'hidden'=>$ifhidden];
          
-         if (!$result){
-            //Si por algun motivo la inserción falla, devolverá 0 y se asegura devolver un entero
-            $result=intval($DB->insert_record('ticket_category', $dataobject, true, false));
-         } else {
-            $result=0;
-         }
-         
-        return $result;
+         $newid=0;
+
+         if (!$result) {
+            // Si no existe, insertar la nueva categoría
+            $newid = intval($DB->insert_record('ticket_category', $dataobject, true, false));
+        } 
+        
+        // Devolver los valores en un array asociativo
+        return [
+            'ok'=>$newid,
+            'categoryname' => $categoryname,
+            'ifhidden' => $ifhidden
+        ];
     }
 
 
     public static function execute_returns() {
-        //Must show the WBS, Coursename, Start, End, Num Trainees, Assignation, Location, Provider, Download CSV, Send Email
-        return new external_value(PARAM_INT,'Returns the Id of the operation');
+        return new external_single_structure([
+            'ok' => new external_value(PARAM_INT, 'If was ok)'),
+            'categoryname' => new external_value(PARAM_TEXT, 'The name of the category'),
+            'ifhidden' => new external_value(PARAM_INT, 'If the category is hidden (1 for hidden, 0 for visible)')
+        ]);
     }
+    
 
 }

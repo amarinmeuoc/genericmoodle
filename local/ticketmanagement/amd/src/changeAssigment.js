@@ -3,7 +3,7 @@ import Notification from 'core/notification';
 import {add as addToast} from 'core/toast';
 import {get_string as getString} from 'core/str';
 
-export const init =() => {
+export const init =() => { 
     
 
     // Seleccionar todas las filas con la clase `.cerrado`
@@ -49,14 +49,15 @@ const showAssigmentFormPopup=(e)=>{
         //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
         
         const ticket=e.detail.ticket;
-        const tr=document.querySelector(`td a.assignbtn[data-ticketid="ALTR-G1-1731586030-000012"]`).closest('tr');
+        window.console.log("done");
+        const tr=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).closest('tr'); 
         //Se borra la clase amarillo, ya que se asigna un gestor
         tr.classList.remove('yellow');
         const td=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).parentElement;
         const link=document.querySelector(`a.assignbtn[data-ticketid="${ticket.id}"]`)
         const span = link.nextElementSibling; 
         span.textContent=ticket.user;
-        const state=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).parentElement.parentElement.children[4];
+        const state=tr.querySelector("td:nth-child(6)");
         state.textContent=ticket.state;
     });
 

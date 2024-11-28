@@ -24,8 +24,10 @@ class createsubcategoryform extends \moodleform {
         $category_list=array_values($category);
 
         $options=array();
+        
         foreach ($category_list as $elem){
             $options[$elem->id]=$elem->category;
+            
         }
 
         //Se crean los campos       
@@ -35,16 +37,31 @@ class createsubcategoryform extends \moodleform {
         
         $mform->setType('subcategoryname',PARAM_TEXT);
 
+        $mform->addElement('advcheckbox', 'hiddencategory', get_string('hiddencategory', 'local_ticketmanagement'), 'Select this checkbox to set a hidden subcategory', [], array(0, 1));
+
         $attributes=array('size'=>10);
         $values=array_keys($options);
         $firstCategoryKey=$values[0];
         //Get the subcategories attached to the first selected category
-        $subcategories=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstCategoryKey],'','id,subcategory');
+        $subcategories=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstCategoryKey],'','id,subcategory,hidden,description');
         $options=array();
+        $hidden_values = []; // Aquí guardamos los valores `hidden` de cada categoría
         foreach ($subcategories as $elem){
+            
             $options[$elem->id]=$elem->subcategory;
+            $hidden_values[$elem->id] = $elem->hidden; // Guardar el valor `hidden` de la categoría
         }
-        $mform->addElement('select', 'subcategorySelect', get_string('subcategory_select', 'local_ticketmanagement'),$options,$attributes);
+        $category_element=$mform->addElement('select', 'subcategorySelect', get_string('subcategory_select', 'local_ticketmanagement'),$options,$attributes);
+
+        // Agregar el atributo `data-hidden` a cada opción
+        foreach ($category_element->_options as &$option) {
+            
+            $id = $option['attr']['value']; // El id de la categoría es el valor de la opción
+            if (isset($hidden_values[$id])) {
+                $option['attr']['data-hidden'] = $hidden_values[$id]; // Agregar el atributo        
+            }
+            
+        }
 
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 

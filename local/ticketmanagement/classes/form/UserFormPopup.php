@@ -79,6 +79,7 @@ class UserFormPopup extends \core_form\dynamic_form {
         $mform->setType('notes', PARAM_TEXT);
     
         // Campos de fecha
+        $mform->addElement('date_selector', 'niedate', get_string('niedate', 'local_ticketmanagement'));
         $mform->addElement('date_selector', 'birthdate', get_string('birthdate', 'local_ticketmanagement'));
         $mform->addElement('date_selector', 'arrival_date', get_string('arrival_date', 'local_ticketmanagement'));
         $mform->addElement('date_selector', 'departure_date', get_string('departure_date', 'local_ticketmanagement'));
@@ -188,6 +189,7 @@ class UserFormPopup extends \core_form\dynamic_form {
         $profilefields = [
             'passport',
             'nie',
+            'niedate',
             'birthdate',
             'personalemail',
             'insurance_card_number',
@@ -201,7 +203,7 @@ class UserFormPopup extends \core_form\dynamic_form {
         foreach ($profilefields as $field) {
             if (isset($data->{$field})) {
                 // Verifica si el campo es de tipo fecha.
-                if (in_array($field, ['arrival_date', 'departure_date', 'birthdate'])) {
+                if (in_array($field, ['arrival_date', 'departure_date', 'birthdate','niedate'])) {
                     // Convierte el valor de fecha a un timestamp UNIX si es una cadena.
                     $data->{$field} = is_numeric($data->{$field}) ? (int)$data->{$field} : strtotime($data->{$field});
                     if ($data->{$field} === false) {
@@ -292,10 +294,10 @@ class UserFormPopup extends \core_form\dynamic_form {
         $data['city']=$userinfo->city;
 
         // Asegurarse de que todos los campos existan, incluso si no hay datos
-        $fields = ['passport', 'nie', 'birthdate', 'personalemail', 'insurance_card_number', 'shoesize', 'overallsize', 'arrival_date', 'departure_date', 'notes'];
+        $fields = ['passport', 'nie', 'niedate', 'birthdate', 'personalemail', 'insurance_card_number', 'shoesize', 'overallsize', 'arrival_date', 'departure_date', 'notes'];
         foreach ($fields as $field) {
             if (!isset($data[$field])) {
-                $data[$field] = ($field === 'birthdate' || $field === 'arrival_date' || $field === 'departure_date') ? 0 : '';
+                $data[$field] = ($field === 'niedate' || $field === 'birthdate' || $field === 'arrival_date' || $field === 'departure_date') ? 0 : '';
             }
         }
 

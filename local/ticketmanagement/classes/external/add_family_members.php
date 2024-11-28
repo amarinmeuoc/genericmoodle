@@ -43,6 +43,9 @@ class add_family_members extends \core_external\external_api {
         $relationship=$request['params'][0]['relationship'];
         $firstname=$request['params'][0]['firstname'];   
         $lastname=$request['params'][0]['lastname'];
+        $birthdate=time();
+        $arrival=time();
+        $departure=time();
    
         
         // now security checks
@@ -55,6 +58,9 @@ class add_family_members extends \core_external\external_api {
         $record->relationship=$relationship;
         $record->name=$firstname;
         $record->lastname=$lastname;
+        $record->birthdate=$birthdate;
+        $record->departure=$departure;
+        $record->arrival=$arrival;
 
         $id=$DB->insert_record('family', $record,true);
 

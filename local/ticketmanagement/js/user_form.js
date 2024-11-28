@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
 const updateSubcategory= (categoryid,token)=>{
+  const role=document.querySelector('input[name="role"]').value;
   let xhr = new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -20,6 +21,7 @@ const updateSubcategory= (categoryid,token)=>{
     formData.append('wsfunction', 'local_ticketmanagement_load_subcategories');
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][categoryid]',categoryid);
+    formData.append('params[0][role]',role);
 
     xhr.open('POST',url,true);
     xhr.send(formData);

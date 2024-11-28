@@ -65,7 +65,6 @@ class edit_family_members extends \core_external\external_api {
             ]
         ];
 
-        
         // Retornar una respuesta (ej. el ID del nuevo ticket creado)
         return $ObjReturn;
     }

@@ -16,7 +16,8 @@ class add_ticketsubcategory extends \core_external\external_api {
             'params'=>new external_multiple_structure(
                 new external_single_structure([
                     'categoryid'=>new external_value(PARAM_INT,'Category id'),
-                    'subcategory'=>new external_value(PARAM_TEXT, 'Subcategory name')
+                    'subcategory'=>new external_value(PARAM_TEXT, 'Subcategory name'),
+                    'ifhidden'=>new external_value(PARAM_INT,'If hidden subcategory'),
                 ])
             ) 
         ]);
@@ -34,6 +35,7 @@ class add_ticketsubcategory extends \core_external\external_api {
         $request=self::validate_parameters(self::execute_parameters(), ['params'=>$params]);
         $categoryid=$request['params'][0]['categoryid'];
         $subcategoryname=strtoupper($request['params'][0]['subcategory']);
+        $ifhidden=$request['params'][0]['ifhidden'];
 
         //Si el nombre de la subcategoria está vacio devolvemos 0
         if (trim($subcategoryname)===''){
@@ -44,17 +46,24 @@ class add_ticketsubcategory extends \core_external\external_api {
          $context = \context_system::instance();
          self::validate_context($context);
          require_capability('webservice/rest:use', $context);
-         $dataobject=(object)['categoryid'=>$categoryid,'subcategory'=>$subcategoryname];
+         $dataobject=(object)['categoryid'=>$categoryid,'subcategory'=>$subcategoryname,'hidden'=>$ifhidden];
 
          //Devuelve el ID del nuevo grupo creado
-         $result=$DB->insert_record('ticket_subcategory', $dataobject, true,false);
+         $result=intval($DB->insert_record('ticket_subcategory', $dataobject, true,false));
          
-        return $result;
+         return [
+            'ok'=>$result,
+            'subcategoryname' => $subcategoryname,
+            'ifhidden' => $ifhidden
+        ];
     }
 
 
     public static function execute_returns() {
-        //Must show the WBS, Coursename, Start, End, Num Trainees, Assignation, Location, Provider, Download CSV, Send Email
-        return new external_value(PARAM_INT,'Returns the Id of the operation');
+        return new external_single_structure([
+            'ok' => new external_value(PARAM_INT, 'If was ok)'),
+            'subcategoryname' => new external_value(PARAM_TEXT, 'The name of the category'),
+            'ifhidden' => new external_value(PARAM_INT, 'If the category is hidden (1 for hidden, 0 for visible)')
+        ]);
     }
 }

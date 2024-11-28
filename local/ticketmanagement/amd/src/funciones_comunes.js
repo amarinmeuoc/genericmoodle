@@ -373,13 +373,14 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                         categorySelect.addEventListener('change', (event) => {
                             const selectedCategory = event.target.value;
                             window.console.log(`Categoría seleccionada: ${selectedCategory}`);
-                            eventoCat=event.target.value;
+                            eventoCat=event.target.selectedOptions[0].text;
+                            
                             // Lógica para actualizar las opciones del selector de subcategorías
                             self.updateSubcategory(selectedCategory, subcategorySelect,token);
                         });
     
                         subcategorySelect.addEventListener('change',(e)=>{
-                            eventoSubCat=e.target.value;
+                            eventoSubCat=e.target.selectedOptions[0].text;
                         })
                     } else {
                         window.console.error('Los selectores de categoría y subcategoría no están disponibles.');
@@ -486,6 +487,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
             formData.append('wsfunction', 'local_ticketmanagement_load_subcategories');
             formData.append('moodlewsrestformat', 'json');
             formData.append('params[0][categoryid]',categoryid);
+            formData.append('params[0][role]','controller');
         
             xhr.open('POST',url,true);
             xhr.send(formData);

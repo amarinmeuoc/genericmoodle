@@ -200,6 +200,17 @@ define(['core_form/modalform',
                           showTicketActions(e);
                         
                       })
+
+                      const chk_communication=document.querySelectorAll("#tablebody input[type='checkbox']");
+
+                      chk_communication.forEach((chk)=>{
+                          chk.addEventListener('click',(e)=>{
+                          const ticket=e.target.dataset.ticketid;
+                          const value=(e.target.checked)?1:0;
+                          const token = document.querySelector('input[name="token"]').value;
+                          funcionesComunes.updateCommunication(ticket,value,token,url); 
+                          })
+                      })
                 
               
                     const assignbtn=document.querySelectorAll('.assignbtn')[document.querySelectorAll('.assignbtn').length-1];
@@ -296,13 +307,16 @@ define(['core_form/modalform',
                     //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
                       
                     const ticket=e.detail.ticket;
+        
+                    const tr=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).closest('tr'); 
+                    //Se borra la clase amarillo, ya que se asigna un gestor
+                    tr.classList.remove('yellow');
                     const td=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).parentElement;
                     const link=document.querySelector(`a.assignbtn[data-ticketid="${ticket.id}"]`)
                     const span = link.nextElementSibling; 
                     span.textContent=ticket.user;
-                    const state=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).parentElement.parentElement.children[4];
-                    state.textContent=ticket.state;
-                });
+                    const state=tr.querySelector("td:nth-child(6)");
+                    state.textContent=ticket.state;               });
               
                 modalForm.addEventListener(modalForm.events.LOADED, (e)=>{
                     //Changing the text of the dynamic button

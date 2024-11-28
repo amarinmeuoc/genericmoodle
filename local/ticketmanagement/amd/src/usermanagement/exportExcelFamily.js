@@ -3,7 +3,7 @@ export const init=(XLSX, filesaver,blobutil)=>{
     //definicion de url
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
     const token=document.querySelector('input[name="token"]').value;
-    const boexport=document.querySelector('#id_exportExcel');
+    const boexport=document.querySelector('#id_exportExcelFamily');
     boexport.addEventListener('click',(e)=>{
         exportToExcel(e,XLSX,filesaver,blobutil, url);
         
@@ -40,7 +40,7 @@ const exportToExcel=(e,XLSX,filesaver,blobutil, url)=>{
 const prepareDataToSend=(obj, url,token)=>{
     let xhr = new XMLHttpRequest();
 
-    const service= 'local_ticketmanagement_get_list_users';
+    const service= 'local_ticketmanagement_get_list_families';
 
     //Se prepara el objeto a enviar
     const formData= new FormData();
@@ -96,7 +96,8 @@ const onLoadFunction=(myXhr)=>{
    
     if (myXhr.readyState===4 && myXhr.status===200){
         const res=JSON.parse(myXhr.response);
-        createExcelFromJSON(res,'userReport');
+        window.console.log(res);
+        createExcelFromJSON(res,'familyReport');
         
     }
 }
@@ -111,32 +112,30 @@ const onProgressFunction=(event) =>{
 const createExcelFromJSON = (res, op) => {
     let listado = [];
     
-    if (res.userlist && res.userlist.length>0){
+    if (res.family_list && res.family_list.length>0){
         // Generar títulos basados en las claves del primer objeto
-        const titles = Object.keys(res.userlist[0]);
+        const titles = Object.keys(res.family_list[0]);
         listado.push(titles);
 
         // Convertir cada objeto a un array de valores y añadirlo al listado
-        const usersArray = res.userlist.map(user => [
+        const usersArray = res.family_list.map(user => [
             user.id,
             user.vessel,
             user.billid,
-            user.email,
-            user.personalemail,
             user.firstname,
             user.lastname,
-            user.phone1,
-            user.phone2,
-            user.address,
-            user.city,
-            formatUnixToDateTime(user.birthdate),
-            formatUnixToDateTime(user.arrival_date),
-            formatUnixToDateTime(user.departure_date),
-            user.insurance_card_number,
-            user.shoesize,
-            user.overallsize,
-            user.notes,
-            user.iffamily
+            user.email,
+            user.family_role,
+            user.family_firstname,
+            user.family_lastname,
+            user.family_nie,
+            formatUnixToDateTime(user.family_birthdate),
+            user.family_adeslas,
+            user.family_phone1,
+            user.family_email,
+            formatUnixToDateTime(user.family_arrival),
+            formatUnixToDateTime(user.family_departure),
+            user.family_notes
         ]);
         listado = listado.concat(usersArray);
     }
@@ -153,20 +152,20 @@ const createExcelFromJSON = (res, op) => {
 
     // Configuración de propiedades del archivo
     wb.Props = {
-        Title: "List of users",
+        Title: "List of familiars",
         Subject: "Training program report",
         Author: "Alberto Marín",
         CreateDate: new Date(year, month - 1, dateFile) // Ajuste del mes a base 0
     };
 
-    // Añadir una hoja de Excel con el nombre "UsersReport"
-    wb.SheetNames.push("UsersReport");
+    // Añadir una hoja de Excel con el nombre "FamilyReport"
+    wb.SheetNames.push("FamilyReport");
     const ws = XLSX.utils.aoa_to_sheet(listado);
-    wb.Sheets["UsersReport"] = ws;
+    wb.Sheets["FamilyReport"] = ws;
 
     // Generar y descargar el archivo
     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-    const nameFile = `UsersReport-${dateFile}.${month}.${year}-${hour}.${min}.xlsx`;
+    const nameFile = `FamilyReport-${dateFile}.${month}.${year}-${hour}.${min}.xlsx`;
     saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), nameFile);
 };
 

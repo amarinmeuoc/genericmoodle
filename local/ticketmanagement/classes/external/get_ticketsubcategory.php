@@ -58,6 +58,7 @@ class get_ticketsubcategory extends \core_external\external_api {
                 array(
                     'id' => new external_value(PARAM_INT, 'Subcategory ID'),
                     'subcategory' => new external_value(PARAM_TEXT, 'Subcategory name'),
+                    'hidden'=>new external_value(PARAM_INT, 'If hidden'),
                 )
             )
         );

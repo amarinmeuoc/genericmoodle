@@ -18,6 +18,7 @@ class edit_ticketsubcategory extends \core_external\external_api {
                     'subcategory'=>new external_value(PARAM_TEXT,'subcategory name'),
                     'id'=>new external_value(PARAM_INT,'id'),
                     'categoryid'=>new external_value(PARAM_INT,'Category id'),
+                    'ifhidden'=>new external_value(PARAM_INT,'if category is hidden')
                 ])
             ) 
         ]);
@@ -37,6 +38,7 @@ class edit_ticketsubcategory extends \core_external\external_api {
         $categoryid=$request['params'][0]['categoryid'];
         $subcategory=$request['params'][0]['subcategory'];
         $id=$request['params'][0]['id'];
+        $ifhidden=$request['params'][0]['ifhidden'];
         
         
         if (!$categoryid || !$id || trim($subcategory)===''){
@@ -47,7 +49,7 @@ class edit_ticketsubcategory extends \core_external\external_api {
          self::validate_context($context);
          require_capability('webservice/rest:use', $context);
          
-         $dataobject=(object)['id'=>$id,'subcategory'=>$subcategory,'categoryid'=>$categoryid];
+         $dataobject=(object)['id'=>$id,'subcategory'=>$subcategory,'categoryid'=>$categoryid,'hidden'=>$ifhidden];
 
          //Se comprueba que la categoria sea unica
          $result=$DB->update_record('ticket_subcategory', $dataobject, $bulk);

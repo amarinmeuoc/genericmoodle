@@ -28,6 +28,7 @@ function xmldb_local_ticketmanagement_install() {
         'passport' => 'Passport',
         'personalemail' => 'Personal Email',
         'nie' => 'NIE',
+        'niedate'=>'NIE expiration date',
         'birthdate'=>'Birth date',
         'insurance_card_number'=>'Insurance card number',
         'shoesize'=>'Shoe size',
@@ -44,7 +45,7 @@ function xmldb_local_ticketmanagement_install() {
             $data = new stdClass();
             $data->shortname = $shortname;
             $data->name = $name;
-            if ($data->shortname==='arrival_date' || $data->shortname==='departure_date' || $data->shortname==='birthdate'){
+            if ($data->shortname==='arrival_date' || $data->shortname==='departure_date' || $data->shortname==='birthdate' || $data->shortname==='niedate'){
                 $data->datatype = 'datetime';
                 $data->visible = 1;
             } else if ($data->shortname==='notes') {

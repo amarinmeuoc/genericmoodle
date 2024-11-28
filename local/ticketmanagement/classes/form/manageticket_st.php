@@ -20,7 +20,7 @@ public function definition() {
     $mform->addElement('hidden',  'user',  $USER->id);  
     $mform->settype('user',PARAM_INT)                                                      ;
                                                                                                                             
-    $category=$DB->get_records('ticket_category',[],'id ASC','id,category');
+    $category=$DB->get_records('ticket_category',['hidden'=>0],'id ASC','id,category');
 
     $category_arr=[];
     foreach ($category as $key => $cat) {
@@ -39,7 +39,7 @@ public function definition() {
         $firstcategoryid=0;
 
         
-    $subcategory=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstcategoryid],'id ASC','id,subcategory');
+    $subcategory=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstcategoryid,'hidden'=>0],'id ASC','id,subcategory');
 
     
     $subcategory_arr=[];

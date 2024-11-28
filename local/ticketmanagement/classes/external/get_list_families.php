@@ -8,7 +8,7 @@ use \core_external\external_multiple_structure as external_multiple_structure;
 use \core_external\external_single_structure as external_single_structure;
 use \core_external\external_value as external_value;
 
-class get_list_users extends \core_external\external_api {
+class get_list_families extends \core_external\external_api {
 
     /**
      * Returns description of method parameters
@@ -50,7 +50,7 @@ class get_list_users extends \core_external\external_api {
         $orderby=$request['params'][0]['orderby'];
         $page=$request['params'][0]['page'];
         $activePage=$request['params'][0]['activePage'];
-        $perpage=2;
+        $perpage=50;
         $offset=($page-1)*$perpage;
 
         // Parámetros opcionales
@@ -135,41 +135,42 @@ class get_list_users extends \core_external\external_api {
             ];
         }
         
-        $trainee_list=[];
+        $total_family_list=[];
         foreach ($trainee_query as $user) {
-            $family_members=$DB->get_records('family',['userid'=>$user->id],'id');
-            
-            $trainee_list[]=[
-                'id'=>$user->id,
-                'vessel'=>$user->groupname,
-                'billid'=>$user->billid,
-                'firstname'=>$user->firstname,
-                'lastname'=>$user->lastname,
-                'email'=>$user->email,
-                'personalemail'=>$user->personalemail,
-                'phone1'=>$user->phone1,
-                'phone2'=>$user->phone2,
-                'address'=>$user->address,
-                'city'=>$user->city,
-                'notes'=>$user->notes,
-                'insurance_card_number'=>$user->insurance_card_number,
-                'birthdate'=>max($user->birthdate,0),
-                'shoesize'=>max($user->shoesize,0),
-                'overallsize'=>max($user->overallsize,0),
-                'arrival_date'=>max($user->arrival_date,0),
-                'departure_date'=>max($user->departure_date,0),
-                'iffamily'=>count($family_members)
-            ];
+            $family_members=$DB->get_records('family',['userid'=>$user->id]);
+            $familiar_list=[];
+            foreach ($family_members as $member){
+                $familiar_list[]=[
+                    'id'=>$user->id,
+                    'vessel'=>$user->groupname,
+                    'billid'=>$user->billid,
+                    'firstname'=>$user->firstname,
+                    'lastname'=>$user->lastname,
+                    'email'=>$user->email,
+                    'family_role'=>$member?->relationship ?? '',
+                    'family_firstname'=>$member?->name ?? '',
+                    'family_lastname'=>$member?->lastname ?? '',
+                    'family_nie'=>$member?->nie ?? '',
+                    'family_birthdate'=>$member?->birthdate ?? 0,
+                    'family_adeslas'=>$member?->adeslas ?? '',
+                    'family_phone1'=>$member?->phone1 ?? '',
+                    'family_email'=>$member?->email ?? '',
+                    'family_arrival'=>$member?->arrival ?? 0,
+                    'family_departure'=>$member?->departure ?? 0,
+                    'family_notes'=>$member?->notes ?? '',
+                ];
+            };
+            $total_family_list = array_merge($total_family_list, $familiar_list);
         }
         
         $users=[
-            'userlist'=>$trainee_list,
-            'orderbyid'=>$orderby==='id'?true:false,
-            'orderbyvessel'=>$orderby==='groupname'?true:false,
-            'orderbybillid'=>$orderby==='billid'?true:false,
-            'orderbyemail'=>$orderby==='email'?true:false,
-            'orderbyfirstname'=>$orderby==='firstname'?true:false,
-            'orderbylastname'=>$orderby==='lastname'?true:false,
+            'family_list'=>$total_family_list,
+            'orderbyid'=>$orderby==='id',
+            'orderbyvessel'=>$orderby==='groupname',
+            'orderbybillid'=>$orderby==='billid',
+            'orderbyemail'=>$orderby==='email',
+            'orderbyfirstname'=>$orderby==='firstname',
+            'orderbylastname'=>$orderby==='lastname',
             'order'=>($order==='ASC')?1:0,
             'hidecontrolonsinglepage'=>false,
             'activepagenumber'=>$activePage,
@@ -206,7 +207,7 @@ class get_list_users extends \core_external\external_api {
         //Devuelve un array de objetos
         return new external_single_structure(
             array(
-                'userlist' => new external_multiple_structure(
+                'family_list' => new external_multiple_structure(
                     new external_single_structure([
                         'id' => new external_value(PARAM_INT, 'User ID'),
                         'vessel' => new external_value(PARAM_TEXT, 'Groupname or vessel'),
@@ -214,19 +215,17 @@ class get_list_users extends \core_external\external_api {
                         'firstname' => new external_value(PARAM_TEXT, 'First name'),
                         'lastname' => new external_value(PARAM_TEXT, 'Last name'),
                         'email' => new external_value(PARAM_TEXT, 'Email'),
-                        'personalemail' => new external_value(PARAM_TEXT, 'Email2'),
-                        'phone1' => new external_value(PARAM_TEXT, 'Phone 1'),
-                        'phone2' => new external_value(PARAM_TEXT, 'Phone 2'),
-                        'address' => new external_value(PARAM_TEXT, 'Address'),
-                        'city' => new external_value(PARAM_TEXT, 'city'),
-                        'birthdate'=>new external_value(PARAM_INT, 'birthdate'),
-                        'arrival_date'=>new external_value(PARAM_INT, 'arrival_date'),
-                        'departure_date'=>new external_value(PARAM_INT, 'departure_date'),
-                        'insurance_card_number'=>new external_value(PARAM_TEXT, 'insurance_card_number'),
-                        'shoesize'=>new external_value(PARAM_FLOAT, 'shoesize'),
-                        'overallsize'=>new external_value(PARAM_FLOAT, 'overallsize'),
-                        'notes'=>new external_value(PARAM_TEXT, 'notes'),
-                        'iffamily'=>new external_value(PARAM_INT, 'if has any family member'),
+                        'family_role'=> new external_value(PARAM_TEXT, 'Last name'),
+                        'family_firstname'=> new external_value(PARAM_TEXT, 'Last name'),
+                        'family_lastname'=> new external_value(PARAM_TEXT, 'Last name'),
+                        'family_nie'=> new external_value(PARAM_TEXT, 'Last name'),
+                        'family_birthdate'=> new external_value(PARAM_INT, 'Last name'),
+                        'family_adeslas'=> new external_value(PARAM_TEXT, 'Last name'),
+                        'family_phone1'=> new external_value(PARAM_TEXT, 'Last name'),
+                        'family_email'=> new external_value(PARAM_TEXT, 'Last name'),
+                        'family_arrival'=> new external_value(PARAM_INT, 'Last name'),
+                        'family_departure'=> new external_value(PARAM_INT, 'Last name'),
+                        'family_notes'=> new external_value(PARAM_TEXT, 'Last name'),
                     ])
                 ),
                 'orderbyid' => new external_value(PARAM_BOOL, 'ordenados por id'),

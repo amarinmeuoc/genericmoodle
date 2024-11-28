@@ -202,6 +202,7 @@ const showEditFamilyPopup=(id)=>{
         returnFocus:e.target
     });
 
+
     modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
         //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
         const id=e.detail.id;
@@ -209,6 +210,7 @@ const showEditFamilyPopup=(id)=>{
         const firstname=e.detail.firstname;
         const lastname=e.detail.lastname;
         editFamiliar(id,relationship,firstname,lastname,token,url);
+        
     });
 
     modalForm.addEventListener(modalForm.events.LOADED, (e)=>{

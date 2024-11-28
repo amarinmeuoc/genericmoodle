@@ -19,23 +19,40 @@ class createcategoryform extends \moodleform {
         //Se configura id de formulario
         $mform->_attributes['id']="categoryformid";
 
-        //Se carga la lista de clientes ya creados
+        //Se carga la lista de categorias ya creadas
         $category=$DB->get_records('ticket_category');
         $category_list=array_values($category);
 
         $options=array();
+        $hidden_values = []; // Aquí guardamos los valores `hidden` de cada categoría
         foreach ($category_list as $elem){
             $options[$elem->id]=$elem->category;
+            $hidden_values[$elem->id] = $elem->hidden; // Guardar el valor `hidden` de la categoría
         }
 
         //Se crean los campos
         $mform->addElement('text', 'categoryname', get_string('category', 'local_ticketmanagement'),[]);
         $mform->addRule('categoryname','error, this field is required','required');
         $mform->setType('categoryname',PARAM_TEXT);
+
+        $mform->addElement('advcheckbox', 'hiddencategory', get_string('hiddencategory', 'local_ticketmanagement'), 'Select this checkbox to set a hidden category', [], array(0, 1));
         
         $attributes=array('size'=>10);
         $mform->addElement('select', 'categorySelect', get_string('category_select', 'local_ticketmanagement'),$options,$attributes);
 
+        $category_element = $mform->getElement('categorySelect');
+
+        
+        // Agregar el atributo `data-hidden` a cada opción
+        foreach ($category_element->_options as &$option) {
+            
+            $id = $option['attr']['value']; // El id de la categoría es el valor de la opción
+            if (isset($hidden_values[$id])) {
+                $option['attr']['data-hidden'] = $hidden_values[$id]; // Agregar el atributo        
+            }
+            
+        }
+        
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
