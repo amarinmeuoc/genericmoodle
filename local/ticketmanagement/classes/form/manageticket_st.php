@@ -73,32 +73,9 @@ public function definition() {
     // Use hideIf() to hide the second select box if the first select box is not "Yes"
     $mform->hideIf('familiar', 'familyissue', 'eq', 'no');
 
-    $context = \context_system::instance();
-
-    // Obtener un draftitemid único.
-    $draftitemid = file_get_unused_draft_itemid();
-
-    // Prepara el área de archivos para el campo editor.
-    file_prepare_draft_area(
-        $draftitemid,
-        $context->id,
-        'local_ticketmanagement',
-        'content',
-        0,
-        ['subdirs' => true]
-    );
-
-    
-    $mform->addElement('editor', 'description', get_string('editortext', 'local_ticketmanagement'),null,[
-        'maxfiles' => 5,
-        'context' => $context
-    ]);
+    $mform->addElement('editor', 'description', get_string('editortext', 'local_ticketmanagement'));
     $mform->setType('description', PARAM_RAW);
-    $mform->setDefault('description', [
-        'text' => '', // Contenido por defecto.
-        'format' => FORMAT_HTML,
-        'itemid' => $draftitemid
-    ]);
+   
 /*
     $mform->addElement(
         'filemanager',
