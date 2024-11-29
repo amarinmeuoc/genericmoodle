@@ -11,9 +11,6 @@ export const init=(XLSX, filesaver,blobutil)=>{
 }
 
 const exportToExcel=(e,XLSX,filesaver,blobutil, url)=>{
-    
-    const newPage=document.querySelector('input[name="page"]');
-        newPage.value=1;
         const orderby = document.querySelector('input[name="orderby"]').value;
         const order = document.querySelector('input[name="order"]').value;
         const groupid = document.querySelector('#id_vessel').value;
@@ -23,10 +20,10 @@ const exportToExcel=(e,XLSX,filesaver,blobutil, url)=>{
         const apellidos=document.querySelector('#teapellidos').value;
                 
         const obj={
-          activePage:1,
+          
           order:order,
           orderby:orderby,
-          page:newPage.value,
+          
           groupid:groupid,
           customerid:customerid,
           billid:billid,
@@ -40,7 +37,7 @@ const exportToExcel=(e,XLSX,filesaver,blobutil, url)=>{
 const prepareDataToSend=(obj, url,token)=>{
     let xhr = new XMLHttpRequest();
 
-    const service= 'local_ticketmanagement_get_list_families';
+    const service= 'local_ticketmanagement_get_list_families_excel';
 
     //Se prepara el objeto a enviar
     const formData= new FormData();
@@ -51,8 +48,7 @@ const prepareDataToSend=(obj, url,token)=>{
     formData.append('params[0][groupid]',obj.groupid);
     formData.append('params[0][order]',obj.order);
     formData.append('params[0][orderby]',obj.orderby);
-    formData.append('params[0][page]',obj.page);
-    formData.append('params[0][activePage]',obj.activePage);
+    
     if ('billid' in obj){
       formData.append('params[0][billid]',obj.billid);
     }
@@ -76,18 +72,42 @@ const prepareDataToSend=(obj, url,token)=>{
     }
 
     xhr.onloadstart=(event)=>{
-        //self.showLoader(event);
-        }
+        const loader=document.querySelector('.excel_loader');
+        loader.classList.remove('hide');
+        loader.classList.add('show');
+        
+        const boexport=document.querySelector('#id_exportExcelFamily');
+
+        if (boexport)
+            boexport.disabled=true;
+        
+    }
 
     xhr.onprogress = (event)=>{
-        //self.onProgressFunction(event);
+        onProgressFunction(event);
     } 
     xhr.onloadend=(event)=>{
-        //self.hideLoader(event);
+        const loader=document.querySelector('.excel_loader');
+        
+        loader.classList.remove('show');
+        loader.classList.add('hide');
+        
+        const boexport=document.querySelector('#id_exportExcelFamily');
+
+        if (boexport)
+            boexport.disabled=false;
     }
 
     xhr.onerror = ()=> {
-        //self.rejectAnswer(xhr);
+        window.console.error('Network Error: Unable to send the request.');
+
+        // Opcional: Restablecer el estado de la interfaz
+        const loader = document.querySelector('.excel_loader');
+        loader.classList.remove('show');
+        loader.classList.add('hide');
+
+        const boexport = document.querySelector('#id_exportExcelFamily');
+        if (boexport) boexport.disabled = false;
     }
 
 }

@@ -8,7 +8,7 @@ use \core_external\external_multiple_structure as external_multiple_structure;
 use \core_external\external_single_structure as external_single_structure;
 use \core_external\external_value as external_value;
 
-class get_list_users extends \core_external\external_api {
+class get_list_users_excel extends \core_external\external_api {
 
     /**
      * Returns description of method parameters
@@ -22,8 +22,6 @@ class get_list_users extends \core_external\external_api {
                     'customerid'=>new external_value(PARAM_TEXT,'Customer shortname'),
                     'order' => new external_value(PARAM_INT, 'order'),
                     'orderby' => new external_value(PARAM_TEXT, 'orderby: name, lastname, email...'),
-                    'page' => new external_value(PARAM_INT, 'Page number'),
-                    'activePage' => new external_value(PARAM_INT, 'Active page'),
 
                     // Parámetros opcionales
                     'billid' => new external_value(PARAM_TEXT, 'Bill ID', VALUE_OPTIONAL),
@@ -48,10 +46,7 @@ class get_list_users extends \core_external\external_api {
         $customerid = $request['params'][0]['customerid'];
         $order=($request['params'][0]['order']===1)?'ASC':'DESC'; //Si order es igual a 1 ordenamiento ascendente, sino descendente
         $orderby=$request['params'][0]['orderby'];
-        $page=$request['params'][0]['page'];
-        $activePage=$request['params'][0]['activePage'];
-        $perpage=50;
-        $offset=($page-1)*$perpage;
+       
 
         // Parámetros opcionales
         $billid = $request['params'][0]['billid'] ?? null;
@@ -107,33 +102,16 @@ class get_list_users extends \core_external\external_api {
         }
 
         
-        //Listado total de usuarios sin paginación
-        $sqlTotal=$sql. " ORDER BY $orderby $order";
-
-        // Listado de usuarios ordenado y con paginación
-        $sql .= " ORDER BY $orderby $order LIMIT $perpage OFFSET $offset";
         
 
-         // Obtener el número total de usuarios
-        $total_records = $DB->get_records_sql($sqlTotal, $params_array);
-        $num_total_records = count($total_records);
+        // Listado de usuarios ordenado y con paginación
+        $sql .= " ORDER BY $orderby $order";
+        
+
+        
 
         // Obtener los usuarios filtrados
         $trainee_query = $DB->get_records_sql($sql, $params_array);
-
-        // Calcular el número total de páginas
-        $num_pages = intval(ceil($num_total_records / $perpage));
-        $num_pages = max($num_pages, 1);
-
-        $num_records = count($trainee_query) + $offset;
-
-        $pages=[];
-        for ($i = 1; $i <= $num_pages; $i++) {
-            $pages[] = (object)[
-                'page' => $i,
-                'active' => ($i === $activePage) // Set the first page as active
-            ];
-        }
         
         $trainee_list=[];
         foreach ($trainee_query as $user) {
@@ -171,29 +149,7 @@ class get_list_users extends \core_external\external_api {
             'orderbyfirstname'=>$orderby==='firstname'?true:false,
             'orderbylastname'=>$orderby==='lastname'?true:false,
             'order'=>($order==='ASC')?1:0,
-            'hidecontrolonsinglepage'=>false,
-            'activepagenumber'=>$activePage,
-            'barsize'=>'small',
-            'num_total_records'=>$num_total_records,
-            'num_pages'=>$num_pages,
-            'num_records'=>$num_records,
-            'pages'=>$pages,
-            'previous' => [
-                'page' => max(1, $page - 1), // Si es menor a 1, devolver siempre 1
-                'url' => '' // URL vacía o generada
-            ],
-            'next' => [
-                'page' => min($num_pages, $page + 1),    // Límite superior en 10
-                'url' => '' // URL vacía o generada
-            ],
-            'first' => [
-                'page' => 1,
-                'url' => '' // URL vacía o generada
-            ],
-            'last' => [
-                'page' => $num_pages, // Asumiendo que 10 es el número máximo de páginas
-                'url' => '' // URL vacía o generada
-            ],
+            
         ];
 
         return $users;
@@ -237,45 +193,7 @@ class get_list_users extends \core_external\external_api {
                 'orderbylastname' => new external_value(PARAM_BOOL, 'Ordenados por phone2'),
                 
                 'order'=> new external_value(PARAM_INT, 'Indica si es orden ascendente o descendente'),
-                'hidecontrolonsinglepage' => new external_value(PARAM_BOOL, 'Control para ocultar la navegación en una sola página'),
-                'activepagenumber' => new external_value(PARAM_INT, 'Número de página actual'),
-                'barsize' => new external_value(PARAM_TEXT, 'Tamaño de la barra de navegación'),
-                'num_total_records' => new external_value(PARAM_INT, 'Número total de registros'),
-                'num_pages' => new external_value(PARAM_INT, 'Número total de registros para la pagina seleccionada'),
-                'num_records' => new external_value(PARAM_INT, 'Número total de registros para la pagina seleccionada'),
-                // Nueva estructura 'pages'
-                'pages' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'page' => new external_value(PARAM_INT, 'Número de página'),
-                            'active' => new external_value(PARAM_BOOL, 'Indica si la página está activa')
-                        )
-                    )
-                ),
-                'previous' => new external_single_structure(
-                    array(
-                        'page' => new external_value(PARAM_INT, 'Número de la página anterior'),
-                        'url' => new external_value(PARAM_TEXT, 'URL para la página anterior'),
-                    )
-                ),
-                'next' => new external_single_structure(
-                    array(
-                        'page' => new external_value(PARAM_INT, 'Número de la página siguiente'),
-                        'url' => new external_value(PARAM_TEXT, 'URL para la página siguiente'),
-                    )
-                ),
-                'first' => new external_single_structure(
-                    array(
-                        'page' => new external_value(PARAM_INT, 'Número de la primera página'),
-                        'url' => new external_value(PARAM_TEXT, 'URL para la primera página'),
-                    )
-                ),
-                'last' => new external_single_structure(
-                    array(
-                        'page' => new external_value(PARAM_INT, 'Número de la última página'),
-                        'url' => new external_value(PARAM_TEXT, 'URL para la última página'),
-                    )
-                ),
+                
             )
         );
     }

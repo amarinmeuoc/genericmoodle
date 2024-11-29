@@ -544,6 +544,48 @@ $functions = [
         ]
         
     ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_get_list_users_excel' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\get_list_users_excel',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Getting all users.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_get_list_families_excel' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\get_list_families_excel',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Getting all families.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
     
 ];
 
@@ -574,7 +616,9 @@ $services = [
             'local_ticketmanagement_update_ticket_communication',
             'local_ticketmanagement_get_logistic_users',
             'local_ticketmanagement_get_list_users',
-            'local_ticketmanagement_get_list_families'
+            'local_ticketmanagement_get_list_families',
+            'local_ticketmanagement_get_list_families_excel',
+            'local_ticketmanagement_get_list_users_excel',
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado

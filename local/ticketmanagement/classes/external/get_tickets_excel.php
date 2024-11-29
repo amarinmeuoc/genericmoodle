@@ -93,6 +93,10 @@ class get_tickets_excel extends \core_external\external_api {
             if (!empty($user->id)) {
                 profile_load_custom_fields($user);
             }
+
+            // Obtener la última acción para el ticket especificado
+            $lastAction = $DB->get_records('ticket_action', ['ticketid' => $ticket->id], 'dateaction DESC','*');
+            $lastAction=array_values($lastAction);
             
             $subcategory=$DB->get_record('ticket_subcategory', ['id'=>$ticket->subcategoryid]);
             $category=$DB->get_record('ticket_category', ['id'=>$subcategory->categoryid],'category');
@@ -124,6 +128,7 @@ class get_tickets_excel extends \core_external\external_api {
                 'familiarname' => $familiar,
                 'familiar_role' => $familiar_type,
                 'date' => (int) $ticket->dateticket,
+                'lastdate'=> (int) $lastAction[0]->dateaction,
                 'state' => $ticket->state,
                 'description' => strip_tags($ticket->description), // Eliminamos etiquetas HTML
                 'priority' => empty($ticket->priority) ? 'Low' : $ticket->priority,
@@ -158,6 +163,7 @@ class get_tickets_excel extends \core_external\external_api {
                             'familiarname' => new external_value(PARAM_TEXT, 'familiarname'),
                             'familiar_role' => new external_value(PARAM_TEXT, 'familiar role'),
                             'date' => new external_value(PARAM_INT, 'Fecha del ticket (timestamp)'),
+                            'lastdate' => new external_value(PARAM_INT, 'Fecha del ticket (timestamp)'),
                             'state' => new external_value(PARAM_TEXT, 'Open/Assigned/Cancelled/Closed'),
                             'description' => new external_value(PARAM_TEXT, 'Descripción del problema'),
                             'priority' => new external_value(PARAM_TEXT, 'High/Medium/Low'),

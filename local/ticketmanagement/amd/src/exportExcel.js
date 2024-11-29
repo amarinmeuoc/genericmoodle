@@ -130,6 +130,7 @@ const createExcelFromJSON = (res, op) => {
         ticket.familiarname,
         ticket.familiar_role,
         formatUnixToDateTime(ticket.date),
+        formatUnixToDateTime(ticket.lastdate),
         ticket.state,
         ticket.description,
         ticket.priority,
