@@ -45,6 +45,7 @@ class creategroupform extends \moodleform {
         
         $mform->addElement('html',  '<div id="button_container" class="flex row m-3">');
         $mform->addElement('button', 'bosubmit', get_string('submit', 'block_itp'));
+        $mform->addElement('button', 'boedit', get_string('update', 'block_itp'));
         $mform->addElement('button', 'boremove', get_string('remove', 'block_itp'));
 
         $mform->addElement('html',  '<div id="error-message" class="alert alert-danger" role="alert" style="display:none">');

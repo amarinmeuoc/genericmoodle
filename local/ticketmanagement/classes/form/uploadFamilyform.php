@@ -41,7 +41,7 @@ class uploadFamilyform extends \moodleform {
         # code...
         $vessel_arr[$key]=$value->name;
     }
-    $vessel_arr=[0=>'PCO']+$vessel_arr;
+    
     $keys=array_keys($vessel_arr);
     if (isset($keys[0]))
         $firstvesselid=$keys[0];

@@ -99,3 +99,4 @@ $string['ungrouped']='Detailed view';
 $string['filtrar']='Search';
 $string['selCustomer']='Project';
 $string['hiddengroup']='Administrative group';
+$string['update']='Update';

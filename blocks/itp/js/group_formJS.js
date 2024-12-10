@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     boremove.classList.remove('btn-secondary');
     boremove.classList.add('btn-danger');
 
+    let boedit=document.querySelector('#id_boedit');
+
+    boedit.disabled=true;
+
     //Reubicación de botones
     let buttonContainer=document.querySelector('#button_container');
     let boaddnewdiv=document.querySelector("#fitem_id_bosubmit>div:nth-child(2)");
@@ -20,12 +24,15 @@ document.addEventListener('DOMContentLoaded',()=>{
     boremovediv.classList.add('ml-1');
     let boContainer=document.createElement('div');
     boContainer.appendChild(boaddnewdiv);
+    boContainer.appendChild(boedit);
     boContainer.appendChild(boremovediv);
     buttonContainer.appendChild(boContainer);
     boContainer.classList.add('flex','row');
     let old_addButton_layer=document.querySelector('#fitem_id_bosubmit');
+    let old_editButton_layer=document.querySelector('#fitem_id_boedit');
     let old_removeButton_layer=document.querySelector('#fitem_id_boremove');
     old_addButton_layer.remove();
+    old_editButton_layer.remove();
     old_removeButton_layer.remove();
 
     //Reubicando error message
@@ -35,6 +42,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     const groupListSel=document.querySelector('#id_tegrouplist');
     groupListSel.classList.add('pr-2');
+    
 
     let checkbox=document.getElementById('id_hiddengroup'); 
     let ifhidden=0;
@@ -46,6 +54,16 @@ document.addEventListener('DOMContentLoaded',()=>{
             ifhidden=0;
         }
     });
+
+    groupListSel.addEventListener('click',(e)=>{
+        const value=e.target.value;
+        const text=e.target.text;
+        const hiddenoption=e.target.dataset.hidden;
+        boedit.disabled=false;
+        handleGroupEdition(value,text,hiddenoption);
+    });
+
+    
 
     
     //Token
@@ -69,10 +87,28 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
 
     //Se define el comportamiento de Remove
+    boedit.addEventListener('click',(e)=>{
+        updateGroup(token);
+    })
+
+    //Se define el comportamiento de Remove
     boremove.addEventListener('click',(e)=>{
         removeGroup(token);
     })
 });
+
+const handleGroupEdition=(value,text,hiddenoption)=>{
+    const checkbox=document.getElementById('id_hiddengroup'); 
+    const tegroup=document.getElementById('id_tegroup'); 
+    
+    if (parseInt(hiddenoption)===1){
+        checkbox.checked=true;
+    } else {
+        checkbox.checked=false;
+    }
+
+    tegroup.value=text;
+}
 
 const removeGroup=(token)=>{
     const groupListSel=document.querySelector('#id_tegrouplist');
@@ -107,6 +143,61 @@ const createGroup=(ifhidden,token)=>{
         showMessage(errMsg,msg);
         grouptrainee.focus();
 
+    }
+}
+
+const updateGroup=(token)=>{
+    let xhr= new XMLHttpRequest();
+    const checkbox=document.getElementById('id_hiddengroup'); 
+    const tegroup=document.getElementById('id_tegroup'); 
+    const grouplist=document.getElementById('id_tegrouplist');
+
+    const formData = new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'block_itp_edit_group');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[0][groupid]',parseInt(grouplist.value));
+    formData.append('params[0][groupname]',tegroup.value);
+    formData.append('params[0][ifhidden]',(checkbox.checked)?1:0);
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        reqHandlerUpdateGroup(xhr);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const reqHandlerUpdateGroup=(xhr)=>{
+    if (xhr.readyState=== 4 && xhr. status === 200){
+        if (xhr.response){
+            const response=JSON.parse(xhr.response);
+            if (!response.result){
+                const errMsg=document.querySelector('#error-message');
+                const msg="No group selected. Please, select a group";
+                showMessage(errMsg,msg);
+            } else {
+                const groupListSel=document.querySelector('#id_tegrouplist');
+                const selectedOption = groupListSel.options[groupListSel.selectedIndex];
+                
+                // Actualizar el texto del elemento seleccionado
+                selectedOption.text = response.groupname;
+
+                // Actualizar la propiedad hidden del elemento seleccionado
+                selectedOption.dataset.hidden = (response.ifhidden === 1)?1:0;
+
+                if (response.ifhidden===1){
+                    selectedOption.classList.add('bg-warning');
+                } else {
+                    selectedOption.classList.remove('bg-warning');
+                }
+                
+            }
+        }
     }
 }
 
