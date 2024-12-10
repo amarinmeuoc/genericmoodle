@@ -40,9 +40,6 @@ class get_list_trainees extends \core_external\external_api {
         $groupid = $request['params'][0]['groupid'];
         $customerid = $request['params'][0]['customerid'];
         $role = $request['params'][0]['role'];
-        
-
-        
     
         // Security checks
         $context = \context_system::instance();
@@ -67,6 +64,7 @@ class get_list_trainees extends \core_external\external_api {
                 FROM mdl_user AS u
                 INNER JOIN mdl_user_info_data AS ui ON ui.userid=u.id
                 INNER JOIN mdl_user_info_field AS uf ON uf.id=ui.fieldid
+                WHERE u.suspended=0
                 GROUP by username,firstname, lastname
                 HAVING role_name=:role_name AND customer=:customer AND groupname=:groupname',['role_name'=>$role,'customer'=>$customer, 'groupname'=>$groupname]);
                 $trainee_list=array_values($trainee_query);

@@ -13,7 +13,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     selvessel.addEventListener('change',(e)=>{
       customerid=selproject.options[selproject.selectedIndex].value;
       vesselid=e.target.options[e.target.selectedIndex].value;
-      role=(vesselid==="0")?"observer":"student";
+      
+        let role='student'
+        if (e.target.options[e.target.selectedIndex].textContent==='PCO'){
+          role='observer';
+        } else if (e.target.options[e.target.selectedIndex].textContent==='UTE'){
+          role='controller';
+        }
       
       
       updateListofUsers(customerid, vesselid, role, token);
@@ -85,6 +91,7 @@ const updateListofUsers=(customerid, vesselid, role, token)=>{
     formData.append('params[0][groupid]',vesselid);
   
 
+
     xhr.open('POST',url,true);
     xhr.send(formData);
 
@@ -100,6 +107,7 @@ const updateListofUsers=(customerid, vesselid, role, token)=>{
 const reqHandlerGetListTrainees=(xhr)=>{
   if (xhr.response){
     const response=JSON.parse(xhr.response);
+    window.console.log(response);
     const selUserlist=document.querySelector('#id_userlist');
     if (response){
       selUserlist.innerHTML='';

@@ -68,6 +68,7 @@ class uploadFamilyform extends \moodleform {
         FROM mdl_user AS u
         INNER JOIN mdl_user_info_data AS ui ON ui.userid=u.id
         INNER JOIN mdl_user_info_field AS uf ON uf.id=ui.fieldid
+        WHERE u.suspended=0
         GROUP by username,firstname, lastname
         HAVING role_name=:role_name AND customer=:customer AND groupname=:groupname',['role_name'=>$role,'customer'=>$customer, 'groupname'=>$selected_groupname]);
         $trainee_list=array_values($trainee_query);
