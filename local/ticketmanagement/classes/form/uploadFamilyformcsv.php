@@ -39,12 +39,31 @@ class uploadFamilyformcsv extends \moodleform {
     // Custom validation should be added here.
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
-        // Ejemplo: Validación personalizada para el archivo CSV
-        if (!isset($files['familycsv'])) {
+    
+        // Validate that a file was uploaded
+        if (empty($data['familycsv'])) {
             $errors['familycsv'] = 'Por favor, suba un archivo CSV válido.';
+        } else {
+            global $USER;
+    
+            // Check if the uploaded file is accessible
+            $draftitemid = $data['familycsv']; // Get the draft item ID
+            $context = \context_user::instance($USER->id);
+            $fs = get_file_storage();
+            $uploaded_files = $fs->get_area_files($context->id, 'user', 'draft', $draftitemid, 'id', false);
+    
+            if (empty($uploaded_files)) {
+                $errors['familycsv'] = 'No se pudo acceder al archivo subido. Intente nuevamente.';
+            } else {
+                // Perform additional validation if needed (e.g., file type, format)
+                $file = reset($uploaded_files);
+                if ($file->get_mimetype() !== 'text/csv') {
+                    $errors['familycsv'] = 'El archivo debe ser un CSV válido.';
+                }
+            }
         }
-        
+    
         return $errors;
     }
+    
 }
