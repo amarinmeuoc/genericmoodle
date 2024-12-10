@@ -1,8 +1,9 @@
 .action {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: nowrap;
     border-bottom: thin #8f959e solid;
+    align-items: center;
 }
 
 .qheader {
@@ -117,4 +118,10 @@ tr:nth-of-type(even).yellow {
 .p-5 {
     padding: 2rem !important;
     text-align: center;
+}
+
+h2, .navantia {
+    background-color: #0f6cbf;
+    color:white;
+    padding: .3em;
 }

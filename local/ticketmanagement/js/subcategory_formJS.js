@@ -276,7 +276,7 @@ const getSubcategories=(xhr)=>{
         if (xhr.response){
             const response=JSON.parse(xhr.response);
             if (response){
-                window.console.log(response);
+                
                 const selectText=document.querySelector('#id_subcategorySelect');
                 selectText.options.length=0;
 

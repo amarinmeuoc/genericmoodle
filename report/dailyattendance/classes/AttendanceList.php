@@ -90,6 +90,13 @@ class AttendanceList {
 
     private function setDailyAttendance($billid=null){
         global $DB;
+
+        // Verifica si la tabla mdl_attendance existe
+        if (!$DB->get_manager()->table_exists('attendance')) {
+            // Si la tabla no existe, termina el método
+            throw new \moodle_exception('La tabla de asistencia no existe en la base de datos. Por favor, instala el plugin attendance para poder consultar la asistenca diaria.');
+        }
+
         $customershortcode=$this->get_customershortcode();
         
         

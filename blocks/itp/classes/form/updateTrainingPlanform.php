@@ -40,7 +40,7 @@ class updateTrainingPlanform extends \moodleform {
             
         }
         
-        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$selected_customer],'','id,name');
+        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$selected_customer,'hidden'=>0],'','id,name');
         foreach ($list_of_groups as $key=>$group){
             $list_of_groups[$key]=$group->name;
         }
@@ -78,7 +78,7 @@ class updateTrainingPlanform extends \moodleform {
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
+                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
         $token=$token->token;
 
         $mform->addElement('hidden', 'token', $token);

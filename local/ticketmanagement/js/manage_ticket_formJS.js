@@ -13,7 +13,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     selvessel.addEventListener('change',(e)=>{
       customerid=selproject.options[selproject.selectedIndex].value;
       vesselid=e.target.options[e.target.selectedIndex].value;
-      role=(vesselid==="0")?"observer":"student";
+      let role='student'
+      if (e.target.options[e.target.selectedIndex].textContent==='PCO'){
+        role='observer';
+      } else if (e.target.options[e.target.selectedIndex].textContent==='UTE'){
+        role='controller';
+      }
+      
           
       
       
@@ -67,9 +73,15 @@ const reqHandlerLoadFamilyMembers=(xhr)=>{
       const response=JSON.parse(xhr.response);
       if (response.listadoFamily){
         const listadoFamily=response.listadoFamily;
+        
         const selFamily=document.querySelector('#id_familiar');
-        selFamily.innerHTML="";
         let optionsHTML="";
+        if (listadoFamily.length>0){
+          selFamily.innerHTML="";
+        } else {
+          optionsHTML=`<option value="0">No family registered for this user</option>`;
+        }
+        
         listadoFamily.forEach(elem=>{
           optionsHTML += `<option value="${elem.id}">${elem.name}, ${elem.lastname}</option>`;
         });

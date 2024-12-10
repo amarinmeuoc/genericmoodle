@@ -85,9 +85,7 @@ class block_itp extends block_base {
         
         
         
-        $this->page->requires->css(new moodle_url('/blocks/itp/css/styles.scss'));
-       
-
+        $this->page->requires->css(new moodle_url('/blocks/itp/css/styles.css'));
 
         $this->content = new stdClass();
         $this->content->footer = '';

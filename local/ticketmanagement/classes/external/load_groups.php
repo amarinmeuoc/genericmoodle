@@ -40,7 +40,7 @@ class load_groups extends \core_external\external_api {
 
          //Se listan todos los grupos del cliente seleccionado
          $result=$DB->get_records('grouptrainee', ['customer'=>$customerid], 'id ASC', 'id,name');
-         $result=[(object)['id'=>0,'name'=>'PCO']]+$result;
+         
         return $result;
     }
 

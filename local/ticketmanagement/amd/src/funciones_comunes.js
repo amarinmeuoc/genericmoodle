@@ -227,7 +227,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                   const response=JSON.parse(xhr.response);
                   response.pages=this.truncateArrayWithActiveMiddle(response.pages,8);
                   this.loadTemplateFromResponse(response);
-                  window.console.log(response);
+                  
               }
             }
         },
@@ -327,7 +327,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
             e.stopPropagation();
             const ticketId=e.target.textContent.trim();
             const formpopup=(role==='controller')?"TicketFormPopup":"TicketFormPopupStudent";
-            window.console.log(role);
+            
             const modalForm=new ModalForm({
                 formClass: `\\local_ticketmanagement\\form\\${formpopup}`,
                 args: {num_ticket: ticketId},
@@ -339,7 +339,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                 //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
                 const formElement=e.target;
                 const subcategoryValue = formElement.querySelector('select[name="subcategory"]')?.value;
-                window.console.log(e.detail); 
+                
                 //Se captura el valor subcategory porque como campo de formulario aparece la categoria, pero no la subcategoria
                 if (subcategoryValue) {
                     e.detail.subcategory = subcategoryValue;
@@ -372,7 +372,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                         // Añadir un listener para cuando cambie la categoría seleccionada
                         categorySelect.addEventListener('change', (event) => {
                             const selectedCategory = event.target.value;
-                            window.console.log(`Categoría seleccionada: ${selectedCategory}`);
+                           
                             eventoCat=event.target.selectedOptions[0].text;
                             
                             // Lógica para actualizar las opciones del selector de subcategorías
@@ -450,7 +450,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                     const response=JSON.parse(xhr.response);
                     
                     if (response){
-                    window.console.log(response.ticket);
+                    
                     const ticket=response.ticket;
                     this.updateTemplate(ticket);
                     }
@@ -464,7 +464,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
             const priority = fila.querySelector('td:nth-child(8)');
             state.textContent=ticket.state;
             priority.textContent=ticket.priority;
-            window.console.log("edicion...");
+            
             if (ticket.state==='Closed' || ticket.state==='Cancelled'){
                 fila.classList.add("cerrado");
                 const boAssigment=fila.querySelector('.assignbtn');
@@ -550,7 +550,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
             if (xhr.readyState=== 4 && xhr. status === 200){
                 if (xhr.response){
                     const response=JSON.parse(xhr.response);
-                    window.console.log(response);
+                    
                     addToast.add(`Now user attached to the ticket: ${response.ticket.ticketid} is ${response.ticket.communication === true ? 'allowed' : 'not allowed'} to update messages in the ticket.`);
 
                     
@@ -567,7 +567,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                     else
                         this.showTicketActionsWithFeedback(response.result)
         
-                    window.console.log(response);
+                    
                 }
             }
         },
@@ -582,13 +582,15 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                         <tr>
                             <th>Date</th>
                             <th>Task</th>
-                            <th>Done by</th>
+                            <th>Assigned to</th>
                         </tr>
                     </thead>
                     <tbody>
                         ` + 
                         response.map(action => {
-                            
+                            if (action.user.match(/webservice/gi)){
+                                action.user='Waiting for a controller'
+                            }
                             return `
                                 <tr>
                                     <td>${action.dateaction}</td>
@@ -609,7 +611,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                 body: modalContent,
                 size: 'modal-xl'
             }).then(modal => {
-                window.console.log(modal);
+                
                 // Manejar el clic en Aceptar
                 modal.getRoot()[0].querySelector('[data-action="confirm"]').onclick = function() {
                     

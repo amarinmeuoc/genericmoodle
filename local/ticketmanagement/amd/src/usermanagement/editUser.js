@@ -32,7 +32,7 @@ define([
             //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
             const formElement=e.target;
             //Se actualiza
-            window.console.log(e.detail);
+            
             updateUser(e.detail);
     
         });

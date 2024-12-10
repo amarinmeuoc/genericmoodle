@@ -40,7 +40,6 @@ public function definition() {
         $vessel_arr[$value->id]=$value->name;
     }
 
-    $vessel_arr=[0=>'PCO']+$vessel_arr;
     $keys=array_keys($vessel_arr);
     if (isset($keys[0]))
         $firstvesselid=$keys[0];
@@ -139,10 +138,19 @@ public function definition() {
     }
 
     // Add the second select box (initially hidden)
-    $mform->addElement('select', 'familiar', 'Select an option:', $family_arr);
+    $mform->addElement('select', 'familiar', 'Select an option:', (count($family_arr)===0)?['No family registered for this user']:$family_arr);
 
     // Use hideIf() to hide the second select box if the first select box is not "Yes"
     $mform->hideIf('familiar', 'familyissue', 'eq', 'no');
+
+    // Add the second select box (initially hidden)
+    $mform->addElement('select', 'assigment', get_string('assigment', 'local_ticketmanagement'),  ['yes'=>'Yes','no'=>'No']);
+
+    $mform->addElement('text',  'field_name',  'Write a key-word to refer the ticket: ');
+    $mform->settype('field_name',PARAM_TEXT);
+
+    // Use hideIf() to hide the second select box if the first select box is not "Yes"
+    $mform->hideIf('field_name', 'assigment', 'eq', 'yes');
 
     
     $mform->addElement('editor', 'description', get_string('editortext', 'local_ticketmanagement'));

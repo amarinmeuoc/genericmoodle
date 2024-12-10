@@ -40,7 +40,7 @@ $attendance_status->present=true;
 $attendance_status->absent=false;
 $attendance_status->late=false;
 $attendance_status->excused=false;
-
+$totalPages=0;
 
 $d=date('Y-m-d',time());
 
@@ -101,7 +101,7 @@ $userSessionId=\core\session\manager::get_login_token();
 
 $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
+                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
    
 
 echo $OUTPUT->header();
@@ -171,7 +171,7 @@ function get_customer_list($customerid=null){
 
 function get_group_list($customerid){
     global $DB;
-    $group_list=$DB->get_records('grouptrainee',['customer'=>$customerid], 'name ASC', 'id, name');
+    $group_list=$DB->get_records('grouptrainee',['customer'=>$customerid, 'hidden'=>0], 'name ASC', 'id, name');
     $group_list=array_values($group_list);
     return $group_list;
 }

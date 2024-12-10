@@ -29,7 +29,7 @@ export const init =() => {
         Notification.addNotification({message:'Error: No trainee selected. Please select an availabe trainee.',type:'error'});
         return;
     } else {
-        window.console.log('loading...');
+        
         loadFamiliyfromUserId(selectedUser,gestorid,token,url);
     }
 }
@@ -63,7 +63,7 @@ const reqHandlerLoadFamilyMembers=(xhr)=>{
         if (xhr.response) {
             const response = JSON.parse(xhr.response);
             loadFamiliyTemplate(response);
-            window.console.log(response);
+           
         }
     }
 }
@@ -132,7 +132,7 @@ function showRemoveFamilyPopup(id) {
         body: modalContent,
         size: 'modal-md'
     }).then(modal => {
-        window.console.log(modal);
+        
         // Manejar el clic en Aceptar
         modal.getRoot()[0].querySelector('[data-action="confirm"]').onclick = function() {
             removeFamilyMember(id); // Llama a la función para eliminar el miembro
@@ -242,7 +242,7 @@ const reqHandlerEditFamiliar=(xhr)=>{
         if (xhr.response) {
             const response = JSON.parse(xhr.response);
             if (response) {
-                window.console.log(response);
+                
                 editFamiliarToTemplate(response);
             }
         }

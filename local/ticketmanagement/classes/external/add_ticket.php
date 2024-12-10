@@ -7,6 +7,8 @@ use \core_external\external_multiple_structure as external_multiple_structure;
 use \core_external\external_single_structure as external_single_structure;
 use \core_external\external_value as external_value;
 
+
+
 require_once($CFG->libdir . '/filelib.php');
 
 
@@ -26,6 +28,8 @@ class add_ticket extends \core_external\external_api {
                    'description' => new external_value(PARAM_RAW, 'ID del aprendiz'),
                    'familiarid' => new external_value(PARAM_INT, 'ID del familiar o aprendiz (si no hay issue familiar)'),
                    'gestorid' => new external_value(PARAM_INT, 'Ticket made by...'),
+                   'label_field' => new external_value(PARAM_TEXT, 'label to refer the ticket', VALUE_OPTIONAL)
+
                 ])
             ) 
         ]);
@@ -46,11 +50,18 @@ class add_ticket extends \core_external\external_api {
         $ticket=$request['params'][0];
         $userid=$ticket['traineeid'];
         $userCreatedTicket=$ticket['gestorid'];
+        $label_field = $ticket['label_field'] ?? '';  // Si no se pasa, se asigna una cadena vacía
 
+        
         $madeby=$DB->get_record('user', ['id'=>$userCreatedTicket], 'firstname,lastname');
 
         //Nombre y apellidos del usuario afectado
-        $affectedUser=$DB->get_record('user', ['id'=>$userid], 'id,username,firstname,lastname');
+        if ($label_field==='' || !$label_field){
+            $affectedUser=$DB->get_record('user', ['id'=>$userid], 'id,username,firstname,lastname');
+        } else {
+            $affectedUser=$DB->get_record('user', ['username'=>'logisticwebservice'],'id,username,firstname,lastname');
+        }
+        
         
         if ($affectedUser) {
             \profile_load_custom_fields($affectedUser);
@@ -60,10 +71,14 @@ class add_ticket extends \core_external\external_api {
         } else {
             throw new \invalid_parameter_exception("El usuario con ID $userid no existe.");
         }
+        if ($label_field==='' || !$label_field){
+            $customer=($customer==='')?'NONE':$customer;
+        } else {
+            $customer=strtoupper($label_field);
+        }
         
-
+        $vessel=($vessel==='')?'XX':$vessel;
         
-
         $year = date("Y");
         $last_ticket = $DB->get_record_sql("
             SELECT SUBSTRING_INDEX(MAX(id), '-', -1) as lastid 
@@ -87,21 +102,22 @@ class add_ticket extends \core_external\external_api {
         $record->description = $ticket['description'];
         $record->state = $ticket['state'];
         $record->priority = $ticket['priority'];
-        $record->userid = $ticket['traineeid']; //ID del usuario afectado 
+        $record->userid = $affectedUser->id; //ID del usuario afectado 
         $record->familiarid = $ticket['familiarid']; //ID del familiar, sino el usuario que hace el ticket
         $record->assigned=$USER->id; //ID del usuario que lleva el ticket, sino el del operador que lo crea
+        $record->label_field=$label_field;
         
         $record->lastupdate = time();
 
        
-
+        
         
         // Insertar el nuevo ticket en una tabla personalizada
         
-        $DB->execute("INSERT INTO {ticket} (id, subcategoryid, dateticket, description, state, priority, userid, familiarid, assigned, lastupdate)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+        $DB->execute("INSERT INTO {ticket} (id, subcategoryid, dateticket, description, state, priority, userid, familiarid, assigned, label_field, lastupdate)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
               array($next_id, $record->subcategoryid, $record->dateticket, $record->description, $record->state, $record->priority, 
-                    $record->userid, $record->familiarid, $record->assigned, $record->lastupdate));
+                    $record->userid, $record->familiarid, $record->assigned, $record->label_field, $record->lastupdate));
 
         $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid)
                 VALUES (?,?,?,?)",
@@ -109,11 +125,15 @@ class add_ticket extends \core_external\external_api {
 
         //Borramos etiquetas HTML
         $record->description=strip_tags($record->description);
-
-        $record->familyissue=($record->userid!==$record->familiarid)?'Yes':'No';
-
-        $record->username="$affectedUser->firstname, $affectedUser->lastname";
-
+        
+        $record->familyissue=(intval($record->userid)!==intval($record->familiarid))?'Yes':'No';
+        
+        if ($label_field==='' || !$label_field){
+            $record->username="$affectedUser->firstname, $affectedUser->lastname";
+        }else {
+            $record->username="no user attached";
+        }
+        
         
         //Send email ticket created
         

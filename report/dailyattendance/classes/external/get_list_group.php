@@ -33,7 +33,7 @@ class Get_List_Group extends \core_external\external_api {
         
         $customerid=$request['params'][0]['customerid'];
 
-        $group_list=$DB->get_records('grouptrainee',['customer'=>$customerid],'id,name');
+        $group_list=$DB->get_records('grouptrainee',['customer'=>$customerid, 'hidden'=>0],'id,name');
         $group_list=array_values($group_list);
         
         $transaction =$DB->start_delegated_transaction();

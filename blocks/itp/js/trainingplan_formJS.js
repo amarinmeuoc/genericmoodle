@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     const boremove_container=document.querySelector('#button_container');
     boremove_container.classList.remove('flex');
     boremove_container.classList.add('flex-row-reverse');
-    document.querySelector('#error-message').style.display='none';
-
+document.querySelector('#error-message').style.display='none';
     //Token
     let token=document.querySelector('input[name="token"]').value;
 

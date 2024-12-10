@@ -68,7 +68,7 @@ public function definition() {
     }
 
     // Add the second select box (initially hidden)
-    $mform->addElement('select', 'familiar', 'Select an option:', $family_arr);
+    $mform->addElement('select', 'familiar', 'Select an option:', (count($family_arr)===0)?['No family registered for this user']:$family_arr);
 
     // Use hideIf() to hide the second select box if the first select box is not "Yes"
     $mform->hideIf('familiar', 'familyissue', 'eq', 'no');

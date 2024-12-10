@@ -132,6 +132,7 @@ class get_tickets_excel extends \core_external\external_api {
                 'state' => $ticket->state,
                 'description' => strip_tags($ticket->description), // Eliminamos etiquetas HTML
                 'priority' => empty($ticket->priority) ? 'Low' : $ticket->priority,
+                'label' => $ticket->label_field,
                 'assigned' => ($userincharge->username==='logisticwebservice')?'Waiting to be assigned':"$userincharge->firstname, $userincharge->lastname",
             ];
         }
@@ -167,6 +168,7 @@ class get_tickets_excel extends \core_external\external_api {
                             'state' => new external_value(PARAM_TEXT, 'Open/Assigned/Cancelled/Closed'),
                             'description' => new external_value(PARAM_TEXT, 'Descripción del problema'),
                             'priority' => new external_value(PARAM_TEXT, 'High/Medium/Low'),
+                            'label' => new external_value(PARAM_TEXT, ' etiqueta/usuario ficticio'),
                             'assigned' => new external_value(PARAM_TEXT, ' usuario asignado'),
                             
                         )

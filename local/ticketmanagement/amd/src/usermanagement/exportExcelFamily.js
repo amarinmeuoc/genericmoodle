@@ -116,7 +116,7 @@ const onLoadFunction=(myXhr)=>{
    
     if (myXhr.readyState===4 && myXhr.status===200){
         const res=JSON.parse(myXhr.response);
-        window.console.log(res);
+        
         createExcelFromJSON(res,'familyReport');
         
     }

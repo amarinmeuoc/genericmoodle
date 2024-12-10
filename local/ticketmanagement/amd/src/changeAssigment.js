@@ -10,7 +10,7 @@ export const init =() => {
     document.querySelectorAll("tr.cerrado .assignbtn").forEach(link => {
         // Añadir un manejador de eventos para el clic que evita que el evento se propague
         link.addEventListener("click", (event) => {
-            window.console.log("changeAssigment");
+            
             event.stopPropagation(); // Detener la propagación del evento
             event.preventDefault();  // Prevenir cualquier acción predeterminada
         });
@@ -49,7 +49,7 @@ const showAssigmentFormPopup=(e)=>{
         //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
         
         const ticket=e.detail.ticket;
-        window.console.log("done");
+        
         const tr=document.querySelector(`td a.assignbtn[data-ticketid="${ticket.id}"]`).closest('tr'); 
         //Se borra la clase amarillo, ya que se asigna un gestor
         tr.classList.remove('yellow');

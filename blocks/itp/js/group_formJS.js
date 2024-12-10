@@ -31,11 +31,23 @@ document.addEventListener('DOMContentLoaded',()=>{
     //Reubicando error message
     let errorlayer=document.querySelector('#error-message');
     buttonContainer.parentNode.insertBefore(errorlayer, buttonContainer.nextSibling);
-    document.querySelector('#error-message').style.display='none';
+    errorlayer.style.display='none';
 
     const groupListSel=document.querySelector('#id_tegrouplist');
     groupListSel.classList.add('pr-2');
 
+    let checkbox=document.getElementById('id_hiddengroup'); 
+    let ifhidden=0;
+
+    checkbox.addEventListener('change', function() {
+        if (checkbox.checked) {
+            ifhidden=checkbox.value;
+        } else {
+            ifhidden=0;
+        }
+    });
+
+    
     //Token
     let token=document.querySelector('input[name="token"]').value;
     
@@ -53,7 +65,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     //Se define comportamiento ADD NEW
     boaddnew.addEventListener('click',(e)=>{
-        createGroup(token);        
+        createGroup(ifhidden,token);        
     })
 
     //Se define el comportamiento de Remove
@@ -75,13 +87,18 @@ const removeGroup=(token)=>{
     }
 }
 
-const createGroup=(token)=>{
-    const grouptrainee=document.querySelector('#id_tegroup');
+const createGroup=(ifhidden,token)=>{
+    const grouptrainee=document.querySelector('#id_tegroup'); 
     const groupValue=grouptrainee.value.trim();
     const selectedCustomer= document.querySelector('#id_tecustomer').value;
     const errMsg=document.querySelector('#error-message');
+    //Si el grupo es administrativo o no.
+    
+    
+
+    
     if (selectedCustomer && groupValue)
-        createGroupInSelectedCustomer(selectedCustomer,groupValue,token,url);
+        createGroupInSelectedCustomer(ifhidden,selectedCustomer,groupValue,token,url);
     else if (selectedCustomer==='') { 
         const msg="Error: No proyect selected.";
         showMessage(errMsg,msg);
@@ -115,7 +132,7 @@ const removeGroupFromSelectedCustomer= (groupid,token,url)=>{
     }
 }
 
-const createGroupInSelectedCustomer = (selectedCustomerid,groupValue,token,url)=>{
+const createGroupInSelectedCustomer = (ifhidden,selectedCustomerid,groupValue,token,url)=>{
     let xhr = new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -125,6 +142,7 @@ const createGroupInSelectedCustomer = (selectedCustomerid,groupValue,token,url)=
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][customerid]',selectedCustomerid);
     formData.append('params[0][groupname]',groupValue);
+    formData.append('params[0][ifhidden]',ifhidden);
     
     xhr.open('POST',url,true);
     xhr.send(formData);
@@ -181,7 +199,8 @@ const reqHandlerCreateGroup=(xhr)=>{
         if (xhr.response){
             const response=JSON.parse(xhr.response);
             const grouptrainee=document.querySelector('#id_tegroup');
-            if (response===0){
+            window.console.log(response);
+            if (response.result===0){
                 const errMsg=document.querySelector('#error-message');
                 const msg="A Vessel must be written. Please, write a vessel";
                 grouptrainee.focus();
@@ -189,11 +208,14 @@ const reqHandlerCreateGroup=(xhr)=>{
                 showMessage(errMsg,msg);
             } else { //suponiendo que todo haya ido bien
                 const groupListSel=document.querySelector('#id_tegrouplist');
-                if (document.querySelector('#id_tegrouplist option').value==='0')
-                    groupListSel.innerHTML='';
-                const option=document.createElement('option');
-                option.text=grouptrainee.value.toUpperCase();
-                option.value=response;
+                if (document.querySelector('#id_tegrouplist option')!==null)
+                    if (document.querySelector('#id_tegrouplist option').value==='0')
+                        groupListSel.innerHTML='';
+                const value=response.result;
+                const text=grouptrainee.value.toUpperCase();
+                const ifhidden=response.ifhidden;
+                const option=createOption(value,text,ifhidden);
+                
                 groupListSel.add(option);
             }
         }
@@ -214,7 +236,7 @@ const reqHandlerChangeListOfGroups=(xhr)=>{
             if (response.length!==0) {
                 // Iterar sobre los datos y crear las opciones
                 response.forEach(item => {
-                    let option = createOption(item.id,item.name);
+                    let option = createOption(item.id,item.name,item.hidden);
                     grouptraineeSel.appendChild(option);
                 });
             } else {
@@ -225,10 +247,14 @@ const reqHandlerChangeListOfGroups=(xhr)=>{
     }
 }
 
-const createOption= (value,text)=>{
+const createOption= (value,text,ifhidden)=>{
     const option = document.createElement('option');
     option.value = value;
     option.text = text;
+    option.dataset.hidden=ifhidden;
+    if (ifhidden==1){
+        option.classList.add('bg-warning');
+    }
     return option;
 }
 

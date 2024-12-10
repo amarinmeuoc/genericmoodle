@@ -42,7 +42,7 @@ define([
           state:selstate,
           gestor:gestorvalue
         }
-        window.console.log("busqueda pulsando boton: search by date");
+       
         funcionesComunes.requestDataToServer(obj, token, url,'controller');
       })
 
@@ -50,7 +50,7 @@ define([
         const newPage=document.querySelector('input[name="page"]');
         newPage.value=1;
         const ticketNumber=document.querySelector('#id_tesearch').value.trim();
-        window.console.log("busqueda pulsando boton: search by ID");
+        
         const orderby = document.querySelector('input[name="orderby"]').value;
         const order = document.querySelector('input[name="order"]').value;
         
@@ -122,7 +122,7 @@ define([
           state:selstate,
           gestor:gestorvalue
         }
-        window.console.log("primera búsqueda");
+        
         //Carga de los datos por defecto
         funcionesComunes.requestDataToServer(obj, token, url,'controller');  
         // Ahora puedes usar 'gestorvalue' en tu lógica
@@ -213,7 +213,7 @@ define([
       if (xhr.response){
           const response=JSON.parse(xhr.response);
           loadTemplateSingleTicketfromResponse(response);
-          window.console.log("response");
+          
       }
     }
     }
@@ -300,7 +300,7 @@ define([
           newPage.value=1;
           const ticketNumber=document.querySelector('#id_tesearch').value.trim();
         
-          window.console.log("puff");
+          
         requestDataToServerbyTicket(1,ticketNumber, parseInt(order), orderby, newPage.value, token.value, url);
         });
       });

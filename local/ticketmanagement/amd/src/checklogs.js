@@ -38,7 +38,7 @@ define([
             // Get the button after the modal is fully loaded
             // Get the modal element after it is loaded
             const formElement=e.target;
-    
+     
             funcionesComunes.areElementsLoaded('button[name="boExcel"],input[name="description"],input[name="state"]', formElement).then((elements) => {
                 const state=formElement.querySelector('input[name="state"]').value;
 
@@ -122,7 +122,7 @@ define([
             const res=JSON.parse(myXhr.response);
             
             createExcelFromJSON(res.result,'logsReport');
-            window.console.log(res);
+            
             
         }
     }
@@ -194,9 +194,6 @@ define([
             partesHora[1] // Minutos
         );
         return fecha;
-        
-    
-        return date;
     };
 
     return {

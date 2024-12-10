@@ -123,7 +123,7 @@ const reqHandlerGetUsers=(xhr)=>{
   if (xhr.readyState=== 4 && xhr. status === 200){
     if (xhr.response){
         const response=JSON.parse(xhr.response);
-        window.console.log(response);
+       
         loadTemplateFromResponse(response);
     }
   }

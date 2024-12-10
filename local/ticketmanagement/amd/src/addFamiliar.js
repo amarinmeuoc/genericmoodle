@@ -83,7 +83,7 @@ const reqHandlerAddFamiliar=(xhr)=>{
         if (xhr.response) {
             const response = JSON.parse(xhr.response);
             if (response) {
-                window.console.log(response);
+               
                 addFamiliarToTemplate(response);
             }
         }
@@ -142,7 +142,7 @@ const addFamiliarToTemplate=(response)=>{
         body: modalContent,
         size: 'modal-md'
     }).then(modal => {
-        window.console.log(modal);
+        
         // Manejar el clic en Aceptar
         modal.getRoot()[0].querySelector('[data-action="confirm"]').onclick = function() {
             removeFamilyMember(id); // Llama a la función para eliminar el miembro
@@ -254,7 +254,7 @@ const reqHandlerEditFamiliar=(xhr)=>{
         if (xhr.response) {
             const response = JSON.parse(xhr.response);
             if (response) {
-                window.console.log(response);
+                
                 editFamiliarToTemplate(response);
             }
         }

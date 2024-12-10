@@ -60,7 +60,7 @@ profile_load_custom_fields($USER);
 
 // Acceder al valor del campo personalizado role
 $role = $USER->profile['role'];
-
+$toform='';
 
 if (preg_match('/(controller|manager)/i', $role)) {
     $mform= new \report_coursereport\form\form_con();

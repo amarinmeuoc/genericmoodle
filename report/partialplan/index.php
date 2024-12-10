@@ -57,7 +57,7 @@ profile_load_custom_fields($USER);
 // Acceder al valor del campo personalizado role
 $role = $USER->profile['role'];
 
-
+$toform='';
 if (preg_match('/(controller|manager|logistic)/i', $role)) {
     $mform= new \report_partialplan\form\Controller_Form();
     $PAGE->requires->js_call_amd('report_partialplan/init_con', 'init');

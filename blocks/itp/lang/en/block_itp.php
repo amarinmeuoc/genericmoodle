@@ -98,3 +98,4 @@ $string['grouped']='Grouped by course';
 $string['ungrouped']='Detailed view';
 $string['filtrar']='Search';
 $string['selCustomer']='Project';
+$string['hiddengroup']='Administrative group';

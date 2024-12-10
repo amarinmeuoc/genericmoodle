@@ -60,6 +60,7 @@
  echo $OUTPUT->header();
 
  echo $OUTPUT->heading(get_string('uploadITP', 'block_itp'));
+
  $toform='';
 
  // Form processing and displaying is done here.
@@ -156,12 +157,13 @@ if ($mform->is_cancelled()) {
                 $cont++;
             }
 
+		// Se rectifica esta linea porque por algun motivo la expresion $data['customer'] siempre devuelve null
             // Verificar si `customerid` no es nulo o no coincide con el cliente seleccionado.
-            if (empty($data['customer']) || $data['customer']!==$customerid) {
+            if (empty($data[key($data)]) || $data[key($data)]!==$customerid) {
                 $cont++;
                 continue;
             }
-            
+          
             // Verificar si el grupo existe o no es nulo
             if (empty($data['group']) || !grupoExiste($customerid,$data['group'])) {
                 $params[]=array(
@@ -210,7 +212,7 @@ if ($mform->is_cancelled()) {
 
             // Mapear los datos del csv a los campos de la base de datos
             $record = new stdClass();
-            $record->customerid = $data['customer'];
+            $record->customerid = $data[key($data)];
             $record->groupid = $data['group'];
             $record->billid = $data['billid'];
             $record->email = $data['email'];

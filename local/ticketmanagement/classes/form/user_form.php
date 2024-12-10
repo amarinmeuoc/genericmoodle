@@ -42,7 +42,6 @@ public function definition() {
         $vessel_arr[$value->id]=$value->name;
     }
     
-    $vessel_arr=[0=>'PCO']+$vessel_arr; 
     
    
     $mform->addElement('select', 'vessel', get_string('selectvessel', 'local_ticketmanagement'),$vessel_arr);

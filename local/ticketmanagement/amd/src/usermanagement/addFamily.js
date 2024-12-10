@@ -85,7 +85,7 @@ define([
             //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
             const formElement=e.target;
             //Se actualiza
-            window.console.log(e.detail);
+            
             
     
         });
@@ -112,7 +112,7 @@ define([
 
                     boviewfamiliar.forEach((boviewfamily)=>{
                         boviewfamily.addEventListener('click',(e)=>{
-                            window.console.log(e.target.dataset.id);
+                            
                             
                             showViewFamilyFormPopup(e);
                         })
@@ -153,7 +153,7 @@ define([
                 if (xhr.response) {
                     const response = JSON.parse(xhr.response);
                     if (response) {
-                        window.console.log(response);
+                        
                         //editFamiliarToTemplate(response);
                     }
                 }

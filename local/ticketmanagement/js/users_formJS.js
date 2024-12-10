@@ -13,7 +13,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     selvessel.addEventListener('change',(e)=>{
       customerid=selproject.options[selproject.selectedIndex].value;
       vesselid=e.target.options[e.target.selectedIndex].value;
-      const role=(vesselid==="0")?"observer":"student";
+      let role='student'
+      if (e.target.options[e.target.selectedIndex].textContent==='PCO'){
+        role='observer';
+      } else if (e.target.options[e.target.selectedIndex].textContent==='UTE'){
+        role='controller';
+      }
       
     });
 

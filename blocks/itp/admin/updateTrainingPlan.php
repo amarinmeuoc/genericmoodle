@@ -60,6 +60,7 @@
  echo $OUTPUT->header();
 
  echo $OUTPUT->heading(get_string('updateTrainingPlan', 'block_itp'));
+
  $toform='';
 
  // Form processing and displaying is done here.
@@ -119,6 +120,7 @@ if ($mform->is_cancelled()) {
 
         // Validar el número de columnas
         if (count($line) !== 10) {
+            
             $params[]=array(
                 'type' => 'error',
                 'message' => "Operación cancelada: Formato de archivo erroneo: Utima fila procesada: '$cont'"
@@ -130,6 +132,9 @@ if ($mform->is_cancelled()) {
             $header = $line; // Asume que la primera fila es el encabezado
         } else {
             $data = array_combine($header, $line);
+            
+            //Se eliminan BOM de las claves
+            $data = removeBomKeys($data);
 
             // Convertir $groupid y $data['group'] a enteros
             $groupid = intval($groupid);
@@ -143,12 +148,17 @@ if ($mform->is_cancelled()) {
 
             // Verificar si `customerid` no es nulo o no coincide con el cliente seleccionado.
             if (empty($data['customer']) || $data['customer']!==$customerid) {
+                
+                
+                var_dump($data['customer']);
+            die;
                 $cont++;
                 continue;
             }
 
             // Verificar si el grupo existe o no es nulo
             if (empty($data['group']) || !grupoExiste($customerid,$data['group'])) {
+                
                 $params[]=array(
                     'type' => 'error',
                     'message' => "Operación cancelada: Asegurate de que el campo groupid exista y no sea nulo. Error en linea: {$cont}. Valor del campo: group: {$data['group']}"
@@ -159,6 +169,7 @@ if ($mform->is_cancelled()) {
 
             //Verificar que el campo wbs no sea nulo y mayor que 40 caracteres
             if (empty($data['wbs']) || strlen($data['wbs'])>40) {
+                
                 $params[]=array(
                     'type' => 'error',
                     'message' => "Operación cancelada: Asegurate de que el campo wbs no sea nulo y tenga menos de 40 caracteres. Error en linea: {$cont}. Valor del campo: wbs: {$data['wbs']}"
@@ -172,6 +183,7 @@ if ($mform->is_cancelled()) {
             $enddate = \DateTime::createFromFormat('d/m/Y', $data['enddate']);
 
             if ($startdate === false || $enddate === false) {
+                
                 // Manejar el error de fecha aquí, como omitir la línea o lanzar una excepción
                 $params[]=array(
                     'type' => 'error',
@@ -242,3 +254,13 @@ if ($type=='ok'){
     $result=$DB->record_exists('grouptrainee', ['customer'=>$customerid, 'id'=>$groupid]);
     return $result;
  }
+
+ function removeBomKeys(array $data): array {
+    $cleanData = [];
+    foreach ($data as $key => $value) {
+        // Eliminar el BOM de la clave
+        $cleanKey = preg_replace('/^\xEF\xBB\xBF/', '', $key);
+        $cleanData[$cleanKey] = $value;
+    }
+    return $cleanData;
+}

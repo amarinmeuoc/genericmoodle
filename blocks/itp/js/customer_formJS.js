@@ -24,8 +24,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     let divAfterboRemove=document.querySelector("#fitem_id_boremove>div:nth-child(1)");
     let divAfterboRemove2=document.querySelector("#fitem_id_boremove>div:nth-child(2)");
     let token=document.querySelector('input[name="token"]').value;
-    document.querySelector('#error-message').style.display='none';
-
+        document.querySelector('#error-message').style.display="none";
     teshortname.classList.add('form-control');
     tename.classList.add('form-control');
     selectContainer.classList.add('mt-3');

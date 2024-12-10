@@ -52,6 +52,7 @@ class Observer_Form extends \moodleform {
         $customerid=$DB->get_field('customer','id',['shortname'=>$customer]);
 
         $mform->addElement('hidden','selcustomer',$customerid);
+        $mform->setType('selcustomer',PARAM_TEXT);
         
 
         $mform->addElement('date_selector', 'assesstimefinish', get_string('dateTo', 'report_partialplan'));
@@ -67,11 +68,12 @@ class Observer_Form extends \moodleform {
 
         //Se añade el input de billid
         $mform->addElement('text','tebillid',get_string('billid','report_partialplan'));
+        $mform->setType('tebillid',PARAM_TEXT); 
         
 
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
+                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
         $token=$token->token;
 
         $mform->addElement('hidden', 'token', $token);
@@ -94,7 +96,7 @@ class Observer_Form extends \moodleform {
 
     private function getGroupFromCustomer($customerid){
         global $DB;
-        $group=$DB->get_records('grouptrainee',['customer'=>$customerid],'name ASC','id,name');
+        $group=$DB->get_records('grouptrainee',['customer'=>$customerid, 'hidden'=>0],'name ASC','id,name');
         foreach ($group as $key => $item) {
             $group[$key]=$item->name;
         }

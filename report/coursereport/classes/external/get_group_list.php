@@ -40,7 +40,7 @@ class get_group_list extends \core_external\external_api {
         // Extract parameters
         $customerid=$request['params'][0]['customerid'];
         
-        $group=$DB->get_records('grouptrainee', ['customer'=>$customerid], '','id,name');
+        $group=$DB->get_records('grouptrainee', ['customer'=>$customerid, 'hidden'=>0], '','id,name');
         $group=array_values($group);
         
         return $group;

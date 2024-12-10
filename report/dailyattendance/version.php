@@ -29,7 +29,7 @@
 
  defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024020801.14;
+$plugin->version = 2024020801.01;
 $plugin->requires = 2023100902.06;
 $plugin->component = 'report_dailyattendance';
 

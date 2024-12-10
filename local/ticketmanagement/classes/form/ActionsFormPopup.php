@@ -61,7 +61,7 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         
 
         profile_load_custom_fields($USER);
-        if (!preg_match('/^(student|observer)$/i', $USER->profile['role'])) {
+        if (preg_match('/^(logistic|manager)$/i', $USER->profile['role'])) {
             $mform->addElement('text','internal','Internal message:');
             $mform->addElement('button', 'boExcel', 'Export to Excel');
         }
@@ -174,7 +174,13 @@ class ActionsFormPopup extends \core_form\dynamic_form {
 
         $mform = $this->_form;
 
+        
         $mform->addElement('html', '<div class="qheader">');
+        $mform->addElement('html','<div class="action">');
+        $mform->addElement('html', '<div class="date"><strong> Date </strong></div>');
+        $mform->addElement('html', '<div class="description"><strong> Description </strong></div>');
+        $mform->addElement('html', '<div class="addby"><strong> Assigned to: </strong></div>');
+        $mform->addElement('html','</div>');
     foreach ($actions as $action) {
         $user=$DB->get_record('user', ['id'=>$action->userid], 'firstname,lastname', IGNORE_MISSING);
         $formatted_date = userdate($action->dateaction, '%d-%m-%Y %H:%M');
@@ -199,9 +205,12 @@ $description .= '</div>';
 
 // Añadir el campo de descripción al formulario
 $mform->addElement('html', $description);
+        
+        if (preg_match('/webservice/i',$user->firstname)){
+            $user->firstname='Waiting for a controller';
+        }
 
-
-        $mform->addElement('html', '<div class="addedby">Added by: ' . $user->firstname . '</div>');
+        $mform->addElement('html', '<div class="addedby">' .$user->firstname . '</div>');
         $mform->addElement('html', '</div>');
     }
     $mform->addElement('html', '</div>');

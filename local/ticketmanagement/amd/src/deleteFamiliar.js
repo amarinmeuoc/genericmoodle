@@ -5,6 +5,6 @@ import Templates from 'core/templates';
 export const init =() => {
     //definicion de url
 const url=M.cfg.wwwroot+'/webservice/rest/server.php';
-      window.console.log(url);
+      
   
 }

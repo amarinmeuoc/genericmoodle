@@ -34,6 +34,17 @@ define(['core_form/modalform',
                         const familyissue=document.querySelector('#id_familyissue').value;
                         const description=document.querySelector('textarea[name="description[text]"]').value;
                         const gestorid=document.querySelector('input[name="gestorid"]').value;
+                        const id_assigment=document.querySelector('#id_assigment').value;
+
+                        let label_field='';
+                        if (id_assigment==='no'){
+                          if (document.querySelector('#id_field_name').value!=='')
+                            label_field=document.querySelector('#id_field_name').value.trim().toLowerCase();
+                        }
+
+                        
+
+                        
                         //const fileid=document.querySelector('#id_attachments').value;
                         let familiar=trainee;
                         if (familyissue==='yes'){
@@ -51,6 +62,7 @@ define(['core_form/modalform',
                             description:description,
                             gestorid:gestorid,
                             familiarid:familiar,
+                            label_field:label_field
                   
                         };
                 
@@ -66,6 +78,30 @@ define(['core_form/modalform',
               }
               
               const createNewTicket=(newTicket)=>{
+                  if (newTicket.familiarid=='0'){
+                    addToast.add('No ticket created: Is not allowed to open a ticket over a family member if it hasnt been registered yet. Please, choose the right option',{
+                      type:0
+                    });
+                    return;
+                  } else {
+                    const label_field=document.querySelector('#id_field_name').value;
+                    if (label_field.split(/\s+/).length>1){
+                      addToast.add('No ticket created: The ticket only can be assigned to only one key-word',{
+                        type:0
+                      });
+                      return;
+                    }
+                  }
+                  const familyissue=document.querySelector('#id_familyissue').value;
+                  const id_assigment=document.querySelector('#id_assigment').value;
+
+                  if (familyissue==='yes' && id_assigment==='no'){
+                    addToast.add('No ticket created. You cant select to open a ticket over a familiar member and not linked to an user',{
+                      type:0
+                    });
+                    return;
+                  }
+
                   let xhr = new XMLHttpRequest();
                   
                   //Se prepara el objeto a enviar
@@ -80,7 +116,10 @@ define(['core_form/modalform',
                   formData.append('params[0][description]',newTicket.description);
                   formData.append('params[0][familiarid]',newTicket.familiarid);
                   formData.append('params[0][gestorid]',newTicket.gestorid);
-              
+                  formData.append('params[0][label_field]',newTicket.label_field);
+                 
+                  
+
                   xhr.open('POST',url,true);
                   xhr.send(formData);
               
@@ -99,7 +138,7 @@ define(['core_form/modalform',
                         const response = JSON.parse(xhr.response);
               
                         if (response.id) {
-                            window.console.log("alberto");
+                            
                             addToast.add('Ticket created successfully: ' + response.id);
               
                             // Actualiza el número de tickets y las páginas
@@ -240,7 +279,7 @@ define(['core_form/modalform',
                       const pages=document.querySelectorAll('.page-link');
                       pages.forEach((page)=>{
                         page.addEventListener('click',(ev)=>{
-                          window.console.log('adleante');
+                          
                           ev.preventDefault();
                           ev.stopPropagation();
                           const token = document.querySelector('input[name="token"]').value;

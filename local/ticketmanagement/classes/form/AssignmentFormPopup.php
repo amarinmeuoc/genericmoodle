@@ -140,7 +140,7 @@ class AssignmentFormPopup extends \core_form\dynamic_form {
      */
     public function process_dynamic_submission() {
 
-        global $DB;
+        global $DB,$USER;
 
         // Obtener los datos enviados del formulario
         $data = $this->get_data();
@@ -165,7 +165,7 @@ class AssignmentFormPopup extends \core_form\dynamic_form {
 
                 $userid=$selectedUserId;
                 $dateaction=time();
-                $message="Ticket assigned to: ". $user->firstname .", ".$user->lastname;
+                $message=$USER->firstname.", has assigned the ticket to: ". $user->firstname .", ".$user->lastname;
 
                 $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid)
                         VALUES (?,?,?,?)",

@@ -55,7 +55,6 @@ class load_itp extends \core_external\external_api {
         
         $user = $DB->get_record('user', ['email' => $email]);
 
-        
         $lastupdate = $DB->get_field('itptrainee', 'lastupdate', ['email' => $email]);
         
         if (!$lastupdate) {

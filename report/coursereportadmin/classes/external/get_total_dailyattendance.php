@@ -46,8 +46,8 @@ class get_total_dailyattendance extends \core_external\external_api {
             $customer=$DB->get_record('customer', ['id'=>$customerid], 'shortname');
             $shortname=$customer->shortname;
         } 
-        
-        $customerkey = $DB->get_record_sql(
+
+$customerkey = $DB->get_record_sql(
             "SELECT id FROM {user_info_field} WHERE " . $DB->sql_compare_text('shortname') . " = " . $DB->sql_compare_text(':customerkey'),
             ['customerkey' => 'customer']
         )->id;
@@ -61,7 +61,7 @@ class get_total_dailyattendance extends \core_external\external_api {
         $billidkey = $DB->get_record_sql(
             "SELECT id FROM {user_info_field} WHERE " . $DB->sql_compare_text('shortname') . " = " . $DB->sql_compare_text(':billidkey'),
             ['billidkey' => 'billid']
-        )->id;
+        )->id;        
         
         $sub_sql="(SELECT DISTINCT
             att.course AS courseid,
@@ -120,7 +120,7 @@ class get_total_dailyattendance extends \core_external\external_api {
         
       
         $list=[];
-        $params=[
+	$params=[
             'customerkey'=>$customerkey,
             'groupkey'=>$groupkey,
             'billidkey'=>$billidkey,

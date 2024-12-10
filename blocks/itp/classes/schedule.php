@@ -45,6 +45,7 @@ class schedule {
         $this->order='ASC';
         $this->totalAttendance=0;
         $this->totalAssessment=0;
+        
         $this->setItp();
     }
 
@@ -62,6 +63,7 @@ class schedule {
 
     public function getItp($compacted=null){
         $itp=$this->itp;
+        
         if ($compacted==='yes'){
             //agrupar $this->itp por curso con min(startdate) y max(enddate)
             $grouped = [];

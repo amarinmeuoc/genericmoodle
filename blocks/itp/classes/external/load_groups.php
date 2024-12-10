@@ -39,7 +39,7 @@ class load_groups extends \core_external\external_api {
          require_capability('webservice/rest:use', $context);
 
          //Se listan todos los grupos del cliente seleccionado
-         $result=$DB->get_records('grouptrainee', ['customer'=>$customerid], 'id ASC', 'id,name');
+         $result=$DB->get_records('grouptrainee', ['customer'=>$customerid], 'id ASC', 'id,name,hidden');
          
         return $result;
     }
@@ -51,6 +51,7 @@ class load_groups extends \core_external\external_api {
             new external_single_structure([
                 'id'=> new external_value(PARAM_INT,'Group id'),
                 'name'=>new external_value(PARAM_TEXT,'Group name'),
+                'hidden'=>new external_value(PARAM_INT,'If hidden'),
             ])
         );
     }

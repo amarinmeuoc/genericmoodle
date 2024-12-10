@@ -34,7 +34,7 @@ class form_con extends \moodleform {
 
         
         //Selector de grupo
-        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$customerid],'','id,name');
+        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$customerid, 'hidden'=>0],'','id,name');
         
         foreach ($list_of_groups as $key=>$group){
             $list_of_groups[$key]=$group->name;
@@ -59,6 +59,7 @@ class form_con extends \moodleform {
                                     FROM mdl_user AS u
                                     INNER JOIN mdl_user_info_data AS ui ON ui.userid=u.id
                                     INNER JOIN mdl_user_info_field AS uf ON uf.id=ui.fieldid
+                                    WHERE u.suspended=0
                                     GROUP by username,firstname, lastname
                                     HAVING role_name=:role_name AND customer=:customer AND groupname=:groupname',
                                     ['role_name'=>$role,'customer'=>$customer_shortname, 'groupname'=>$selected_groupname]);
@@ -104,9 +105,10 @@ class form_con extends \moodleform {
         
         
         //Adding start date selector
-        $mform->addElement('date_selector', 'startdate', get_string('from'));
+        $mform->addElement('date_selector', 'startdate', get_string('from','report_coursereport'));
 
         $radioarray=array();
+        $attributes='';
         $radioarray[] = $mform->createElement('radio', 'status', '', get_string('completed','report_coursereport'), 1, $attributes);
         $radioarray[] = $mform->createElement('radio', 'status', '', get_string('on_going','report_coursereport'), 0, $attributes);
         $mform->addGroup($radioarray, 'radioar', '', array(' '), false);
@@ -120,7 +122,7 @@ class form_con extends \moodleform {
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
+                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
         $token=$token->token;
 
         $mform->addElement('hidden', 'token', $token);
@@ -133,7 +135,7 @@ class form_con extends \moodleform {
         $mform->setType('orderby',PARAM_TEXT);
 
         $mform->addElement('hidden', 'page', '1');
-        
+        $mform->setType('page',PARAM_INT);
         
     }
 

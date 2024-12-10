@@ -19,7 +19,7 @@ if (preg_match('/(logistic|manager)/i',$role)){
     //Muestra formulario para logistic
     $mform=new \local_ticketmanagement\form\manageticket_log();
     $PAGE->requires->js_call_amd('local_ticketmanagement/init_log', 'loadTemplate');
-} elseif (preg_match('/student|observer/i',$role)){
+} elseif (preg_match('/student|observer|controller|teacher/i',$role)){
     $PAGE->requires->js_call_amd('local_ticketmanagement/user/init_st', 'loadTemplate');
     //Muestra sistema de gestión de tickets alumno
     $mform=new \local_ticketmanagement\form\manageticket_st();
@@ -35,7 +35,7 @@ $PAGE->requires->css(new moodle_url('/local/ticketmanagement/css/styles.scss'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('manageticket', 'local_ticketmanagement'));
 $mform->display();
-
+$render='';
 $data = [ 
    /* 
     'listadoTickets'=> [
@@ -93,7 +93,7 @@ $data = [
 ];
 if (preg_match('/(logistic|manager)/i',$role)){
     $render=$OUTPUT->render_from_template('local_ticketmanagement/content_log', $data);
-} elseif (preg_match('/student|observer/i',$role)){
+} elseif (preg_match('/student|observer|controller|teacher/i',$role)){
     $render=$OUTPUT->render_from_template('local_ticketmanagement/content_user', $data);
 }
 echo $render;

@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         
         //Si no hay errores se añade el cliente
         if (!hasErrors){
-            window.console.log(ifhidden);
+            
             addticketcategory(ifhidden,categoryname.value,token, url);
         }
             

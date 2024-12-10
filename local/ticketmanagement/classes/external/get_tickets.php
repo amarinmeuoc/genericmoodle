@@ -137,7 +137,7 @@ class get_tickets extends \core_external\external_api {
             $profile_url=new \moodle_url('/user/profile.php', array('id' => $user->id));
             $formatted_tickets[] = [
                 'ticketnumber' => $ticket->id,
-                'username' => "$user->firstname, $user->lastname",
+                'username' => ($ticket->label_field)?'no user attached':"$user->firstname, $user->lastname",
                 'profile_url'=>$profile_url->out(),
                 'familyissue' => ($ticket->familiarid!==$ticket->userid) ? 'Yes' : 'No', // Si tiene un familiar asignado
                 'date' => (int) $ticket->dateticket,

@@ -76,7 +76,7 @@ const removeOptions=(selectElement) =>{
  const updateListTrainees=(listTrainees,token)=>{
   //Obtener el id del grupo seleccionado
    const groupSel=document.querySelector('#id_grouptrainee');
-   const selectedGroupId=groupSel.value;
+   const selectedGroupId=(groupSel.value==='')?0:groupSel.value;
   
    let xhr = new XMLHttpRequest();
   xhr.open('POST',url,true);

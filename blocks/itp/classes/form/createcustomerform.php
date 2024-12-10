@@ -11,8 +11,8 @@ class createcustomerform extends \moodleform {
         
         //Se añaden javascript y CSS
         //Se añade javascript
-        $PAGE->requires->js(new \moodle_url('/blocks/itp/js/customer_formJS.js'), false);
-        $PAGE->requires->css(new \moodle_url('/blocks/itp/css/styles.scss'));
+        $PAGE->requires->js('/blocks/itp/js/customer_formJS.js', false);
+        $PAGE->requires->css(new \moodle_url('/blocks/itp/css/styles.css'));
         
         $mform = $this->_form; // Don't forget the underscore!
         $mform->disable_form_change_checker();
@@ -43,8 +43,10 @@ class createcustomerform extends \moodleform {
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
-        $token=$token->token;
+                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
+        
+        if ($token)
+            $token=$token->token;
 
         $mform->addElement('hidden', 'token', $token);
         $mform->setType('token',PARAM_TEXT);   

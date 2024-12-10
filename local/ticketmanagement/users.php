@@ -27,7 +27,7 @@ if (preg_match('/(logistic|manager)/i',$role) && has_capability('local/ticketman
 }
 $PAGE->requires->css(new moodle_url('/local/ticketmanagement/css/styles.scss'));
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('manageticket', 'local_ticketmanagement'));
+echo $OUTPUT->heading(get_string('manageuser', 'local_ticketmanagement'));
 $mform->display();
 
 $data = [ 

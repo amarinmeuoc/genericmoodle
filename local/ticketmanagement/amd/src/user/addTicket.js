@@ -51,6 +51,13 @@ define(['core/modal',
         }
 
         const createNewTicket=(newTicket)=>{
+
+            if (newTicket.familiarid=='0'){
+              addToast.add('Is not allowed to open a ticket linked to a family issue. Please, choose "Family issue=No"',{
+                type:0
+              });
+              return;
+            }
             let xhr = new XMLHttpRequest();
             
             //Se prepara el objeto a enviar
@@ -84,7 +91,7 @@ define(['core/modal',
                   const response = JSON.parse(xhr.response);
 
                   if (response) {
-                      window.console.log(response);
+                      
                       addToast.add('Ticket created successfully: ' + response.id);
 
                       // Actualiza el número de tickets y las páginas
@@ -197,7 +204,7 @@ define(['core/modal',
                 const pages=document.querySelectorAll('.page-link');
                 pages.forEach((page)=>{
                   page.addEventListener('click',(ev)=>{
-                    window.console.log('adleante andalucia');
+                    
                     ev.preventDefault();
                     ev.stopPropagation();
                     const token = document.querySelector('input[name="token"]').value;

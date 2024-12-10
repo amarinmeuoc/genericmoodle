@@ -1,6 +1,5 @@
 const url=M.cfg.wwwroot+'/blocks/itp/admin/updateitp.php';
 const urlService=M.cfg.wwwroot+'/webservice/rest/server.php';
-
 //Al completar la carga del formulario se eliminan las capas sobrantes
 document.addEventListener('DOMContentLoaded',()=>{
     //Correcciones visuales de los botones

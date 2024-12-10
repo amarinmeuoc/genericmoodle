@@ -28,7 +28,7 @@ class filteritpform_controller extends \moodleform {
         $customer=$DB->get_field('customer', 'shortname', array('id'=>$customerid), IGNORE_MISSING);
 
         //Selector de grupo
-        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$customerid],'','id,name');
+        $list_of_groups=$DB->get_records('grouptrainee',['customer'=>$customerid,'hidden'=>0],'','id,name');
         foreach ($list_of_groups as $key=>$group){
             $list_of_groups[$key]=$group->name;
         }       
@@ -51,6 +51,7 @@ class filteritpform_controller extends \moodleform {
         FROM mdl_user AS u
         INNER JOIN mdl_user_info_data AS ui ON ui.userid=u.id
         INNER JOIN mdl_user_info_field AS uf ON uf.id=ui.fieldid
+        WHERE u.suspended=0
         GROUP by username,firstname, lastname
         HAVING role_name=:role_name AND customer=:customer AND groupname=:groupname',['role_name'=>$role,'customer'=>$customer, 'groupname'=>$selected_groupname]);
         $trainee_list=array_values($trainee_query);
@@ -74,7 +75,7 @@ class filteritpform_controller extends \moodleform {
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
+                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
         $token=$token->token;
 
         $mform->addElement('hidden', 'token', $token);
@@ -105,13 +106,6 @@ class filteritpform_controller extends \moodleform {
 
         $mform->addElement('hidden', 'orderby', 'startdate');
         $mform->setType('orderby',PARAM_TEXT);  
-        
-
-        
-       
-
-        
-
     }
 
     // Custom validation should be added here.
