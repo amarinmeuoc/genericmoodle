@@ -1,0 +1,35 @@
+<div class="table-responsive">
+<table class="generaltable table-sm">
+<thead>
+<tr>
+    <th>Relationship</th>
+    <th>Name</th>
+    <th>Lastname</th>
+    <th>Edit</th>
+    <th>Delete</th>
+</tr>
+</thead>
+<tbody id="tablebody">
+
+
+{{>local_ticketmanagement/tr_family}}
+
+
+</tbody>
+</table>
+
+</div>
+
+
+{{#js}}
+
+
+require(['local_ticketmanagement/loadFamiliar'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/addFamiliar'],function(module){
+    module.init();
+});
+
+{{/js}}

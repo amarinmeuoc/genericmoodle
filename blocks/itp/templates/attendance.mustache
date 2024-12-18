@@ -1,0 +1,42 @@
+<div class="attendance-layer">
+<hr>
+<div class="titular bg-primary">
+<h1>{{personaldata.coursename}}</h1>
+<p>Daily attendance for [{{#userdate}} {{personaldata.startdate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}} -- {{#userdate}} {{personaldata.enddate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}]</p>
+<div class="subtitular">
+
+<p>Selected user: {{personaldata.billid}} | {{personaldata.name}} | <a class="white" href="mailto:{{personaldata.email}}?subject=Message from the LMS" >{{personaldata.email}}</a></p>
+</div>
+</div>
+
+
+
+<div class="table-responsive">
+<table class="generaltable table-sm">
+<thead>
+<tr>
+    <th id="coursename" scope="col">Coursename</th>
+    <th id="date" scope="col">Dateatt</th>
+    <th id="status" scope="col">Status</th>
+    <th id="feedback" scope="col">Feedback</th>
+</tr>
+</thead>
+<tbody>
+
+{{#attendance}}
+<tr>
+<td headers="coursename">{{coursename}}</td>
+<td headers="date">{{#userdate}} {{date}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+<td headers="status">{{description}}</td>
+<td headers="feedback">{{feedback}}</td>
+</tr>
+{{/attendance}}
+
+</tbody>
+</table>
+{{#personaldata}}{{#message}}<div class="alert alert-success text-center" role="success">Congratulations: 100% Attendance registered!</div>{{/message}}{{/personaldata}}
+<a class="btn btn-primary back" href="{{{dashboard_url}}}" role="button">&crarr; Back to ITP</a>
+</div>
+
+
+

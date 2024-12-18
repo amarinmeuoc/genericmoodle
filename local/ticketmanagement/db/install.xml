@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/ticketmanagement/db" VERSION="20140120" COMMENT="XMLDB file for ticketmanagement plugin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+<TABLES>
+    <TABLE NAME="ticket_category" COMMENT="each record is one ticket category">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="category" TYPE="char" LENGTH="250" DEFAULT="" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="ticket_subcategory" COMMENT="each record is a ticket subcategory">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="subcategory" TYPE="char" LENGTH="250" SEQUENCE="false" NOTNULL="false"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="true"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_category" TYPE="foreign" FIELDS="categoryid" REFTABLE="ticket_category" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="ticket" COMMENT="each record is one ticket">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="subcategoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="dateticket" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="state" TYPE="char" LENGTH="30" SEQUENCE="false" NOTNULL="false"/>
+        <FIELD NAME="priority" TYPE="char" LENGTH="30" SEQUENCE="false" NOTNULL="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="familiarid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="assigned" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="communication" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="label_field" TYPE="char" LENGTH="250" SEQUENCE="false" NOTNULL="false"/>
+        <FIELD NAME="lastupdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_subcategoryid" TYPE="foreign" FIELDS="subcategoryid" REFTABLE="ticket_subcategory" REFFIELDS="id"/>
+        <KEY NAME="fk_user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="fk_assigned" TYPE="foreign" FIELDS="assigned" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="fk_familiar" TYPE="foreign" FIELDS="familiarid" REFTABLE="family" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="ticket_action" COMMENT="each record is one action in a ticket">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="action" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="internal" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="dateaction" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="ticketid" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="fk_ticketid" TYPE="foreign" FIELDS="ticketid" REFTABLE="ticket" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="family" COMMENT="user family">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="relationship" TYPE="char" LENGTH="30" SEQUENCE="false" NOTNULL="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="nie" TYPE="char" LENGTH="25" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="birthdate" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="adeslas" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="phone1" TYPE="char" LENGTH="25" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="arrival" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="departure" TYPE="char" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="notes" TYPE="text" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

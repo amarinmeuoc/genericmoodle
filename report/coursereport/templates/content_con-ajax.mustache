@@ -1,0 +1,150 @@
+<div class="result table-responsive">
+<div class="loader p-5 hide text-center">
+    {{> core/loading }}
+</div>
+
+<table class="generaltable table-sm">
+<thead>
+<tr>
+
+<th><a class="orderby" href="#" data-activo="{{#orderbycustomer}}activo{{/orderbycustomer}}" data-orderby="customercode">Project {{#orderbycustomer}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbycustomer}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbygroup}}activo{{/orderbygroup}}" data-orderby="groupname">Vessel {{#orderbygroup}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbygroup}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbybillid}}activo{{/orderbybillid}}" data-orderby="billid">Billid {{#orderbybillid}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbybillid}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbyname}}activo{{/orderbyname}}" data-orderby="firstname">Firstname {{#orderbyname}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyname}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbylastname}}activo{{/orderbylastname}}" data-orderby="lastname">Lastname {{#orderbylastname}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbylastname}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbywbs}}activo{{/orderbywbs}}" data-orderby="shortname">WBS {{#orderbywbs}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbywbs}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbycoursename}}activo{{/orderbycoursename}}" data-orderby="fullname">Fullname {{#orderbycoursename}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbycoursename}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbystartdate}}activo{{/orderbystartdate}}" data-orderby="startdate">Start date {{#orderbystartdate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbystartdate}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbyenddate}}activo{{/orderbyenddate}}" data-orderby="enddate">End date {{#orderbyenddate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyenddate}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbyatt}}activo{{/orderbyatt}}" data-orderby="attendance">Attendance {{#orderbyatt}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyatt}}</a></th>
+<th><a class="orderby" href="#" data-activo="{{#orderbyass}}activo{{/orderbyass}}" data-orderby="assessment">Assessment {{#orderbyass}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyass}}</a></th>
+</tr>
+</thead>
+<tbody>
+{{#assessment_list}}
+<tr>
+    <td>{{customercode}}</td>
+    <td>{{groupname}}</td>
+    <td>{{billid}}</td>
+    <td>{{firstname}}</td>
+    <td>{{lastname}}</td>
+    <td>{{shortname}}</td>
+    <td>{{fullname}}</td>
+    <td>{{#userdate}} {{startdate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+    <td>{{#userdate}} {{enddate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+    <td>{{attendance}}</td>
+    <td>{{assessment}}</td>
+</tr>
+{{/assessment_list}}
+{{^assessment_list}}
+    <tr><td colspan="11" class="text-center">No results found.</td></tr>
+{{/assessment_list}}
+</tbody>
+</table>
+<p> Displaying {{num_records}} results from {{num_total_records}}</p>
+<div>
+<button id="idexport" type="button" class="btn btn-info">Export to Excel</button>
+</div>
+</div>
+
+<div class="d-flex flex-row-reverse">
+    
+<nav
+        id="{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}"
+        class="{{#showitemsperpageselector}}ml-auto{{/showitemsperpageselector}}"
+        data-region="paging-bar"
+        data-ignore-control-while-loading="{{ignorecontrolwhileloading}}"
+        data-hide-control-on-single-page="{{hidecontrolonsinglepage}}"
+        {{#activepagenumber}}
+            data-active-page-number="{{.}}"
+        {{/activepagenumber}}
+        {{^activepagenumber}}
+            data-active-page-number="1"
+        {{/activepagenumber}}
+        {{#itemsperpage}}
+            {{#active}}
+                data-items-per-page="{{value}}"
+            {{/active}}
+        {{/itemsperpage}}
+        {{#arialabels.paginationnav}}
+            aria-label="{{.}}"
+        {{/arialabels.paginationnav}}
+        {{^arialabels.paginationnav}}
+            aria-label="{{#str}} pagedcontentnavigation, core {{/str}}"
+        {{/arialabels.paginationnav}}
+        {{#arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="{{.}}"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{^arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="pagedcontentnavigationitem, core"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{#arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="{{.}}"
+        {{/arialabels.paginationactivenavitemcomponents}}
+        {{^arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="pagedcontentnavigationactiveitem, core"
+        {{/arialabels.paginationactivenavitemcomponents}}
+        {{#barsize}}
+            data-bar-size="{{.}}"
+        {{/barsize}}
+    >
+
+        <ul class="pagination mb-0">
+            {{#previous}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{page}}"{{/linkattributes}}
+                    {{$item-content}}
+                        <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
+                        <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
+                    {{/item-content}}
+                    {{$attributes}}data-control="previous"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/previous}}
+            {{#first}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{page}}"{{/linkattributes}}
+                    {{$item-content}}
+                        {{#str}}first{{/str}}
+                    {{/item-content}}
+                    {{$attributes}}data-control="first"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/first}}
+            
+            {{#pages}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$attributes}}data-page="true"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/pages}}
+            
+            {{#last}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{page}}"{{/linkattributes}}
+                    {{$item-content}}
+                        {{#str}}last{{/str}}
+                    {{/item-content}}
+                    {{$attributes}}data-control="last"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/last}}
+            {{#next}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{page}}"{{/linkattributes}}
+                    {{$item-content}}
+                        <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
+                        <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
+                    {{/item-content}}
+                    {{$attributes}}data-control="next"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/next}}
+        </ul>
+    </nav>
+           
+</div>
+
+
+{{#js}}
+
+require(['report_coursereport/exportExcel','xlsx','filesaver','blobutil'], function(module,XLSX,filesaver,blobutil){
+    module.init(XLSX,filesaver,blobutil);
+});
+
+{{/js}}

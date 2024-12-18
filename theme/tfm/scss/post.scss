@@ -1,0 +1,33 @@
+
+@import 'login';
+
+@import 'barranavegacionprincipal';
+@import 'coursesections';
+@import 'autocompleteform';
+
+.generaltable tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 95, 186,0.03);
+  }
+
+.generaltable tbody tr:hover {
+    color: #1d2125;
+    background-color: rgba(0, 96, 186, 0.200);
+}
+
+h2 {
+  color: #005fba;
+    border-bottom: solid thin #005fba;
+    margin-bottom: 1em;
+}
+
+.btn.btn-icon.icons-collapse-expand {
+  background-color: inherit;
+}
+
+.course-section .sectionname>a{
+  color: white;
+}
+
+.action-menu-trigger i.fa-ellipsis-vertical{
+  color: white;
+}

@@ -1,0 +1,292 @@
+import ModalForm from 'core_form/modalform';
+import Notification from 'core/notification';
+import Templates from 'core/templates';
+import modalEvents from 'core/modal_events';
+import {get_string as getString} from 'core/str';
+import ModalFactory from 'core/modal';
+
+const url=M.cfg.wwwroot+'/webservice/rest/server.php';
+const token=document.querySelector('input[name="token"]').value;
+
+export const init =() => {
+    //definicion de url
+    const boadd=document.querySelector('#id_add');
+    boadd.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const legend=document.querySelector('legend');
+        const userid=legend.dataset.userid;
+        const traineename=document.querySelector('#traineename');
+        const fullname=traineename.textContent.trim();
+        
+        showAddFamilyPopup(userid,fullname);
+    })
+
+}
+
+const showAddFamilyPopup=(userid,fullname)=>{
+    const modalForm=new ModalForm({
+        formClass: "\\local_ticketmanagement\\form\\AddFamiliarFormPopup",
+        args: {userid: userid, traineename:fullname},
+        modalConfig: {title: `New Family member: #${fullname}`},
+        returnFocus:e.target
+    });
+
+    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
+        //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
+        const userid=e.detail.userid;
+        const relationship=e.detail.selrelationship;
+        const firstname=e.detail.firstname;
+        const lastname=e.detail.lastname;
+        const gestorid=e.detail.gestorid;
+        addFamiliar(userid,gestorid,relationship,firstname,lastname,token,url);
+    });
+
+    modalForm.addEventListener(modalForm.events.LOADED, (e)=>{
+        //Changing the text of the dynamic button
+        //e.target.querySelector("button[data-action='save']").textContent="Send Email"
+        
+        }
+    );
+    
+    modalForm.show();
+}
+
+const addFamiliar=(userid,gestorid,relationship,firstname,lastname,token,url)=>{
+    let xhr = new XMLHttpRequest();
+    
+    //Se prepara el objeto a enviar
+    const formData= new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'local_ticketmanagement_add_family_members');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[0][userid]',userid);
+    formData.append('params[0][relationship]',relationship);
+    formData.append('params[0][firstname]',firstname);
+    formData.append('params[0][lastname]',lastname);
+    formData.append('params[0][gestorid]',gestorid);
+    
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        reqHandlerAddFamiliar(xhr);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const reqHandlerAddFamiliar=(xhr)=>{
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        if (xhr.response) {
+            const response = JSON.parse(xhr.response);
+            if (response) {
+               
+                addFamiliarToTemplate(response);
+            }
+        }
+    }
+}
+
+const addFamiliarToTemplate=(response)=>{
+    let template='local_ticketmanagement/tr_family';
+        if (response.listadoFamily.gestor_role==='logistic'){
+            template='local_ticketmanagement/tr_family-log'
+        }
+    Templates.renderForPromise(template,response)
+        .then(({html,js})=>{
+        const content=document.querySelector('#tablebody');
+        
+          Templates.appendNodeContents(content,html,js);
+          const boedit=document.querySelectorAll('.edit');
+
+          boedit.forEach(elem=>{
+              
+              elem.addEventListener('click',(e)=>{
+                  
+                  const id=e.target.dataset.id;
+                  
+                  showEditFamilyPopup(id);
+              })
+          })
+
+          const boremove=document.querySelectorAll('.remove');
+
+          boremove.forEach(elem=>{
+              
+            elem.addEventListener('click',(e)=>{
+                const id=e.target.dataset.id;
+                showRemoveFamilyPopup(id);
+            })
+            })
+        })
+        .catch((error)=>displayException(error));
+  }
+
+  function showRemoveFamilyPopup(id) {
+    const modalContent = `
+        
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar este miembro de la familia?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-action="cancel">Cancelar</button>
+            <button type="button" class="btn btn-danger" data-action="confirm">Aceptar</button>
+        </div>
+    `;
+
+    ModalFactory.create({
+        title: 'Confirmar Eliminación',
+        body: modalContent,
+        size: 'modal-md'
+    }).then(modal => {
+        
+        // Manejar el clic en Aceptar
+        modal.getRoot()[0].querySelector('[data-action="confirm"]').onclick = function() {
+            removeFamilyMember(id); // Llama a la función para eliminar el miembro
+            modal.hide(); // Cierra el modal
+        };
+
+        // Manejar el clic en Cancelar
+        modal.getRoot()[0].querySelector('[data-action="cancel"]').onclick = function() {
+            modal.hide(); // Solo cierra el modal
+        };
+
+        
+        modal.show(); // Muestra el modal
+    });
+}
+
+const removeFamilyMember=(id)=>{
+    let xhr = new XMLHttpRequest();
+    
+    //Se prepara el objeto a enviar
+    const formData= new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'local_ticketmanagement_remove_family_members');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[0][id]',id);
+    
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        reqHandlerRemoveFamilyMember(xhr);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const reqHandlerRemoveFamilyMember=(xhr)=>{
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        if (xhr.response) {
+            const id = JSON.parse(xhr.response);
+            if (id) {
+                //Se borra el elemento afectado
+                document.querySelector(`#id_${id}`).remove()
+            }
+        }
+    }
+}
+
+const showEditFamilyPopup=(id)=>{
+    const modalForm=new ModalForm({
+        formClass: "\\local_ticketmanagement\\form\\EditFamiliarFormPopup",
+        args: {id: id},
+        modalConfig: {title: `Edit Family member`},
+        returnFocus:e.target
+    });
+
+
+    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
+        //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
+        const id=e.detail.id;
+        const relationship=e.detail.selrelationship;
+        const firstname=e.detail.firstname;
+        const lastname=e.detail.lastname;
+        editFamiliar(id,relationship,firstname,lastname,token,url);
+        
+    });
+
+    modalForm.addEventListener(modalForm.events.LOADED, (e)=>{
+        //Changing the text of the dynamic button
+        //e.target.querySelector("button[data-action='save']").textContent="Send Email"
+        
+        }
+    );
+    
+    modalForm.show();
+}
+
+const editFamiliar=(id,relationship,firstname,lastname,token,url)=>{
+    let xhr = new XMLHttpRequest();
+    
+    //Se prepara el objeto a enviar
+    const formData= new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'local_ticketmanagement_edit_family_members');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[0][id]',id);
+    formData.append('params[0][relationship]',relationship);
+    formData.append('params[0][firstname]',firstname);
+    formData.append('params[0][lastname]',lastname);
+    
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        reqHandlerEditFamiliar(xhr);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const reqHandlerEditFamiliar=(xhr)=>{
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        if (xhr.response) {
+            const response = JSON.parse(xhr.response);
+            if (response) {
+                
+                editFamiliarToTemplate(response);
+            }
+        }
+    }
+}
+
+const editFamiliarToTemplate=(response)=>{
+    const id=response.listadoFamily.id;
+    Templates.renderForPromise('local_ticketmanagement/relationship_family',response.listadoFamily)
+        .then(({html,js})=>{
+            const relationship=document.querySelector(`#id_${id} > .relationship`);
+            relationship.innerHTML=html;
+            //Templates.appendNodeContents(relationship,html,js);
+          
+        })
+        .catch((error)=>displayException(error));
+
+        Templates.renderForPromise('local_ticketmanagement/firstname_family',response.listadoFamily)
+        .then(({html,js})=>{
+            const firstname=document.querySelector(`#id_${id} > .firstname`);
+            firstname.innerHTML=html;
+            //Templates.appendNodeContents(firstname,html,js);
+          
+        })
+        .catch((error)=>displayException(error));
+
+        Templates.renderForPromise('local_ticketmanagement/lastname_family',response.listadoFamily)
+        .then(({html,js})=>{
+            const lastname=document.querySelector(`#id_${id} > .lastname`);
+            lastname.innerHTML=html;
+            //Templates.appendNodeContents(lastname,html,js);
+          
+        })
+        .catch((error)=>displayException(error));
+  }

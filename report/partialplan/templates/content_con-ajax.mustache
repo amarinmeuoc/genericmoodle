@@ -1,0 +1,70 @@
+
+<p>There are courses available from: <strong>{{#userdate}} {{minstartdate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</strong> to <strong>{{#userdate}} {{maxenddate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</strong></p>
+<div class="table-responsive">
+<table class="generaltable table">
+  <thead>
+    <tr>
+      <th scope="col" id="wbs">WBS</th>
+      <th scope="col" id="coursename">Course Name</th>
+      <th scope="col" id="startdate"><a id="sd-link" href="{{url}}">Start {{#orderbystartdate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbystartdate}}</a></th>
+      <th scope="col" id="enddate"><a id="ed-link" href="{{url}}">End {{#orderbyenddate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyenddate}}</a></th>
+      <th scope="col" id="numtrainees">Num. Trainees</th>
+      <th scope="col" id="enroled">Enroled</th>
+      <th scope="col" id="location">Location</th>
+      <th scope="col" id="provider">Provider</th>
+      <th scope="col" id="csv">CSV</th>
+      <th scope="col" id="email">Email</th>
+    </tr>
+  </thead>
+<tbody>
+{{#courses}}
+    <tr>
+      <th scope="row" headers="wbs" id="wbs_row">{{wbs}}</th>
+      <td headers="coursename wbs_row">{{#terminado}}<a data-wbs={{wbs}} data-trainees={{trainees}} data-startdate={{startdate}} data-enddate={{enddate}} class="courseFinished" href="#" title="Download Report">{{course}}</a>{{/terminado}}{{^terminado}}{{course}}{{/terminado}}</td>
+      <td headers="startdate wbs_row">{{#userdate}} {{startdate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+      <td headers="enddate wbs_row">{{#userdate}} {{enddate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+      <td headers="numtrainees wbs_row">{{num_trainees}}</td>
+      <td headers="enroled wbs_row"><a href="#" class="trainees" title="{{trainees}}">{{#shortentext}}15,{{trainees}}{{/shortentext}}</a></td>
+      <td headers="location wbs_row">{{location}}</td>
+      <td headers="provider wbs_row">{{provider}}</td>
+      <td headers="csv wbs_row"><a data-id="{{trainees}}" href="#" title="download csv" class="btn btn-primary text-center bodownload" style="width:42px;">{{#pix}}i/export, core{{/pix}}</a></td>
+      <td headers="email wbs_row"><button data-id="{{trainees}}" title="Email..." class="btn btn-primary text-center boemail" style="width:42px;">{{#pix}}i/email, core{{/pix}}</button></td>
+    </tr>
+{{/courses}}
+{{^courses}}
+<tr>
+      <td colspan="10" class="text-center">No matches found.</td>
+      
+    </tr>
+{{/courses}}
+</tbody>
+</table>
+</div>
+{{#js}}
+//Este código carga el archivo javascript compilado con grunt.
+//Dentro del archivo javascript debe definirse/exportarse una funcion init que obtenga los parámetros uniqid para su procesamiento
+
+
+
+require(['report_partialplan/downloadcsv'],function(module){
+    module.init();
+});
+
+require(['report_partialplan/sendemail'],function(module){
+    module.init();
+});
+
+
+require(['report_partialplan/managefilter'],function(module){
+
+module.init();
+});
+
+
+
+require(['report_partialplan/downloadpdf','/report/partialplan/js/pdf-lib.min.js'],function(module,PDF){
+  module.init(PDF);
+  });
+
+{{/js}}
+

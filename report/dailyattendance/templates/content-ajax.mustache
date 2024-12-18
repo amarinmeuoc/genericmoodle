@@ -1,0 +1,133 @@
+
+<div class="result table-responsive">
+<div class="loader p-5 hide text-center">
+    {{> core/loading }}
+</div>
+    <table class="generaltable table-sm" >
+        <caption >Attendance list</caption>
+        <thead>
+        <tr>
+        <th><a class="orderby" href="#" data-value="group">Group {{#orderbygroup}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbygroup}}</a></th>
+        <th><a class="orderby" href="#" data-value="billid">Billid {{#orderbybillid}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbybillid}}</a></th>
+        <th><a class="orderby" href="#" data-value="Prenom">Name {{#orderbyname}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbyname}}</a></th>
+        <th><a class="orderby" href="#" data-value="Nom">LastName {{#orderbylastname}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbylastname}}</a></th>
+        <th><a class="orderby" href="#" data-value="Nomducours">WBS {{#orderbywbs}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbywbs}}</a></th>
+        <th>Course name</th>
+        <th><a class="orderby" href="#" data-value="DateAtt">Date {{#orderbydate}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbydate}}</a></th>
+        <th><a class="orderby" href="#" data-value="description">Attendance {{#orderbydescription}}{{#order}}&uarr;{{/order}}{{^order}}&darr;{{/order}}{{/orderbydescription}}</a></th>
+        <th>Feedback</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#attendance_list}}
+    <tr>
+    <td class="group">{{grouptrainee}}</td>
+    <td class="billid">{{billid}}</td>
+    <td>{{prenom}}</td>
+    <td>{{nom}}</td>
+    <td>{{nomducours}}</td>
+    <td>{{namecourse}}</td>
+    <td>{{#userdate}} {{dateatt}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
+    <td>{{description}}</td>
+    <td>{{feedback}}</td>
+    </tr>
+        {{/attendance_list}}
+        {{^attendance_list}}
+         <tr><td colspan="9" class="align-center">No results found.</td></tr>
+        {{/attendance_list}}
+        
+        
+        </tbody>
+        </table>
+    <p> Displaying {{num_records}} results from {{num_total_records}}</p>
+</div>
+    <div class="d-flex flex-row-reverse">
+    <nav
+        id="{{$pagingbarid}}paging-bar-{{uniqid}}{{/pagingbarid}}"
+        class="{{#showitemsperpageselector}}ml-auto{{/showitemsperpageselector}}"
+        data-region="paging-bar"
+        data-ignore-control-while-loading="{{ignorecontrolwhileloading}}"
+        data-hide-control-on-single-page="{{hidecontrolonsinglepage}}"
+        {{#activepagenumber}}
+            data-active-page-number="{{.}}"
+        {{/activepagenumber}}
+        {{^activepagenumber}}
+            data-active-page-number="1"
+        {{/activepagenumber}}
+        {{#itemsperpage}}
+            {{#active}}
+                data-items-per-page="{{value}}"
+            {{/active}}
+        {{/itemsperpage}}
+        {{#arialabels.paginationnav}}
+            aria-label="{{.}}"
+        {{/arialabels.paginationnav}}
+        {{^arialabels.paginationnav}}
+            aria-label="{{#str}} pagedcontentnavigation, core {{/str}}"
+        {{/arialabels.paginationnav}}
+        {{#arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="{{.}}"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{^arialabels.paginationnavitemcomponents}}
+            data-aria-label-components-pagination-item="pagedcontentnavigationitem, core"
+        {{/arialabels.paginationnavitemcomponents}}
+        {{#arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="{{.}}"
+        {{/arialabels.paginationactivenavitemcomponents}}
+        {{^arialabels.paginationactivenavitemcomponents}}
+            data-aria-label-components-pagination-active-item="pagedcontentnavigationactiveitem, core"
+        {{/arialabels.paginationactivenavitemcomponents}}
+        
+    >
+
+        <ul class="pagination mb-0">
+            {{#previous}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}previouspage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
+                        <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
+                    {{/item-content}}
+                    {{$attributes}}data-control="previous"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/previous}}
+            {{#first}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}firstpage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        {{#str}}first{{/str}}
+                    {{/item-content}}
+                    {{$attributes}}data-control="first"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/first}}
+           
+            {{#pages}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$attributes}}data-page="true"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/pages}}
+            
+            {{#last}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}lastpage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        {{#str}}last{{/str}}
+                    {{/item-content}}
+                    {{$attributes}}data-control="last"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/last}}
+            {{#next}}
+                {{< core/paged_content_paging_bar_item }}
+                    {{$linkattributes}}aria-label="{{#str}}nextpage{{/str}}"{{/linkattributes}}
+                    {{$item-content}}
+                        <span class="icon-no-margin dir-rtl-hide" aria-hidden="true">{{#pix}} i/next, core {{/pix}}</span>
+                        <span class="icon-no-margin dir-ltr-hide" aria-hidden="true">{{#pix}} i/previous, core {{/pix}}</span>
+                    {{/item-content}}
+                    {{$attributes}}data-control="next"{{/attributes}}
+                {{/ core/paged_content_paging_bar_item }}
+            {{/next}}
+        </ul>
+    </nav>
+
+           
+    </div>

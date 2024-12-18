@@ -1,0 +1,23 @@
+<hr>
+<div id="content">
+<select id="selcustomer" class="custom-select" aria-label="Default select example">
+<option value="-1">All customers</option>
+{{#customers}}
+<option value='{{id}}'>{{shortname}}</option>
+{{/customers}}
+</select>
+<input type="hidden" name="token" value="{{token}}">
+
+<button id="id_export_ass" type="button" class="btn btn-info">Get course report</button>
+<button id="id_export_att" type="button" class="btn btn-info">Get Daily attendance report</button>
+<button id="id_export_trainee" type="button" class="btn btn-info">Get Trainee report</button>
+</div>
+<div class="loader p-5 hide">
+    {{> core/loading }}
+</div>
+
+{{#js}}
+require(['report_coursereportadmin/exportExcel','xlsx','filesaver','blobutil'], function(module,XLSX,filesaver,blobutil){
+    module.init(XLSX,filesaver,blobutil);
+});
+{{/js}}

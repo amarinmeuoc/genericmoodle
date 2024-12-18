@@ -1,0 +1,44 @@
+
+<div class="assessment-layer">
+<hr>
+
+
+
+<div class="attendance-layer">
+<div class="titular bg-primary">
+<h1>{{personaldata.coursename}}</h1>
+
+<div class="subtitular">
+
+<p>Selected user: {{personaldata.billid}} | {{personaldata.name}} | <a class="white" href="mailto:{{personaldata.email}}?subject=Message from the LMS" >{{personaldata.email}}</a></p>
+</div>
+</div>
+
+
+
+<table class="generaltable table-sm">
+<thead>
+<tr>
+    <th id="kpi" scope="col">KPI</th>
+    <th id="score" scope="col">Score</th>
+    <th id="date" scope="col">Date</th>
+    <th id="feedback" scope="col">Feedback</th>
+</tr>
+</thead>
+<tbody>
+
+{{#examenes}}
+<tr>
+<td headers="kpi">{{kpi}}</td>
+<td headers="score">{{score}}</td>
+<td headers="date">{{#timemodified}}{{#userdate}} {{timemodified}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}{{/timemodified}}</td>
+<td headers="feedback">{{feedback}}{{#timemodified}}{{^feedback}}-{{/feedback}}{{/timemodified}}</td>
+</tr>
+{{/examenes}}
+
+</tbody>
+</table>
+<div>
+<a title="go back" class="btn btn-primary back" href="{{{dashboard_url}}}" role="button">&crarr; Back to ITP</a>
+</div>
+

@@ -1,0 +1,62 @@
+
+<div class="table-responsive">
+<table class="generaltable table-sm">
+<thead>
+<tr>
+    <th><a class="orderby" href="#" data-activo="{{#orderbyticket}}activo{{/orderbyticket}}" data-orderby="id">ticketnumber {{#orderbyticket}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyticket}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbyuser}}activo{{/orderbyuser}}" data-orderby="userid">user {{#orderbyuser}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyuser}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbyfamilyissue}}activo{{/orderbyfamilyissue}}" data-orderby="familiarid">family issue {{#orderbyfamilyissue}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyfamilyissue}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbydate}}activo{{/orderbydate}}" data-orderby="dateticket">date {{#orderbydate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbydate}}</a></th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbystate}}activo{{/orderbystate}}" data-orderby="state">state {{#orderbystate}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbystate}}</a></th>
+    <th>description</th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbypriority}}activo{{/orderbypriority}}" data-orderby="priority">priority {{#orderbypriority}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbypriority}}</a></th>
+    
+    <th>actions</th>
+    <th><a class="orderby" href="#" data-activo="{{#orderbyassigned}}activo{{/orderbyassigned}}" data-orderby="assigned">assigned {{#orderbyassigned}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyassigned}}</a></th>
+    
+</tr>
+</thead>
+<tbody id="tablebody">
+
+
+{{>local_ticketmanagement/tr_st-ajax}}
+
+
+</tbody>
+</table>
+<div class="loader p-5 hide">
+    {{> core/loading }}
+</div>
+</div>
+
+<div id="pagination" class="d-flex justify-content-between flex-wrap">
+    
+    {{>local_ticketmanagement/pagebar_log-ajax}}
+    
+</div>
+
+
+{{#js}}
+require(['local_ticketmanagement/user/checklogs'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/user/editTicket'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/user/changeAssigment'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/user/deleteTicket'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/user/addTicket'],function(module){
+    module.init();
+});
+
+
+
+{{/js}}

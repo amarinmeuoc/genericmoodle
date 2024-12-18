@@ -1,0 +1,127 @@
+.action {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    border-bottom: thin #8f959e solid;
+    align-items: center;
+}
+
+.qheader {
+    margin: 2em;
+}
+
+.date {
+    flex-basis: 25%;
+    align-content: center;
+}
+.description {
+    position: relative;
+    text-align: left;
+    flex-basis: 50%;
+    height: 3em;
+    overflow-y: scroll;
+    align-content: center;
+}
+
+.addedby {
+    flex-basis: 25%;
+    text-align: left;
+    align-content: center;
+}
+
+.assignbtn, .removebtn{
+    max-width: 45px;
+    margin-right: 1em;
+}
+
+.generaltable tbody tr.cerrado:nth-of-type(odd) {
+        color:#8e9093;
+        font-style:italic;
+        .assignbtn{
+            background-color: #c9cbcd;
+            border:#c9cbcd;
+        }
+        a {
+            color:#8e9093;
+        }
+}
+
+.generaltable tbody tr.cerrado:nth-of-type(even) {
+    color:#8e9093;
+    font-style:italic;
+    .assignbtn{
+        background-color: #c9cbcd;
+        border:#c9cbcd;
+    }
+    a {
+        color:#8e9093;
+    }
+}
+
+.qheader {
+    overflow-y: scroll;
+    max-height: 300px;
+}
+
+
+tr:nth-of-type(odd).yellow {
+    background-color:rgba(209,159,7,.15) !important;
+    
+}
+
+tr:nth-of-type(even).yellow {
+    background-color:rgba(209,159,7,.1) !important;
+    
+}
+
+.hiddenmessage i {
+        cursor: pointer;
+        margin-left: 5px;
+        color: #007bff; /* Color del ícono */
+}
+  
+/* Estilo para el tooltip */
+.hiddenmessage:hover::after {
+    content: attr(data-tooltip);
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(217 185 112 / 80%); /* Fondo oscuro */
+    color: #3f3b3b;
+    padding: 8px 12px; /* Aumentar el padding */
+    border-radius: 5px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 9999; /* Asegurarse de que el tooltip esté por encima de otros elementos */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra para hacerlo más visible */
+    border: 2px solid #5387e5; /* Borde rojo para depurar, quitar cuando ya esté funcionando */
+}
+
+/* Para asegurar que el texto no se corte */
+.hiddenmessage:hover::after {
+    white-space: normal;  /* Permite que el texto se ajuste a varias líneas */
+    word-wrap: break-word;  
+    max-width: 300px; /* Evita que el texto se desborde */
+}
+
+.hide {
+    display: none;
+    visibility: hidden;
+}
+
+.show {
+    display: block;
+    visibility: visible;
+}
+
+.p-5 {
+    padding: 2rem !important;
+    text-align: center;
+}
+
+h2, .navantia {
+    background-color: #0f6cbf;
+    color:white;
+    padding: .3em;
+}

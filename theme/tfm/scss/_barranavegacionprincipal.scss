@@ -1,0 +1,48 @@
+.primary-navigation.color-white .navigation .nav-link {
+    height: 60px;
+    color: #ffffff;
+    border-top: 3px solid transparent;
+}
+
+.primary-navigation.color-white .navigation .nav-link:hover {
+    color: #030303;
+}
+.primary-navigation.color-white .navigation .nav-link.active {
+    color: #030303;
+}
+
+.color-white .moremenu .nav-link.active {
+    background-color: #f8f9fa;
+    border-bottom-color: #0f6cbf;
+}
+
+.color-white .moremenu .nav-link:focus, .color-white .moremenu .nav-link:hover {
+    background-color: #f8f9fa;
+    border-bottom-color: #0f6cbf;
+}
+
+
+
+.navbar-light .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, .6);
+}
+
+.navbar-light .navbar-nav .nav-link:hover, .navbar-light .navbar-nav .nav-link:focus {
+    color: rgba(255, 255, 255, 1);
+}
+
+.custom-control-input:checked~.custom.custom-control-label::before {
+    color: #fff;
+    border-color: #0f6cbf;
+    background-color: #0d3c67;
+}
+
+.custom-switch .custom.custom-control-label::after {
+    top: calc(0.078125rem + 2px);
+    left: calc(-2.6875rem + 2px);
+    width: calc(1.25rem - 4px);
+    height: calc(1.25rem - 4px);
+    background-color: #3e5373;
+    border-radius: .625rem;
+    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
