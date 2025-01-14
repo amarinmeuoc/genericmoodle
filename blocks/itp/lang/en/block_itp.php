@@ -100,3 +100,7 @@ $string['filtrar']='Search';
 $string['selCustomer']='Project';
 $string['hiddengroup']='Administrative group';
 $string['update']='Update';
+$string['edit']='Update';
+$string['image']='Image';
+$string['logo']='Logo';
+$string['background']='Background';

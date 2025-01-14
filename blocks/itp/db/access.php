@@ -54,5 +54,6 @@
             'student' => CAP_ALLOW
         ],
     ],
+    
         
 ];

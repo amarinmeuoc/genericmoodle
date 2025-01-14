@@ -39,7 +39,7 @@ class createcustomerform extends \moodleform {
         
         $attributes=array('size'=>10);
         $mform->addElement('select', 'type', get_string('customer_select', 'block_itp'),$options,$attributes);
-
+        
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
                             INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
@@ -51,10 +51,12 @@ class createcustomerform extends \moodleform {
         $mform->addElement('hidden', 'token', $token);
         $mform->setType('token',PARAM_TEXT);   
         
-        $mform->addElement('html',  '<div id="error-message" class="alert alert-danger" role="alert" style="display:none">');
         
         $mform->addElement('button', 'bosubmit', get_string('submit', 'block_itp'));
+        $mform->addElement('button', 'boupdate', get_string('edit', 'block_itp'));
         $mform->addElement('button', 'boremove', get_string('remove', 'block_itp'));
+        
+        $mform->addElement('html',  '<div id="error-message" class="alert alert-danger" role="alert" style="display:none">');
     }
 
     // Custom validation should be added here.

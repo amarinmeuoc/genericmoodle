@@ -11,23 +11,32 @@ document.addEventListener('DOMContentLoaded',()=>{
     boremove.classList.remove('btn-secondary');
     boremove.classList.add('btn-danger');
 
+    let boupdate=document.querySelector('#id_boupdate');
+    boupdate.disabled=true;
+    boupdate.classList.remove('btn-secondary');
+    boupdate.classList.add('btn-primary');
+
     //Se seleccionan capas y controles para que al cargar el formulario podamos eliminar las que dificulten la apariencia
     let teshortname=document.querySelector('#id_customercode');
     let tename=document.querySelector('#id_customername');
     let selectText=document.querySelector('#id_type');
     let form=document.querySelector('#customerformid');
     let selectContainer=document.querySelector('#fitem_id_type');
+    
     let boaddNewContainer=document.querySelector('#fitem_id_bosubmit');
     let divAfterboAddNew=document.querySelector("#fitem_id_bosubmit>div:nth-child(1)");
     let divAfterboAddNew2=document.querySelector("#fitem_id_bosubmit>div:nth-child(2)");
     let boremoveContainer=document.querySelector('#fitem_id_boremove');
     let divAfterboRemove=document.querySelector("#fitem_id_boremove>div:nth-child(1)");
-    let divAfterboRemove2=document.querySelector("#fitem_id_boremove>div:nth-child(2)");
+    let boupdateContainer=document.querySelector('#fitem_id_boupdate');
+    let divAfterboupdate=document.querySelector('#fitem_id_boupdate>div:nth-child(1)');
+    
     let token=document.querySelector('input[name="token"]').value;
         document.querySelector('#error-message').style.display="none";
     teshortname.classList.add('form-control');
     tename.classList.add('form-control');
     selectContainer.classList.add('mt-3');
+    
     let boContainer=document.createElement('div');
     boContainer.classList.add('flex');
     boContainer.classList.add('row');
@@ -36,11 +45,14 @@ document.addEventListener('DOMContentLoaded',()=>{
     boaddNewContainer.classList.remove('row');
     boremoveContainer.classList.remove('form-group');
     boremoveContainer.classList.remove('row');
+    boupdateContainer.classList.remove('row');
     boContainer.appendChild(boaddNewContainer);
+    boContainer.appendChild(boupdateContainer);
     boContainer.appendChild(boremoveContainer);
     selectContainer.appendChild(boContainer);
     divAfterboAddNew.remove();
     divAfterboRemove.remove();
+    divAfterboupdate.remove();
     
     //Se eliminan clases que entorpecen la estética
     divAfterboAddNew2.classList.remove('col-md-9');
@@ -51,6 +63,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     divAfterboRemove.classList.remove('form-inline');
     divAfterboRemove.classList.remove('align-items-start');
     divAfterboRemove.classList.remove('felement');
+    
 
     boremove.addEventListener('click',(e)=>{
         removeProyect(selectText.value, token,url);
@@ -73,7 +86,97 @@ document.addEventListener('DOMContentLoaded',()=>{
         if (!hasErrors)
             addproyect(teshortname.value,tename.value,token, url);
     })
+
+    selectText.addEventListener('click',(e)=>{
+        const shortname=e.target.value;
+        const name=e.target.text;
+
+        teshortname.value=shortname;
+        tename.value=name;
+        
+        
+        boupdate.disabled=false;
+        
+    })
+
+    boupdate.addEventListener('click',()=>{
+        window.console.log("update...");
+        const originalshortname=selectText.value;
+        const shortname=teshortname.value.trim();
+        const project_name=tename.value.trim();
+        updateProject(originalshortname,shortname, project_name, token,url);
+    })
 })
+
+
+const updateProject=(originalshortname,shortname,project_name,token, url)=>{
+    let xhr=new XMLHttpRequest();
+
+    // Obtén los archivos de los filepickers
+    
+    
+    //Se prepara el objeto a enviar
+    const formData= new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'block_itp_update_client');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[0][original_shortname]',originalshortname);
+    formData.append('params[0][shortname]',shortname);
+    formData.append('params[0][proyectname]',project_name);
+
+    
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        processUpdateAnswer(xhr,shortname,project_name);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const processUpdateAnswer=(xhr,shortname,name)=>{
+    if (xhr.readyState=== 4 && xhr. status === 200){
+        if (xhr.response){
+            window.console.log(xhr.response);
+            const response=JSON.parse(xhr.response);
+            if (response===0 || !response){
+                const errMsg=document.querySelector('#error-message');
+                const msg="Operation has not been completed. Verify that there are not duplicates for the shortname.";
+                const teshortname=document.querySelector('#id_customercode');
+                teshortname.focus();
+                teshortname.select();
+                showMessage(errMsg,msg);
+            } else { //suponiendo que todo haya ido bien
+                const selectText = document.querySelector('#id_type');
+               // Variables con los valores deseados
+                const id = response.id; // Ejemplo de ID
+                const shortname = response.shortname; // Ejemplo de shortname
+                const projectname = response.name; // Ejemplo de projectname
+
+                // Crear el texto para la opción
+                const optionValue = shortname;
+                const optionText = `${id} - ${shortname} - ${projectname}`;
+
+                // Buscar si ya existe una opción con ese value
+                let option = selectText.options[selectText.options.selectedIndex];
+                option.text=optionText;
+                option.value=optionValue;
+
+                if (!option) {
+                    // Si no existe, crear una nueva opción
+                    option = document.createElement('option');
+                    option.value = optionValue;
+                    selectText.appendChild(option);
+                }
+            }
+        }
+    }
+}
+
 
 const removeProyect = (value,token, url)=>{
     let xhr = new XMLHttpRequest();
@@ -112,6 +215,9 @@ const reqHandlerDropElem=(xhr)=>{
 
 const addproyect=(shortname,proyect_name,token, url)=>{
     let xhr=new XMLHttpRequest();
+
+    // Obtén los archivos de los filepickers
+    
     
     //Se prepara el objeto a enviar
     const formData= new FormData();
@@ -120,6 +226,8 @@ const addproyect=(shortname,proyect_name,token, url)=>{
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][shortname]',shortname);
     formData.append('params[0][proyectname]',proyect_name);
+
+    
 
     xhr.open('POST',url,true);
     xhr.send(formData);
@@ -136,6 +244,7 @@ const addproyect=(shortname,proyect_name,token, url)=>{
 const processAnswer=(xhr,shortname,name)=>{
     if (xhr.readyState=== 4 && xhr. status === 200){
         if (xhr.response){
+            window.console.log(xhr.response);
             const response=JSON.parse(xhr.response);
             if (response===0){
                 const errMsg=document.querySelector('#error-message');
@@ -149,6 +258,7 @@ const processAnswer=(xhr,shortname,name)=>{
                 const option=document.createElement('option');
                 option.text=response+ ' - ' +shortname.toUpperCase() + ' - ' + name;
                 option.value=shortname;
+                option.dataset.id=response;
                 selectText.add(option);
             }
         }
@@ -170,3 +280,12 @@ const showMessage=(elem,msg)=>{
     }, 3000); // 3000 milisegundos = 3 segundos
 }
 
+function obtenerUltimaCadena(url) {
+    const ultimoSlash = url.lastIndexOf('/');
+    if (ultimoSlash === -1) {
+      return url; // No hay barras, devuelve la URL completa
+    }
+    const ultimaCadena= url.substring(ultimoSlash + 1);
+    return decodeURIComponent(ultimaCadena);
+  }
+  
