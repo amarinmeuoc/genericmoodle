@@ -42,7 +42,7 @@ class FamilyFormPopup extends \core_form\dynamic_form {
         // Obtener información del usuario
         $selecteduser = $DB->get_record('user', ['id' => $userid, 'suspended'=>1], 'id, email, firstname, lastname, phone1, phone2, address, city');
        
-        $mform->addElement('static', 'useridtitle', get_string('showuser', 'local_ticketmanagement'), $selecteduser->firstname);
+        //$mform->addElement('static', 'useridtitle', get_string('showuser', 'local_ticketmanagement'), $selecteduser->firstname);
         
         $mform->addElement('hidden', 'userid', $userid);
         $mform->setType('userid', PARAM_INT);
@@ -254,21 +254,7 @@ class FamilyFormPopup extends \core_form\dynamic_form {
         // Obtener el userid desde los datos proporcionados
         $userid = $this->_ajaxformdata['userid'];
 
-        if ($userid) {
-            // Consultar los datos del usuario en la base de datos
-            $selecteduser = $DB->get_record('user', ['id' => $userid], 'firstname, lastname');
-
-            if ($selecteduser) {
-                // Concatenar nombre y apellidos para mostrar
-                $fullname = $selecteduser->firstname . ' ' . $selecteduser->lastname;
-
-                // Modificar dinámicamente el valor del campo estático
-                $this->_form->getElement('useridtitle')->setValue($fullname);
-            } else {
-                // En caso de que no se encuentre el usuario, mostrar un mensaje genérico
-                $this->_form->getElement('useridtitle')->setValue(get_string('usernotfound', 'local_ticketmanagement'));
-            }
-        }
+       
 
     }
 
