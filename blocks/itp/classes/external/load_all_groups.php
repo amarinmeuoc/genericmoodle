@@ -1,14 +1,13 @@
 <?php
-namespace report_partialplan\external;
+namespace block_itp\external;
 
 use \core_external\external_function_parameters as external_function_parameters;
 use \core_external\external_multiple_structure as external_multiple_structure;
 use \core_external\external_single_structure as external_single_structure;
 use \core_external\external_value as external_value;
 
-class get_group_list extends \core_external\external_api {
-
-    /**
+class load_all_groups extends \core_external\external_api {
+/**
      * Returns description of method parameters
      * @return external_function_parameters
      */
@@ -16,56 +15,44 @@ class get_group_list extends \core_external\external_api {
         return new external_function_parameters([
             'params'=>new external_multiple_structure(
                 new external_single_structure([
-                    'customerid'=>new external_value(PARAM_TEXT,'Customer id'),
+                    'customerid'=>new external_value(PARAM_INT,'Customer id'),
                 ])
             ) 
         ]);
     }
 
-        /**
+    /**
      * Show Partial Training Plan
      * @param array A list of params for display the table
      * @return array Return a array of courses
      */
     public static function execute($params) {
-        global $DB,$USER;
+        global $DB;
         
         // Validate parameters
         $request=self::validate_parameters(self::execute_parameters(), ['params'=>$params]);
-        
-        // now security checks
-        $context = \context_system::instance();
-        self::validate_context($context);
-        require_capability('webservice/rest:use', $context); 
-
-        // Extract parameters
         $customerid=$request['params'][0]['customerid'];
-                
         
-        $group=$DB->get_records('grouptrainee', ['customer'=>$customerid,'hidden'=>0], '','id,name');
-        $group=array_values($group);
-        
-        
-        
-       
-        return $group;
+         // now security checks
+         $context = \context_system::instance();
+         self::validate_context($context);
+         require_capability('webservice/rest:use', $context);
+
+         //Se listan todos los grupos del cliente seleccionado
+         $result=$DB->get_records('grouptrainee', ['customer'=>$customerid], 'id ASC', 'id,name,hidden');
+         
+        return $result;
     }
+
 
     public static function execute_returns() {
         //Must show the WBS, Coursename, Start, End, Num Trainees, Assignation, Location, Provider, Download CSV, Send Email
         return new external_multiple_structure(
-                new external_single_structure([
-                    
-                    
-                        
-                        'id'=>new external_value(PARAM_INT,'group id'),
-                        'name'=>new external_value(PARAM_TEXT,'group name'),
-                        
-                   
-                    
-                ]),
-            
+            new external_single_structure([
+                'id'=> new external_value(PARAM_INT,'Group id'),
+                'name'=>new external_value(PARAM_TEXT,'Group name'),
+                'hidden'=>new external_value(PARAM_INT,'If hidden'),
+            ])
         );
-       
     }
 }

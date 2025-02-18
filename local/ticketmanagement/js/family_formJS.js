@@ -14,15 +14,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       customerid=selproject.options[selproject.selectedIndex].value;
       vesselid=e.target.options[e.target.selectedIndex].value;
       
-        let role='student'
-        if (e.target.options[e.target.selectedIndex].textContent==='PCO'){
-          role='observer';
-        } else if (e.target.options[e.target.selectedIndex].textContent==='UTE'){
-          role='controller';
-        }
+        
       
       
-      updateListofUsers(customerid, vesselid, role, token);
+      updateListofUsers(customerid, vesselid, token);
     });
 
         
@@ -73,12 +68,12 @@ const reqHandlerLoadGroups=(xhr)=>{
         role="observer";
         
         
-        updateListofUsers(customerid, vesselid, role, token);
+        updateListofUsers(customerid, vesselid, token);
     }
   }
 }
 
-const updateListofUsers=(customerid, vesselid, role, token)=>{
+const updateListofUsers=(customerid, vesselid, token)=>{
   let xhr = new XMLHttpRequest();
     
     //Se prepara el objeto a enviar
@@ -87,7 +82,7 @@ const updateListofUsers=(customerid, vesselid, role, token)=>{
     formData.append('wsfunction', 'local_ticketmanagement_get_list_trainees');
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][customerid]',customerid);
-    formData.append('params[0][role]',role);
+    //formData.append('params[0][role]',role);
     formData.append('params[0][groupid]',vesselid);
   
 

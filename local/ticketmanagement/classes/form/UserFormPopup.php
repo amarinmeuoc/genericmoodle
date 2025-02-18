@@ -159,7 +159,7 @@ class UserFormPopup extends \core_form\dynamic_form {
 
         // Validar el ID del usuario
         if (empty($data->userid) || !$user = $DB->get_record('user', ['id' => $data->userid])) {
-            throw new moodle_exception('invaliduserid', 'local_ticketmanagement');
+            throw new \moodle_exception('invaliduserid', 'local_ticketmanagement');
         }
 
         // Extraer el ID del usuario.

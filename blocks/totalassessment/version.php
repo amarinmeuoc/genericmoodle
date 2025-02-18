@@ -29,7 +29,7 @@
 
  defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024020801.01;
+$plugin->version = 2024020801.05;
 $plugin->requires = 2023100902.06;
 $plugin->component = 'block_totalassessment';
 $plugin->dependencies = array(

@@ -20,7 +20,7 @@ class get_list_trainees extends \core_external\external_api {
                 new external_single_structure([
                     'groupid'=>new external_value(PARAM_TEXT,'Group name'),
                     'customerid'=>new external_value(PARAM_TEXT,'Customer shortname'),
-                    'role'=>new external_value(PARAM_TEXT,'Role, in general student'),
+                   // 'role'=>new external_value(PARAM_TEXT,'Role, in general student'),
                     
                 ])
             ) 
@@ -39,7 +39,7 @@ class get_list_trainees extends \core_external\external_api {
         $request = self::validate_parameters(self::execute_parameters(), ['params' => $params]);
         $groupid = $request['params'][0]['groupid'];
         $customerid = $request['params'][0]['customerid'];
-        $role = $request['params'][0]['role'];
+        //$role = $request['params'][0]['role'];
     
         // Security checks
         $context = \context_system::instance();
@@ -66,7 +66,7 @@ class get_list_trainees extends \core_external\external_api {
                 INNER JOIN mdl_user_info_field AS uf ON uf.id=ui.fieldid
                 WHERE u.suspended=0
                 GROUP by username,firstname, lastname
-                HAVING role_name=:role_name AND customer=:customer AND groupname=:groupname',['role_name'=>$role,'customer'=>$customer, 'groupname'=>$groupname]);
+                HAVING  customer=:customer AND groupname=:groupname',['customer'=>$customer, 'groupname'=>$groupname]);
                 $trainee_list=array_values($trainee_query);
         
         

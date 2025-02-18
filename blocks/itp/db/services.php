@@ -294,6 +294,27 @@ $functions = [
         ]
         
     ],
+    // The name of your web service function, as discussed above.
+    'block_itp_load_all_groups' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\block_itp\external\load_all_groups',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'get all groups hidden or not.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
     
 ];
 
@@ -302,7 +323,8 @@ $services = [
         'functions' => [
             'block_itp_remove_client', // Aquí se incluye la función en el nuevo servicio
             'block_itp_add_client',
-            'block_itp_load_groups_from_customer',
+            'block_itp_load_groups',
+            'block_itp_load_all_groups',
             'block_itp_add_group',
             'block_itp_remove_group',
             'block_itp_reset_training_plan',

@@ -137,6 +137,26 @@ class add_ticket extends \core_external\external_api {
         
         //Send email ticket created
         
+        $to=$DB->get_record('user',['id'=>$affectedUser->id]);
+        $message = "<p>Your ticket has been created. You will shortly receive information.</p>";
+        $messageHTML = "
+                <h1 style='background-color:#0f6cbf; color: white; padding: .3em;'>Ticket Created</h1>
+                <p style='font-size:large;'>Your ticket has been created. You will shortly receive more information.</p>
+                <p style='font-size:large;'>You can also see the progress of your ticket by clicking here: <a href=".$_SERVER['SERVER_NAME'].'/local/ticketmanagement'.">Ticket status</a></p>
+                <p style='font-size:large;'>Thank you for using our service.</p>
+                <p style='font-size:large;'><strong>Support Team</strong></p>
+            ";
+        $subject="New Ticket created: $next_id";
+
+        // Obtén el objeto de usuario "no-reply" configurado en Moodle
+        $noreplyuser = "no-reply@ksatraining.navantia.es";
+
+
+        
+        email_to_user($to,$USER,$subject,$message,$messageHTML);
+        
+        
+
         // Retornar una respuesta (ej. el ID del nuevo ticket creado)
         return (array) $record;
     }

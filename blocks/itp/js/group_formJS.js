@@ -253,7 +253,7 @@ const loadGroupOfSelectedCustomer=(value,token,url)=>{
     //Se prepara el objeto a enviar
     const formData= new FormData();
     formData.append('wstoken',token);
-    formData.append('wsfunction', 'block_itp_load_groups');
+    formData.append('wsfunction', 'block_itp_load_all_groups');
     formData.append('moodlewsrestformat', 'json');
     formData.append('params[0][customerid]',value);
     

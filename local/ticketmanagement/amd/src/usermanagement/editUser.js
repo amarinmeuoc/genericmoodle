@@ -19,7 +19,9 @@ define([
         
         e.stopPropagation();
         const tr = e.target.closest('tr');
-        const userid=tr.dataset.userid;
+        const userid=tr.id;
+             
+        
 
         // Accede al tercer <td> dentro del <tr>
         const email = tr.querySelector('td:nth-child(3)').textContent;
