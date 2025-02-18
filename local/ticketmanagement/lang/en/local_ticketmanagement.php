@@ -100,3 +100,4 @@ $string['ticketmanagement:managetickets'] = 'Permiso de gestión de tickets';
 $string['assigment'] = 'This ticket is linked to a user';
 $string['NIE'] = 'NIE';
 $string['manageuser'] = 'Manage users';
+$string['removeticketbyid'] = 'Remove ticket by id';
