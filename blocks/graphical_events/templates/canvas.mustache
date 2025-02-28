@@ -1,0 +1,19 @@
+
+  <canvas id="myChart"></canvas>
+{{#js}}
+require.config({
+    paths: {
+        chart: '/blocks/graphical_events/js/chart',
+    },
+    shim: {
+        chart: { exports: 'chart' },       // Nombre correcto de la variable global de chart
+    }
+});
+
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['block_graphical_events/chart_module', 'chart'], function(module, chart) {
+    // Inicializar el módulo con las dependencias cargadas
+    module.init(chart);
+});
+
+{{/js}}

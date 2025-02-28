@@ -46,9 +46,18 @@ if ($mform->is_cancelled()) {
             }
         }
         $result=$DB->delete_records('ticket',['id'=>$ticketid]);
+        
         if ($result){
-            $message = "El registro se ha borrado correctamente. Se han borrado <strong>$num_archivos_borrados</strong> archivos en total";
-            redirect(new \moodle_url('delete_ticket.php'), $message,null,\core\output\notification::NOTIFY_SUCCESS);
+            //Aseguramos que las acciones tambien se borren
+            $actionresult=$DB->delete_records('ticket_action',['ticketid'=>$ticketid]);
+            if ($actionresult){
+                $message = "El registro se ha borrado correctamente. Se han borrado <strong>$num_archivos_borrados</strong> archivos en total";
+                redirect(new \moodle_url('delete_ticket.php'), $message,null,\core\output\notification::NOTIFY_SUCCESS);
+            } else {
+                $message = "El ticket con id $ticketid, pero ocurrio un problema con las acciones asociadas";
+                redirect(new \moodle_url('delete_ticket.php'), $message,null,\core\output\notification::NOTIFY_WARNING);
+            }
+            
         } else {
             $message = "Ocurrio un problema en el proceso de borrado";
             redirect(new \moodle_url('delete_ticket.php'), $message,null,\core\output\notification::NOTIFY_ERROR);
