@@ -109,7 +109,7 @@ class FamilyFormPopup extends \core_form\dynamic_form {
         $mform->addElement('text', 'nie', get_string('NIE', 'local_ticketmanagement'));
         $mform->setType('nie', PARAM_TEXT);
 
-        $mform->addElement('date_selector', 'birthdate', get_string('birthdate', 'local_ticketmanagement'));
+        $mform->addElement('date_selector', 'birthdate', get_string('birthdate', 'local_ticketmanagement'),['optional'=>true]);
         
         $mform->addElement('text', 'adeslas', get_string('adeslas', 'local_ticketmanagement'));
         $mform->setType('adeslas', PARAM_TEXT);
@@ -120,9 +120,9 @@ class FamilyFormPopup extends \core_form\dynamic_form {
         $mform->addElement('text', 'email', get_string('email', 'local_ticketmanagement'));
         $mform->setType('email', PARAM_TEXT);
 
-        $mform->addElement('date_selector', 'arrival', get_string('arrival', 'local_ticketmanagement'));
+        $mform->addElement('date_selector', 'arrival', get_string('arrival', 'local_ticketmanagement'),['optional'=>true]);
        
-        $mform->addElement('date_selector', 'departure', get_string('departure', 'local_ticketmanagement'));
+        $mform->addElement('date_selector', 'departure', get_string('departure', 'local_ticketmanagement'),['optional'=>true]);
        
         $mform->addElement('text', 'notes', get_string('notes', 'local_ticketmanagement'));
         $mform->setType('notes', PARAM_TEXT);

@@ -116,6 +116,7 @@ const onLoadFunction=(myXhr)=>{
    
     if (myXhr.readyState===4 && myXhr.status===200){
         const res=JSON.parse(myXhr.response);
+        window.console.log(res);
         createExcelFromJSON(res,'userReport');
         
     }
@@ -149,13 +150,14 @@ const createExcelFromJSON = (res, op) => {
             user.phone2,
             user.address,
             user.city,
+            user.notes,
+            user.insurance_card_number,
+            formatUnixToDateTime(user.niedate),
             formatUnixToDateTime(user.birthdate),
             formatUnixToDateTime(user.arrival_date),
             formatUnixToDateTime(user.departure_date),
-            user.insurance_card_number,
             user.shoesize,
             user.overallsize,
-            user.notes,
             user.iffamily
         ]);
         listado = listado.concat(usersArray);
@@ -202,7 +204,7 @@ const formatUnixToDateTime = (unixTimestamp) => {
     let date='';
     if(unixTimestamp!==0){
         date = new Date(unixTimestamp * 1000); // Convertir de segundos a milisegundos
-        date.setDate(date.getDate() + 1); // Sumar un día
+        date.setDate(date.getDate()); // Sumar un día
     }
     return date;
 };

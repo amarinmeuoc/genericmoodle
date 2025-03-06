@@ -201,7 +201,7 @@ const formatUnixToDateTime = (unixTimestamp) => {
     let date='';
     if(unixTimestamp!==0){
         date = new Date(unixTimestamp * 1000); // Convertir de segundos a milisegundos
-        date.setDate(date.getDate() + 1); // Sumar un día
+        date.setDate(date.getDate()); 
     }
     return date;
 };

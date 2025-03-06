@@ -73,6 +73,7 @@ class get_list_users_excel extends \core_external\external_api {
                 MAX(if (uf.shortname="personalemail",ui.data,"")) as personalemail,
                 MAX(if (uf.shortname="notes",ui.data,"")) as notes,
                 MAX(if (uf.shortname="insurance_card_number",ui.data,"")) as insurance_card_number,
+                MAX(if (uf.shortname="niedate",ui.data,"")) as niedate,
                 MAX(if (uf.shortname="birthdate",ui.data,"")) as birthdate,
                 MAX(if (uf.shortname="shoesize",ui.data,"")) as shoesize,
                 MAX(if (uf.shortname="overallsize",ui.data,"")) as overallsize,
@@ -131,11 +132,12 @@ class get_list_users_excel extends \core_external\external_api {
                 'city'=>$user->city,
                 'notes'=>$user->notes,
                 'insurance_card_number'=>$user->insurance_card_number,
-                'birthdate'=>max($user->birthdate,0),
+                'niedate'=>intval($user->niedate),
+                'birthdate'=>intval($user->birthdate),
+                'arrival_date'=>intval($user->arrival_date),
+                'departure_date'=>intval($user->departure_date),
                 'shoesize'=>max($user->shoesize,0),
                 'overallsize'=>max($user->overallsize,0),
-                'arrival_date'=>max($user->arrival_date,0),
-                'departure_date'=>max($user->departure_date,0),
                 'iffamily'=>count($family_members)
             ];
         }
@@ -151,7 +153,7 @@ class get_list_users_excel extends \core_external\external_api {
             'order'=>($order==='ASC')?1:0,
             
         ];
-
+        
         return $users;
 
     }
@@ -175,13 +177,14 @@ class get_list_users_excel extends \core_external\external_api {
                         'phone2' => new external_value(PARAM_TEXT, 'Phone 2'),
                         'address' => new external_value(PARAM_TEXT, 'Address'),
                         'city' => new external_value(PARAM_TEXT, 'city'),
+                        'notes'=>new external_value(PARAM_TEXT, 'notes'),
+                        'insurance_card_number'=>new external_value(PARAM_TEXT, 'insurance_card_number'),
+                        'niedate'=>new external_value(PARAM_INT, 'nie date'),
                         'birthdate'=>new external_value(PARAM_INT, 'birthdate'),
                         'arrival_date'=>new external_value(PARAM_INT, 'arrival_date'),
                         'departure_date'=>new external_value(PARAM_INT, 'departure_date'),
-                        'insurance_card_number'=>new external_value(PARAM_TEXT, 'insurance_card_number'),
                         'shoesize'=>new external_value(PARAM_FLOAT, 'shoesize'),
                         'overallsize'=>new external_value(PARAM_FLOAT, 'overallsize'),
-                        'notes'=>new external_value(PARAM_TEXT, 'notes'),
                         'iffamily'=>new external_value(PARAM_INT, 'if has any family member'),
                     ])
                 ),

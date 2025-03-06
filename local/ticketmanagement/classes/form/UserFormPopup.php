@@ -79,10 +79,10 @@ class UserFormPopup extends \core_form\dynamic_form {
         $mform->setType('notes', PARAM_TEXT);
     
         // Campos de fecha
-        $mform->addElement('date_selector', 'niedate', get_string('niedate', 'local_ticketmanagement'));
-        $mform->addElement('date_selector', 'birthdate', get_string('birthdate', 'local_ticketmanagement'));
-        $mform->addElement('date_selector', 'arrival_date', get_string('arrival_date', 'local_ticketmanagement'));
-        $mform->addElement('date_selector', 'departure_date', get_string('departure_date', 'local_ticketmanagement'));
+        $mform->addElement('date_selector', 'niedate', get_string('niedate', 'local_ticketmanagement'),['optional'=>true]);
+        $mform->addElement('date_selector', 'birthdate', get_string('birthdate', 'local_ticketmanagement'),['optional'=>true]);
+        $mform->addElement('date_selector', 'arrival_date', get_string('arrival_date', 'local_ticketmanagement'),['optional'=>true]);
+        $mform->addElement('date_selector', 'departure_date', get_string('departure_date', 'local_ticketmanagement'),['optional'=>true]);
     }
     
 
