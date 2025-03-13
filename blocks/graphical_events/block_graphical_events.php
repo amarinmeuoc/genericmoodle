@@ -39,7 +39,7 @@ class block_graphical_events extends block_base {
      * @return string The block HTML.
      */
     public function get_content() {
-        global $OUTPUT,$DB;
+        global $OUTPUT,$DB,$USER;
 
         if ($this->content !== null) {
             return $this->content;
@@ -52,7 +52,8 @@ class block_graphical_events extends block_base {
 
         $this->content = new stdClass();
         $this->content->footer = '';
-        $this->page->requires->js_call_amd('block_graphical_events/init', 'init');
+        //$this->page->requires->js_init_code('var userId = ' . $USER->id . ';');
+        $this->page->requires->js_call_amd('block_graphical_events/init', 'init',[isset($USER->id) ? $USER->id : 0]);
 
         //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 

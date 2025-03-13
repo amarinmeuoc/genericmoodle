@@ -6,7 +6,7 @@ define([
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
     const token=document.querySelector('input[name="token"]').value;
 
-    const init = () => {
+    const init = (userIdFromPHP) => {
         
         shared.areElementsLoaded('#layer').then((elements)=>{
             console.log("TODO: START");
@@ -22,8 +22,10 @@ define([
                     })
                     e.target.classList.add('active','active_tree_node');
                     let userId=0;
+                    
                     if (e.target.dataset.user==='yes')
-                        userId=M.cfg.userId;
+                        userId = userIdFromPHP; // Fallback to 0 if userId is not set
+
                     else
                         userId=0;
 
@@ -38,7 +40,8 @@ define([
                 const selectedTab=tabs.querySelector('.nav-link.active');
                 let userId=0;
                     if (selectedTab.dataset.user==='yes')
-                        userId=M.cfg.userId;
+                        userId = userIdFromPHP; // Fallback to 0 if userId is not set
+
                     else
                         userId=0;
                 reloadGraph(url,token,userId);
