@@ -1,11 +1,21 @@
 <div id="layer">
+  <form>
+  <select id="id_graph_project" class="custom-select" aria-label="Default select">
+  <option value='0' selected>KSA01</option>
+  </select>
+  <select id="id_graph_vessel" class="custom-select" aria-label="Default select">
+  <option value='0' selected>All Groups</option>
+  </select>
+  <button id="idboclick" type="button" class="btn btn-primary">Click me!</button>
+  <input type="hidden" name="token" value="{{token}}">
+  </form>
 <nav class="moremenu navigation observed">
     <ul id="graphpanel" class="nav more-nav nav-tabs" role="tablist">
         <li class="nav-item" role="none">
-          <a role="menuitem" class="nav-link active active_tree_node" href="#">General</a>
+          <a role="menuitem" data-user="no" class="nav-link active active_tree_node" href="#">General</a>
         </li>
         <li class="nav-item" role="none">
-          <a role="menuitem" class="nav-link" href="#">Cristina</a>
+          <a role="menuitem" data-user="yes" class="nav-link" href="#">My tickets</a>
         </li>
     </ul>
 </nav>

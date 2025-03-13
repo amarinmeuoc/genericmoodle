@@ -1,4 +1,5 @@
 
+
   <canvas id="myChart"></canvas>
 {{#js}}
 require.config({
@@ -12,8 +13,8 @@ require.config({
 
 // Cargar el módulo de exportación y las dependencias de la biblioteca
 require(['block_graphical_events/chart_module', 'chart'], function(module, chart) {
-    // Inicializar el módulo con las dependencias cargadas
-    module.init(chart);
+    // Pass the data to the module's init function
+    module.init({{{jsondata}}});
 });
 
 {{/js}}

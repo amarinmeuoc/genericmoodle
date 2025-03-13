@@ -39,20 +39,35 @@ class block_graphical_events extends block_base {
      * @return string The block HTML.
      */
     public function get_content() {
-        global $OUTPUT;
+        global $OUTPUT,$DB;
 
         if ($this->content !== null) {
             return $this->content;
+        }
+
+        // Check if the user has the required capability
+        if (!has_capability('blocks/graphical_events:view', $this->context)) {
+            return null; // Return nothing if the user doesn't have access
         }
 
         $this->content = new stdClass();
         $this->content->footer = '';
         $this->page->requires->js_call_amd('block_graphical_events/init', 'init');
 
+        //Se obtiene el token del usuario y se guarda en un campo oculto
+        $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
+                                    INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
+                                    WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
+        $token=$token->token;
+
         // Add logic here to define your template data or any other content.
-        $data = ['YOUR DATA GOES HERE'];
+        $data = [
+            'token'=>$token
+        ];
 
         $this->content->text = $OUTPUT->render_from_template('block_graphical_events/content', $data);
+
+        //$this->page->requires->js('/blocks/graphical_events/js/init.js', false);
 
         return $this->content;
     }

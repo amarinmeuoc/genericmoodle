@@ -27,3 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->version   = 2024042200.1;
 $plugin->requires  = 2024041600;
 $plugin->component = 'block_graphical_events';
+
+$plugin->dependencies = array(
+    'local_ticketmanagement' => ANY_VERSION,   // The block ITP must be present (any version).
+);
