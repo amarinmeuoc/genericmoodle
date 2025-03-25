@@ -26,6 +26,9 @@ class filteritpform_observer extends \moodleform {
         foreach ($list_of_groups as $key=>$group){
             $list_of_groups[$key]=$group->name;
         }       
+
+        if (count($list_of_groups)===0)
+            $list_of_groups[0]='No vessel registered';
         
         $mform->addElement('select', 'tegroup', get_string('tegroup', 'block_itp'), $list_of_groups, '');
         $mform->setType('tegroup', PARAM_INT);

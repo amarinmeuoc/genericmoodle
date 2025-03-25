@@ -20,7 +20,7 @@
 {{#courses}}
     <tr>
       <th scope="row" headers="wbs" id="wbs_row">{{wbs}}</th>
-      <td headers="coursename wbs_row">{{#terminado}}<a data-wbs={{wbs}} data-trainees={{trainees}} data-startdate={{startdate}} data-enddate={{enddate}} class="courseFinished" href="#" title="Download Report">{{course}}</a>{{/terminado}}{{^terminado}}{{course}}{{/terminado}}</td>
+      <td headers="coursename wbs_row">{{#terminado}}<a data-wbs={{wbs}} data-trainees="{{trainees}}" data-startdate={{startdate}} data-enddate={{enddate}} class="courseFinished" href="#" title="Download Report">{{course}}</a>{{/terminado}}{{^terminado}}{{course}}{{/terminado}}</td>
       <td headers="startdate wbs_row">{{#userdate}} {{startdate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
       <td headers="enddate wbs_row">{{#userdate}} {{enddate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}</td>
       <td headers="numtrainees wbs_row">{{num_trainees}}</td>
