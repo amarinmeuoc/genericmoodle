@@ -1,5 +1,5 @@
 // block_graphical_events/chart_module.js
-define(['core/toast','chart'], function(addToast,Chart) {
+define(['core/toast','core/chartjs'], function(addToast,Chart) {
     return {
         init: function(data) {
             const ctx = document.getElementById('myChart');

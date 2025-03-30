@@ -1,0 +1,10 @@
+  <canvas id="myBarChartTickets"></canvas>
+  <em class="text-danger">* Remember that non-project tickets have not been counted.</em>
+{{#js}}
+
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['block_charts/barchart'], function(module) {
+    // Pass the data to the module's init function
+    module.init({{{jsondata}}});
+});
+{{/js}}
