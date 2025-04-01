@@ -1,6 +1,6 @@
 <?php
 
-$string['pluginname']="Charts Line for measuring response time plugin";
-$string['charts_responsetime']="Charts that measure response time";
+$string['pluginname']="Chart Line IT Response time-lapses";
+$string['charts_responsetime']="Chart Line: IT Response time-lapses";
 
 ?>

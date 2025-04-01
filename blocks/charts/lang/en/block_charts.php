@@ -1,5 +1,5 @@
 <?php
 
-$string['pluginname']="Charts Bar of groups grouped by Category plugin";
-$string['charts']="Charts of tickets grouped by crew and category";
+$string['pluginname']="Chart Bar IT Grouped";
+$string['charts']="Chart Bar: IT Grouped";
 ?>

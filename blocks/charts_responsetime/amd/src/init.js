@@ -12,7 +12,7 @@ define([
         shared.areElementsLoaded('#id_chart_responsetime_boclick, #myLineChart').then((elements)=>{
             console.log("TODO: START chart line loaded");
             loadProjectOptions(url,token).then(()=>{
-                window.console.log("se hixo la promesa");
+                
                 reloadLineGraph();
             });
 
@@ -45,6 +45,8 @@ define([
     };
 
     const reloadLineGraph=()=>{
+
+        shared.showLoader();
         //Obtiene los datos y recarga el gráfico
         let xhr=new XMLHttpRequest();
         const project=document.querySelector('#id_chart_responsetime_project').value;
@@ -70,6 +72,7 @@ define([
         xhr.onload = (ev)=> {
             if (xhr.status === 200) {
                 reqHandlerLoadLineGraphEvent(xhr);
+                shared.hideLoader();
                 
             } else {
                 rejectAnswer(xhr);
@@ -78,9 +81,15 @@ define([
         }
 
         xhr.onerror = ()=> {
+            shared.hideLoader();
             rejectAnswer(xhr);
             
         }
+
+        xhr.ontimeout = () => {
+            shared.hideLoader();
+            rejectAnswer(xhr);
+        };
     
     }
 

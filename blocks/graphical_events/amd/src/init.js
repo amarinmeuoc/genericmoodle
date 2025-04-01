@@ -50,6 +50,7 @@ define([
         });
 
         const reloadGraph=(url,token,userId)=>{
+            shared.showLoader();
             const selectedCustomer=parseInt(document.querySelector('#id_graph_project').value);
             const selectedGroup=parseInt(document.querySelector('#id_graph_vessel').value);
             
@@ -71,7 +72,7 @@ define([
             xhr.onload = (ev)=> {
                 if (xhr.status === 200) {
                     reqHandlerLoadGraphEvent(xhr);
-                    
+                    shared.hideLoader();
                 } else {
                     rejectAnswer(xhr);
                     
@@ -80,7 +81,7 @@ define([
 
             xhr.onerror = ()=> {
                 rejectAnswer(xhr);
-                
+                shared.hideLoader();
             }
             
         }

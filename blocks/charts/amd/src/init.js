@@ -39,13 +39,16 @@ define([
             bosubmit.addEventListener('click',()=>{
                 
                 reloadGraph();
-            })
+            }) 
 
         });
 
     };
 
     const reloadGraph=()=>{
+        // Show loading indicator
+        shared.showLoader();
+        
         //Obtiene los datos y recarga el gráfico
         let xhr=new XMLHttpRequest();
         const project=document.querySelector('#id_chart_project').value;
@@ -66,19 +69,29 @@ define([
         xhr.send(formData);
 
         xhr.onload = (ev)=> {
+            
+            
             if (xhr.status === 200) {
                 reqHandlerLoadGraphEvent(xhr);
-                
+                shared.hideLoader();
             } else {
+                shared.hideLoader();
+
                 rejectAnswer(xhr);
                
             }
         }
 
         xhr.onerror = ()=> {
+            shared.hideLoader();
             rejectAnswer(xhr);
             
         }
+
+        xhr.ontimeout = () => {
+            shared.hideLoader();
+            rejectAnswer(xhr);
+        };
     
     }
 

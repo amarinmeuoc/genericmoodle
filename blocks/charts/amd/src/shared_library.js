@@ -17,40 +17,31 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
         },
         
         showLoader: function (event){
-            const loader=document.querySelector('.loader');
-            const table=document.querySelector('.generaltable');
+            
+            const barchartpanel=document.querySelector('#barchartpanel');
+            const loader=barchartpanel.querySelector('.loader');
+            const graph=barchartpanel.querySelector('.graph');
             loader.classList.remove('hide');
             loader.classList.add('show');
-            table.classList.add('hide');
-            const bosearch=document.querySelector('#id_bosearchdate');
-            const bosearchbyID=document.querySelector('#id_bosearchbyid');
-            if (bosearch)
-                bosearch.disabled=true;
-            if (bosearchbyID)
-                bosearchbyID.disabled=true;
+            graph.classList.add('hide');
             
+             
           },
           
           hideLoader:function(event){
-            const loader=document.querySelector('.loader');
-            const table=document.querySelector('.generaltable');
+            const barchartpanel=document.querySelector('#barchartpanel');
+            const loader=barchartpanel.querySelector('.loader');
+            const graph=barchartpanel.querySelector('.graph');
             loader.classList.remove('show');
             loader.classList.add('hide');
-            table.classList.remove('hide');
-            const bosearch=document.querySelector('#id_bosearchdate');
-            const bosearchbyID=document.querySelector('#id_bosearchbyid');
-            if (bosearch)
-                bosearch.disabled=false;
-            if (bosearchbyID)
-                bosearchbyID.disabled=false;
+            graph.classList.remove('hide');
+            
+            
           },
       
-          onProgressFunction:function(event) {
-            console.log(`Uploaded ${event.loaded} of ${event.total}`);
-            const loader=document.querySelector('.loader');
-            loader.classList.remove('.hide');
-            loader.classList.add('.show');
-        },
+         
+      
+          
 
     }
 })

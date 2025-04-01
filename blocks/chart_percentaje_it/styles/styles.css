@@ -1,7 +1,7 @@
-#barchartpanel .hide {
+#piechart-states .hide {
     display: none !important;
 }
 
-#barchartpanel .show {
+#piechart-states .show {
     display: block;
 }

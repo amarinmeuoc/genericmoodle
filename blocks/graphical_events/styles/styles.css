@@ -1,0 +1,7 @@
+#graphicalpanel .hide {
+    display: none !important;
+}
+
+#graphicalpanel .show {
+    display: none;
+}

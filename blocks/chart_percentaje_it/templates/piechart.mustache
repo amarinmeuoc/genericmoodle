@@ -1,0 +1,11 @@
+  <canvas id="myPieChart" class="graph"></canvas>
+  <div class="loader d-flex justify-content-center">
+    {{> core/loading }}
+</div>
+{{#js}}
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['block_chart_percentaje_it/piechart'], function(module) {
+    // Pass the data to the module's init function
+    module.init({{{jsondata}}});
+});
+{{/js}}

@@ -17,32 +17,24 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
         },
         
         showLoader: function (event){
-            const loader=document.querySelector('.loader');
-            const table=document.querySelector('.generaltable');
+            const graphicalpanel=document.querySelector('#graphicalpanel');
+            const loader=graphicalpanel.querySelector('.loader');
+            const table=graphicalpanel.querySelector('.graph');
             loader.classList.remove('hide');
             loader.classList.add('show');
             table.classList.add('hide');
-            const bosearch=document.querySelector('#id_bosearchdate');
-            const bosearchbyID=document.querySelector('#id_bosearchbyid');
-            if (bosearch)
-                bosearch.disabled=true;
-            if (bosearchbyID)
-                bosearchbyID.disabled=true;
             
+             
           },
           
           hideLoader:function(event){
-            const loader=document.querySelector('.loader');
-            const table=document.querySelector('.generaltable');
+            const graphicalpanel=document.querySelector('#graphicalpanel');
+            const loader=graphicalpanel.querySelector('.loader');
+            const table=graphicalpanel.querySelector('.graph');
             loader.classList.remove('show');
             loader.classList.add('hide');
             table.classList.remove('hide');
-            const bosearch=document.querySelector('#id_bosearchdate');
-            const bosearchbyID=document.querySelector('#id_bosearchbyid');
-            if (bosearch)
-                bosearch.disabled=false;
-            if (bosearchbyID)
-                bosearchbyID.disabled=false;
+            
           },
       
           onProgressFunction:function(event) {

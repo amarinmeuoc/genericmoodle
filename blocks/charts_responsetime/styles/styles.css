@@ -1,0 +1,7 @@
+#linechart-responsetime .hide {
+    display: none !important;
+}
+
+#linechart-responsetime .show {
+    display: none;
+}

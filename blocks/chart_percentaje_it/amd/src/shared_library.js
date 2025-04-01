@@ -17,32 +17,27 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
         },
         
         showLoader: function (event){
-            const linechartresponsetime=document.querySelector('#linechart-responsetime');
-            const loader=linechartresponsetime.querySelector('.loader');
-            const table=linechartresponsetime.querySelector('.graph');
+            const piechartstates=document.querySelector('#piechart-states');
+            const loader=piechartstates.querySelector('.loader');
+            const table=piechartstates.querySelector('.graph');
             loader.classList.remove('hide');
             loader.classList.add('show');
             table.classList.add('hide');
             
-             
+            
           },
           
           hideLoader:function(event){
-            const linechartresponsetime=document.querySelector('#linechart-responsetime');
-            const loader=linechartresponsetime.querySelector('.loader');
-            const table=linechartresponsetime.querySelector('.graph');
+            const piechartstates=document.querySelector('#piechart-states');
+            const loader=piechartstates.querySelector('.loader');
+            const table=piechartstates.querySelector('.graph');
             loader.classList.remove('show');
             loader.classList.add('hide');
             table.classList.remove('hide');
             
           },
       
-          onProgressFunction:function(event) {
-            console.log(`Uploaded ${event.loaded} of ${event.total}`);
-            const loader=document.querySelector('.loader');
-            loader.classList.remove('.hide');
-            loader.classList.add('.show');
-        },
+          
 
     }
 })

@@ -1,5 +1,5 @@
 <?php
 
-$string['pluginname']="Graphical Events plugin";
-$string['graphical_events']="Graphical tickets view";
+$string['pluginname']="Chart Bar IT States";
+$string['graphical_events']="Chart Bar: IT States";
 ?>

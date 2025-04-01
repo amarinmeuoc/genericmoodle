@@ -1,8 +1,0 @@
-  <canvas id="myPieChart"></canvas>
-{{#js}}
-// Cargar el módulo de exportación y las dependencias de la biblioteca
-require(['block_charts/piechart', 'chart'], function(module, chart) {
-    // Pass the data to the module's init function
-    module.init({{{jsondata}}});
-});
-{{/js}}

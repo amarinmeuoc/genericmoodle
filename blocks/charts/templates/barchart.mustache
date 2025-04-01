@@ -1,4 +1,7 @@
-  <canvas id="myBarChartTickets"></canvas>
+  <canvas id="myBarChartTickets" class="graph"></canvas>
+    <div class="loader d-flex justify-content-center hide">
+    {{> core/loading }}
+</div>
   <em class="text-danger">* Remember that non-project tickets have not been counted.</em>
 {{#js}}
 
@@ -7,4 +10,4 @@ require(['block_charts/barchart'], function(module) {
     // Pass the data to the module's init function
     module.init({{{jsondata}}});
 });
-{{/js}}
+{{/js}} 
