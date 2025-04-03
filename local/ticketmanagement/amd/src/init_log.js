@@ -1,8 +1,8 @@
 define([
-    'core/notification', 
+    'core/toast', 
     'core/templates', 
     'local_ticketmanagement/funciones_comunes' // Ajusta la ruta según sea necesario
-], function(Notification, Templates, funcionesComunes){
+], function(addToast, Templates, funcionesComunes){
   const loadTemplate =() => {
     //definicion de url
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
@@ -34,8 +34,8 @@ define([
         
         const obj={
           activePage:1,
-          firstDayOfWeek:newStartdateUnix,
-          lastDayOfWeek:newEnddateUnix,
+          firstDayOfMonth:newStartdateUnix,
+          lastDayOfMonth:newEnddateUnix,
           order:order,
           orderby:orderby,
           page:newPage.value,
@@ -53,8 +53,14 @@ define([
         
         const orderby = document.querySelector('input[name="orderby"]').value;
         const order = document.querySelector('input[name="order"]').value;
-        
-        requestDataToServerbyTicket(1,ticketNumber, order, orderby, newPage.value, token, url);
+        if (ticketNumber!=='') {
+          requestDataToServerbyTicket(1,ticketNumber, order, orderby, newPage.value, token, url);
+        } else {
+          addToast.add('Error: SearchID cant be empty. Please, type a ticket id',{
+            type:0
+          });
+          
+        }
       });
 
       
@@ -97,15 +103,15 @@ define([
         const order = document.querySelector('input[name="order"]').value;
         const page= document.querySelector('input[name="page"]').value;
         
-        const dates=funcionesComunes.getFirstAndLastDayOfCurrentWeek();
-        const firstDayOfWeek=funcionesComunes.truncateDateToDay(dates.firstDayOfWeek);
-        const lastDayOfWeek=funcionesComunes.truncateDateToDay(dates.lastDayOfWeek);
-        
+        const dates=funcionesComunes.getFirstAndLastDayOfCurrentMonth();
+        const firstDayOfMonth=funcionesComunes.truncateDateToDay(dates.firstDayOfMonth);
+        const lastDayOfMonth=funcionesComunes.truncateDateToDay(dates.lastDayOfMonth);
+        window.console.log(firstDayOfMonth);
         const startdate= document.querySelector('#startdate');
         const enddate= document.querySelector('#enddate');
 
-        startdate.value=dates.firstDayOfWeek.toISOString().slice(0, 10);
-        enddate.value=dates.lastDayOfWeek.toISOString().slice(0, 10);
+        startdate.value=funcionesComunes.formatForDateInput(dates.firstDayOfMonth);
+        enddate.value=funcionesComunes.formatForDateInput(dates.lastDayOfMonth);
         const activePage=1;
         // Esperamos a que selgestor resuelva su valor
         const gestorvalue = await selgestor(token, url);
@@ -114,8 +120,8 @@ define([
         
         const obj={
           activePage:activePage,
-          firstDayOfWeek:firstDayOfWeek,
-          lastDayOfWeek:lastDayOfWeek,
+          firstDayOfMonth:firstDayOfMonth,
+          lastDayOfMonth:lastDayOfMonth,
           order:order,
           orderby:orderby,
           page:page,
@@ -212,7 +218,13 @@ define([
     if (xhr.readyState=== 4 && xhr. status === 200){
       if (xhr.response){
           const response=JSON.parse(xhr.response);
-          loadTemplateSingleTicketfromResponse(response);
+          if (response.lenght>=100){
+            addToast.add('Error: Too many results. Please, refine your search',{
+              type:0
+            });
+          } else {
+            loadTemplateSingleTicketfromResponse(response);
+          }
           
       }
     }

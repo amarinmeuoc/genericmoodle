@@ -22,6 +22,7 @@
   </select>
         
   <button id="id_chart_boclick" type="button" class="btn btn-primary">Click me!</button>
+    <button id="id_chart_export_pdf" type="button" class="btn btn-info">Export PDF!</button>
   <input type="hidden" name="token" value="{{token}}">
   </form>
 
@@ -29,4 +30,18 @@
     {{>block_charts/barchart}}
     
 </div>
+{{#js}}
+require.config({
+    paths: {
+        pdf: '/blocks/charts/js/pdf-lib.min',
+    },
+    shim: {
+        pdf: { exports: 'pdf' },       // Nombre correcto de la variable global de chart
+    }
+});
 
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['pdf'], function(pdf) {
+    
+});
+{{/js}}

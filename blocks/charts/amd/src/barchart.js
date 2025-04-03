@@ -4,6 +4,7 @@ define(['core/toast','core/chartjs'], function(addToast,Chart) {
   const createFirstBarChart=(rawData)=>{
     //Grafica que muestra el número de tickets (abiertos, cerrados, erroneos y asignados) por dotación
     const ctx = document.getElementById('myBarChartTickets');
+
               
     const labels = getCenteredMonthsCurrentYear(12);
   
@@ -99,6 +100,8 @@ define(['core/toast','core/chartjs'], function(addToast,Chart) {
     return {
         init: function(data) {
             createFirstBarChart(data);
+            
+
             
         }
     };

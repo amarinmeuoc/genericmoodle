@@ -42,7 +42,12 @@ define(['core/toast', 'core/chartjs'], function(addToast, Chart) {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return context.label + ': ' + context.raw + '%';
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${percentage}% (${value})`;
+
                             }
                         }
                     }

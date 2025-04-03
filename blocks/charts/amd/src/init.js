@@ -1,7 +1,9 @@
 define([
     'core/templates',
     'block_charts/shared_library',
-], function(Templates,shared) {
+    'pdf'
+    
+], function(Templates,shared,pdf) {
 
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
     const token=document.querySelector('input[name="token"]').value;
@@ -9,7 +11,7 @@ define([
 
     const init = () => {
         
-        shared.areElementsLoaded('#id_chart_boclick, #myBarChartTickets').then((elements)=>{
+        shared.areElementsLoaded('#id_chart_boclick, #id_chart_export_pdf, #myBarChartTickets').then((elements)=>{
             console.log("TODO: START chart bar loaded");
             loadProjectOptions(url,token).then(()=>{
                 reloadGraph();
@@ -40,6 +42,12 @@ define([
                 
                 reloadGraph();
             }) 
+
+            const bopdf=elements[1];
+            bopdf.addEventListener('click',(e)=>{
+                
+                createPDFAcroField(pdf);
+            })
 
         });
 
@@ -179,8 +187,113 @@ define([
                 console.error('Error rendering template:', error);
             });
     };
+
+    async function createPDFAcroField(PDF) {
+        const pdfDoc = await PDF.PDFDocument.create();
+        const font = await pdfDoc.embedFont(PDF.StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(PDF.StandardFonts.HelveticaBold);
+    
+        // Get the chart canvas and convert it to an image
+        const canvas = document.getElementById('myBarChartTickets');
+        const canvasImageData = await canvasToImage(canvas);
+        const chartImage = await pdfDoc.embedPng(canvasImageData);
+    
+        // Load other images
+        const logoNavantiaURL = M.cfg.wwwroot + '/blocks/charts/pix/navantia-logo.png';
+        const logoNavantiaImageBytes = await fetch(logoNavantiaURL).then(res => res.arrayBuffer());
+        const logoNavantia = await pdfDoc.embedPng(logoNavantiaImageBytes);
+    
+        const fondoURL = M.cfg.wwwroot + '/blocks/charts/pix/marco-horizontal-navantia.jpg';
+        const fondoURLImageBytes = await fetch(fondoURL).then(res => res.arrayBuffer());
+        const fondo = await pdfDoc.embedJpg(fondoURLImageBytes);
+    
+        let page = pdfDoc.addPage([877,620]);
+        const { width, height } = page.getSize();
+    
+        // Create a string of text and measure its width and height in our custom font
+        const text = 'Chart: Total Tickets';
+        const textSize = 24;
+        const textWidth = font.widthOfTextAtSize(text, textSize);
+        const textHeight = font.heightAtSize(textSize);
+        const verticalGap = textHeight / 2;
+        const comienzo = 150;
+    
+        // Draw background
+        page.drawImage(fondo, {
+            x: 0,
+            y: 0,
+            width: page.getWidth(),
+            height: page.getHeight(),
+        });
+    
+        // Draw logo
+        page.drawImage(logoNavantia, {
+            x: 45,
+            y: page.getHeight() - 100,
+            width: 110,
+            height: 60,
+        });
+    
+        // Draw title
+        page.drawText(text, {
+            x: width / 2 - textWidth / 2,
+            y: height - textHeight - verticalGap - comienzo,
+            size: textSize,
+            font: font,
+            color: PDF.rgb(0, 0.53, 0.71),
+        });
+    
+        // Draw the chart in the center of the page
+        const chartWidth = width * 0.6; // 80% of page width
+        const chartHeight = chartWidth * (canvas.height / canvas.width); // Maintain aspect ratio
+        
+        page.drawImage(chartImage, {
+            x: (width - chartWidth) / 2, // Center horizontally
+            y: (height - comienzo - textHeight - verticalGap - chartHeight) / 2, // Center vertically (below title)
+            width: chartWidth,
+            height: chartHeight,
+        });
+    
+        // Generate and download the PDF
+        const pdfBase64 = await pdfDoc.saveAsBase64();
+        const byteCharacters = atob(pdfBase64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = 'documento.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    // Helper function to convert canvas to image data
+    function canvasToImage(canvas) {
+        return new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsArrayBuffer(blob);
+            }, 'image/png');
+        });
+    }
+    
+    
          
     return {
         init: init
     };
 });
+
+
+
+
+
+
+

@@ -1,12 +1,13 @@
 <div id="layer">
   <form>
   <select id="id_graph_project" class="custom-select" aria-label="Default select">
-  <option value='0' selected>KSA01</option>
+  <option value='0' selected>Non-Project</option>
   </select>
   <select id="id_graph_vessel" class="custom-select" aria-label="Default select">
   <option value='0' selected>All Groups</option>
   </select>
   <button id="idboclick" type="button" class="btn btn-primary">Click me!</button>
+  <button id="id_graphical_event_export_pdf" type="button" class="btn btn-info">Export PDF!</button>
   <input type="hidden" name="token" value="{{token}}">
   </form>
 <nav class="moremenu navigation observed">
@@ -23,3 +24,18 @@
     {{>block_graphical_events/canvas}}
 </div>
 </div>
+{{#js}}
+require.config({
+    paths: {
+        pdf: '/blocks/graphical_events/js/pdf-lib.min',
+    },
+    shim: {
+        pdf: { exports: 'pdf' },       // Nombre correcto de la variable global de chart
+    }
+});
+
+// Cargar el módulo de exportación y las dependencias de la biblioteca
+require(['pdf'], function(pdf) {
+    
+});
+{{/js}}

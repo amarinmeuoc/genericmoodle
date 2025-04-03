@@ -62,6 +62,17 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
 
             return { firstDayOfWeek, lastDayOfWeek };
         },
+        getFirstAndLastDayOfCurrentMonth: function() {
+            const today = new Date();
+            
+            // First day of the month (1st)
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            
+            // Last day of the month (by going to next month and subtracting 1 day)
+            const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            
+            return { firstDayOfMonth, lastDayOfMonth };
+        },
         loadTemplateFromResponse: function(response){
             const self=this; //Mantener el contexto
             const role = document.querySelector('input[name="role"]').value;
@@ -121,8 +132,8 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                             const gestorvalue=document.querySelector('#id_logistic').value;
                             const obj={
                                 activePage:1,
-                                firstDayOfWeek:startdateUnixFormat,
-                                lastDayOfWeek:enddateUnixFormat,
+                                firstDayOfMonth:startdateUnixFormat,
+                                lastDayOfMonth:enddateUnixFormat,
                                 order:parseInt(order.value),
                                 orderby:orderby.value,
                                 page:1,
@@ -180,8 +191,8 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                             const gestorvalue=document.querySelector('#id_logistic').value;
                             const obj={
                                 activePage:activePage,
-                                firstDayOfWeek:startdateUnixFormat,
-                                lastDayOfWeek:enddateUnixFormat,
+                                firstDayOfMonth:startdateUnixFormat,
+                                lastDayOfMonth:enddateUnixFormat,
                                 order:parseInt(order),
                                 orderby:orderby,
                                 page:parseInt(page.value),
@@ -253,8 +264,8 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                     formData.append('params[0][order]',obj.order);
                     formData.append('params[0][orderby]',obj.orderby);
                     formData.append('params[0][page]',obj.page);
-                    formData.append('params[0][startdate]',obj.firstDayOfWeek);
-                    formData.append('params[0][enddate]',obj.lastDayOfWeek);
+                    formData.append('params[0][startdate]',obj.firstDayOfMonth);
+                    formData.append('params[0][enddate]',obj.lastDayOfMonth);
                     formData.append('params[0][activePage]',obj.activePage);
                     formData.append('params[0][state]',obj.state);
                     formData.append('params[0][gestor]',obj.gestor);
@@ -619,6 +630,14 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                 };
                 modal.show(); // Muestra el modal
             });
+        },
+
+        formatForDateInput:function(date){
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-11
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+          
         },
         
         
