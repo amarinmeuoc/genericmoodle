@@ -16,6 +16,7 @@
     <th>city </th>
     <th>edit </th>
     <th>family </th>
+    <th>cars </th>
     
 </tr>
 </thead>
@@ -43,6 +44,10 @@ require(['local_ticketmanagement/usermanagement/editUser'],function(module){
 });
 
 require(['local_ticketmanagement/usermanagement/addFamily'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/usermanagement/addVehicle'],function(module){
     module.init();
 });
 {{/js}}
