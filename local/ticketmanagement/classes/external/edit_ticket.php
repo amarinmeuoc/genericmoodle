@@ -73,6 +73,8 @@ class edit_ticket extends \core_external\external_api {
         $record->state = $ticket['state'];
     }
 
+    
+
     try {
         $DB->update_record('ticket', $record);
         $userid=$DB->get_record('ticket',['id'=>$ticketid],'assigned')->assigned;

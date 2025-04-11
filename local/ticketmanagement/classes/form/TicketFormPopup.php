@@ -128,7 +128,7 @@ class TicketFormPopup extends \core_form\dynamic_form {
         //Se comprueba que el ticket no haya sido cerrado previamente
         $state='closed';
 
-        $mform->addElement('hidden',  'hiddenstate',  'Open');
+        $mform->addElement('hidden',  'hiddenstate',  $ticket->state);
         
         $mform->addElement('advcheckbox',  'close',  get_string('close', 'local_ticketmanagement'),  'Close the ticket', [],  array(0, 1));
         
@@ -227,9 +227,11 @@ class TicketFormPopup extends \core_form\dynamic_form {
 
         // Asumimos que `ticketid` es un campo oculto en el formulario que identifica el ticket actual.
         $ticketid = $data->ticketid;
+        
 
         // Obtener el registro del ticket desde la base de datos para actualizarlo.
         $ticket = $DB->get_record('ticket', ['id' => $ticketid], '*', MUST_EXIST);
+        
 
         // Configurar las opciones para el filemanager.
         $fileoptions = [
@@ -260,6 +262,9 @@ class TicketFormPopup extends \core_form\dynamic_form {
         
         // Guardar la actualización en la base de datos.
         $DB->update_record('ticket', $ticket);
+
+        
+        
         
         return $this->get_data();
         
@@ -326,7 +331,7 @@ class TicketFormPopup extends \core_form\dynamic_form {
             $itemid,
             $fileoptions
         );
-
+        
         $this->set_data([
             'attachments'=>$draftitemid,
             'priority'=>$ticket->priority,

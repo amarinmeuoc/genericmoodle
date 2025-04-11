@@ -1,0 +1,106 @@
+{{#has_users}}
+<div class="ticket-workload">
+    <style>
+        .sortable th {
+            cursor: pointer;
+            position: relative;
+            padding-right: 20px;
+            color:#005fba;
+        }
+        .sortable th:hover {
+            text-decoration:underline;
+        }
+        .sortable th {
+            font-style:underline;
+        }
+        .sortable th.sort-asc:after {
+            content: "↑";
+            position: absolute;
+            right: 5px;
+        }
+        .sortable th.sort-desc:after {
+            content: "↓";
+            position: absolute;
+            right: 5px;
+        }
+    </style>
+    
+
+    
+    <table class="table sortable" id="workloadTable">
+        <thead>
+            <tr>
+                <th data-sort="string">User</th>
+                <th data-sort="number">Assigned</th>
+                <th data-sort="number">Closed</th>
+                <th data-sort="number">Cancelled</th>
+                <th data-sort="number">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#users}}
+            <tr>
+                <td>{{fullname}}</td>
+                <td>{{assigned_count}}</td>
+                <td>{{closed_count}}</td>
+                <td>{{cancelled_count}}</td>
+                <td>{{total}}</td>
+            </tr>
+            {{/users}}
+        </tbody>
+    </table>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const table = document.getElementById('workloadTable');
+    const headers = table.querySelectorAll('th');
+    const tbody = table.querySelector('tbody');
+    let currentSortColumn = null;
+    let isAscending = true;
+
+    headers.forEach((header, index) => {
+        header.addEventListener('click', () => {
+            // Determine new sort direction
+            if (currentSortColumn === index) {
+                // Clicking same column - toggle direction
+                isAscending = !isAscending;
+            } else {
+                // Clicking new column - default to ascending
+                currentSortColumn = index;
+                isAscending = true;
+            }
+
+            // Remove all sort classes
+            headers.forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+            
+            // Add appropriate class to current header
+            header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+
+            // Sort rows
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const dataType = header.getAttribute('data-sort');
+            
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.cells[index].textContent.trim();
+                const cellB = rowB.cells[index].textContent.trim();
+                
+                let comparison = 0;
+                
+                if (dataType === 'number') {
+                    comparison = Number(cellA) - Number(cellB);
+                } else {
+                    comparison = cellA.localeCompare(cellB);
+                }
+                
+                // Reverse if descending
+                return isAscending ? comparison : -comparison;
+            });
+
+            // Reappend sorted rows
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+});
+</script>
+</div>
+{{/has_users}}
