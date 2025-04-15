@@ -670,6 +670,57 @@ $functions = [
         ]
         
     ],
+     // The name of your web service function, as discussed above.
+     'local_ticketmanagement_remove_fine' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\remove_fine',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Getting all actions from date to date.',
+
+        // Options include read, and write.
+        'type'        => 'write',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_edit_fine' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\edit_fine',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Getting all actions from date to date.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    'local_ticketmanagement_check_reminders' => [
+        'classname' => 'local_ticketmanagement\external\check_reminders',
+        'methodname' => 'execute',
+        'classpath' => 'local/ticketmanagement/classes/external/check_reminders.php',
+        'description' => 'Check for upcoming fine reminders',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true
+    ]
     
 ];
 
@@ -707,6 +758,9 @@ $services = [
             'local_ticketmanagement_edit_car',
             'local_ticketmanagement_remove_car',
             'local_ticketmanagement_get_list_cars_excel',
+            'local_ticketmanagement_remove_fine',
+            'local_ticketmanagement_edit_fine',
+            'local_ticketmanagement_check_reminders'
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado

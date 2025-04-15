@@ -30,7 +30,7 @@
 namespace local_ticketmanagement\form;
 
 
-class CarFormPopup extends \core_form\dynamic_form {
+class FineFormPopup extends \core_form\dynamic_form {
     // Define the form structure
     public function definition() {
         global $DB;
@@ -38,57 +38,54 @@ class CarFormPopup extends \core_form\dynamic_form {
         $mform->setAttributes(['id' => 'car_form']);
     
         $userid = $this->_ajaxformdata['userid'];
+        $carid = $this->_ajaxformdata['carid'];
     
-        // Obtener información del usuario
-        $selecteduser = $DB->get_record('user', ['id' => $userid, 'suspended'=>1], 'id, email, firstname, lastname, phone1, phone2, address, city');
-       
-        //$mform->addElement('static', 'useridtitle', get_string('showuser', 'local_ticketmanagement'), $selecteduser->firstname);
+        $mform->addElement('hidden', 'carid', $carid);
+        $mform->setType('carid', PARAM_INT);
         
         $mform->addElement('hidden', 'userid', $userid);
         $mform->setType('userid', PARAM_INT);
     
-        //Show all cars of the selected user in a grid
-        $cars = $DB->get_records('ticketmanagement_cars', ['userid' => $userid]); 
+        //Show all fines of the selected user and car in a grid
+        $fines = $DB->get_records('ticketmanagement_fines', ['userid' => $userid, 'carid'=>$carid]); 
 
-        if ($cars) {
+        if ($fines) {
             $table_html = '<div class="table-responsive-xl">
-            <table class="table generaltable car-table">
+            <table class="table generaltable fine-table">
                 <thead>
                     <tr>
-                        <th>' . get_string('brand', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('model', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('delivery_date', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('refund_date', 'local_ticketmanagement') . '</th>
+                        <th>' . get_string('ticket', 'local_ticketmanagement') . '</th>
+                        <th>' . get_string('expiration_date', 'local_ticketmanagement') . '</th>
+                        <th>' . get_string('status', 'local_ticketmanagement') . '</th>
+                        <th>' . get_string('reminder', 'local_ticketmanagement') . '</th>
                         <th>' . get_string('save', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('view', 'local_ticketmanagement') . '</th>
                         <th>' . get_string('remove', 'local_ticketmanagement') . '</th>
-                        <th>' . get_string('fines', 'local_ticketmanagement') . '</th>
                     </tr>
                 </thead>
                 <tbody>';
             
-            foreach ($cars as $car) {
-                $refund_date=(!is_null($car->refund_date) && $car->refund_date!=='0')?
-                                userdate($car->refund_date, get_string('strftimedate', 'langconfig')):'';
-                $table_html .= '<tr id="car_'.$car->id.'">
+            foreach ($fines as $fine) {
+                $expiration_date=(!is_null($fine->expiration_date) && $fine->expiration_date!=='0')?
+                                userdate($fine->expiration_date, get_string('strftimedate', 'langconfig')):'';
+                $table_html .= '<tr id="fine_'.$fine->id.'">
                     
-                    <td><input class="form-control" type="text" name="tecarbrand" value="' . s($car->brand) . '"></td>
-                    <td><input class="form-control" type="text" name="tecarmodel" value="' . s($car->model) . '"></td>
-                    <td>' . userdate($car->delivery_date, get_string('strftimedate', 'langconfig')) . '</td>
-                    <td>' . $refund_date . '</td>
+                    <td><input class="form-control" type="text" name="tefineticket" value="' . s($fine->ticketid) . '"></td>
+                    <td>' . $expiration_date . '</td>
+                    <td> 
+                    <select class="custom-select" name="selstatus">
+                        <option value="pending" ' . $this->isSelected($fine->status, 'not-paid') . '>Pending</option>
+                        <option value="paid" ' . $this->isSelected($fine->status, 'paid') . '>Paid</option>
+                        <option value="cancelled" ' . $this->isSelected($fine->status, 'cancelled') . '>Cancelled</option>
+                    </select>
+                    </td>
+                    <td><label><input type="checkbox" name="reminder" value="active" ' . $this->isChecked($fine->reminder, 1) . '>Activate reminder</label></td>
                     <td>
-                        <button type="button" class="edit-car btn btn-secondary" data-id="' . $car->id . '">' . get_string('save', 'local_ticketmanagement') . '</button>
+                        <button type="button" class="edit-fine btn btn-secondary" data-id="' . $fine->id . '">' . get_string('save', 'local_ticketmanagement') . '</button>
                     </td>
                     <td>
-                        <button type="button" class="view-car btn btn-secondary" data-id="' . $car->id . '">' . get_string('View', 'local_ticketmanagement') . '</button>
+                        <button type="button" class="remove-fine btn btn-secondary" data-id="' . $fine->id . '">' . get_string('remove', 'local_ticketmanagement') . '</button>
                     </td>
-                    <td>
-                        <button type="button" class="remove-car btn btn-secondary" data-id="' . $car->id . '">' . get_string('remove', 'local_ticketmanagement') . '</button>
-                    </td>
-                    <td>
-                        <button type="button" class="fine-car btn btn-secondary" data-id="' . $car->id . '" data-userid="' . $userid . '">' . get_string('fine', 'local_ticketmanagement') . '</button>
-                    </td>
-                    
+                                        
                 </tr>';
             }
         
@@ -96,25 +93,20 @@ class CarFormPopup extends \core_form\dynamic_form {
         
             $mform->addElement('html', $table_html);
         } else {
-            $mform->addElement('static', 'nocar', '', get_string('nocar', 'local_ticketmanagement'));
+            $mform->addElement('static', 'nofines', '', get_string('nofines', 'local_ticketmanagement'));
         }
 
-        $mform->addElement('header', 'addcarheader', get_string('addnewcar', 'local_ticketmanagement'));
+        $mform->addElement('header', 'addfineheader', get_string('addnewfine', 'local_ticketmanagement'));
 
-        $mform->addElement('text', 'brand', get_string('brand', 'local_ticketmanagement'));
-        $mform->setType('brand', PARAM_TEXT);
+        $mform->addElement('text', 'ticketnumber', get_string('ticketnumber', 'local_ticketmanagement'));
+        $mform->setType('ticketnumber', PARAM_TEXT);
 
-        $mform->addElement('text', 'model', get_string('model', 'local_ticketmanagement'));
-        $mform->setType('model', PARAM_TEXT);
+        $mform->addElement('select', 'status', get_string('status', 'local_ticketmanagement'),['pending'=>'Pending','paid'=>'Paid','cancelled'=>'Cancelled']);
+        $mform->setType('status', PARAM_TEXT);
+        $mform->setDefault('status','pending');
 
-        $mform->addElement('text', 'color', get_string('color', 'local_ticketmanagement'));
-        $mform->setType('color', PARAM_TEXT);
-
-        $mform->addElement('text', 'platenumber', get_string('platenumber', 'local_ticketmanagement'));
-        $mform->setType('platenumber', PARAM_TEXT);
-
-        $mform->addElement('date_selector', 'delivery_date', get_string('delivery_date', 'local_ticketmanagement'),[]);
-        $mform->addElement('date_selector', 'refund_date', get_string('refund_date', 'local_ticketmanagement'),['optional'=>true]);
+        $mform->addElement('date_selector', 'expiration_date', get_string('expiration_date', 'local_ticketmanagement'),[]);
+        $mform->addElement('date_selector', 'payment_date', get_string('payment_date', 'local_ticketmanagement'),['optional'=>true]);
         
          //Se obtiene el token del usuario y se guarda en un campo oculto
         $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
@@ -130,6 +122,15 @@ class CarFormPopup extends \core_form\dynamic_form {
 
         
     }
+
+    protected function isSelected($current, $expected) {
+        return $current == $expected ? 'selected' : '';
+    }
+
+    protected function isChecked($current, $expected) {
+        return $current == $expected ? 'checked' : '';
+    }
+    
     
 
     // This method processes the submitted data
@@ -197,32 +198,34 @@ class CarFormPopup extends \core_form\dynamic_form {
     public function process_dynamic_submission() {
         global $DB;
 
-        $data = $this->get_data();
-
-        // Check if all three fields are either empty or contain only whitespace
-        $allEmpty = empty(trim($data->model ?? '')) 
-        && empty(trim($data->brand ?? '')) 
-        && empty(trim($data->platenumber ?? ''))
-        && empty(trim($data->color ?? ''));
-
-
-        // If not all are empty, proceed with the insertion
-        if (!$allEmpty) {
-            // Insert a new car record
-            $DB->insert_record('ticketmanagement_cars', [
-                'userid' => $data->userid,
-                'brand' => $data->brand,
-                'model' => $data->model,
-                'color' => $data->color,
-                'platenumber' => $data->platenumber,
-                'delivery_date' => $data->delivery_date,
-                'refund_date' => $data->refund_date
-            ]);
-
-            return $this->get_data();
+        if (!$this->is_submitted()) {
+            return null;
         }
+        $data = $this->get_data();
         
+    
+    
+        if ($data) {
+            // Check if all three fields are either empty or contain only whitespace
+            $allEmpty = empty(trim($data->ticketnumber ?? '')) ;
 
+            // If not all are empty, proceed with the insertion
+            if (!$allEmpty) {
+                // Insert a new car record
+                $DB->insert_record('ticketmanagement_fines', [
+                    'userid' => $data->userid,
+                    'carid' => $data->carid,
+                    'ticketid' => trim($data->ticketnumber),
+                    'status' => $data->status,
+                    'expiration_date' => $data->expiration_date,
+                    'payment_date' => $data->payment_date,
+                    
+                ]);
+
+                return $this->get_data();
+            }
+        return null;
+        }
         // Aquí puedes manejar lógica para edición y eliminación si se envían datos relacionados
         // por ejemplo, identificadores de familiares para editar o eliminar.
         

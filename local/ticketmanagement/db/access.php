@@ -43,4 +43,12 @@
             'manager' => CAP_ALLOW,
         ],
     ],
+    'local/ticketmanagement:viewreminders' => [
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW
+        ]
+    ]
 ];

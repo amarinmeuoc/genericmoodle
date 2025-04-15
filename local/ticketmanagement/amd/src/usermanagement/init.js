@@ -1,8 +1,12 @@
 define([
-    'core/notification', 
-    'core/templates', 
-    'local_ticketmanagement/funciones_comunes' // Ajusta la ruta según sea necesario
-], function(Notification, Templates, funcionesComunes){
+ 
+  'core/templates',
+  
+  'local_ticketmanagement/funciones_comunes'
+], function(Templates, funcionesComunes) {
+
+
+
   const loadTemplate =() => {
     //definicion de url
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
@@ -59,8 +63,6 @@ define([
         
         requestDataToServer(obj, token, url);
       });
-
-      
     });
   }
 

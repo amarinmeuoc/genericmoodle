@@ -1,8 +1,53 @@
 define([
+    'core/notification',
     'core/toast', 
     'core/templates', 
+    'core/ajax',
     'local_ticketmanagement/funciones_comunes' // Ajusta la ruta según sea necesario
-], function(addToast, Templates, funcionesComunes){
+], function(Notification, addToast, Templates, Ajax,funcionesComunes){
+
+  // New function for reminder checking
+  const checkReminders = function() {
+    const statusElement = document.getElementById('reminder-status') || createStatusElement();
+    statusElement.textContent = 'Last checked: ' + new Date().toLocaleTimeString();
+        
+    // Moodle AJAX call (replaces your $.ajax approach)
+    Ajax.call([{
+        methodname: 'local_ticketmanagement_check_reminders',
+        args: {}
+    }])[0].done(function(response) {
+                
+        if (response.reminders && response.reminders.length > 0) {
+            response.reminders.forEach(function(reminder) {
+                Notification.alert(
+                    'Fine Expiration Reminder',
+                    'The Fine registered by the Ticket ' + reminder.ticketid + ' expires on ' + reminder.expiration,
+                    'OK'
+                );
+            });
+        }
+    }).fail(function(error) {
+        statusElement.textContent += ' (Error)';
+    });
+  };
+
+  // Helper to create status element
+  const createStatusElement = function() {
+      const el = document.createElement('div');
+      el.id = 'reminder-status';
+      Object.assign(el.style, {
+          position: 'fixed',
+          bottom: '10px',
+          right: '10px',
+          padding: '5px',
+          background: '#f0f0f0',
+          fontSize: '0.8em',
+          zIndex: '1000'
+      });
+      document.body.appendChild(el);
+      return el;
+  };
+
   const loadTemplate =() => {
     //definicion de url
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
@@ -11,15 +56,11 @@ define([
       //Se obtienen los valores de los campos necesarios
       const token = document.querySelector('input[name="token"]').value;
       
-
       //Load select logistics
-      
-
       obtenerGestorValue(token,url);     
       const bosearchdate=document.querySelector('#id_bosearchdate');
         const bosearchbyid=document.querySelector('#id_bosearchbyid');
       
-
       bosearchdate.addEventListener('click',()=>{
         const newPage=document.querySelector('input[name="page"]');
         newPage.value=1;
@@ -63,10 +104,12 @@ define([
         }
       });
 
-      
-
+      // Initialize reminder system
+      createStatusElement();
+      checkReminders(); // Immediate check
+      setInterval(checkReminders, 36000000); // Hourly checks
     });
-    }
+  }
 
     const selgestor = async (token, url) => {
       try {
@@ -106,7 +149,7 @@ define([
         const dates=funcionesComunes.getFirstAndLastDayOfCurrentMonth();
         const firstDayOfMonth=funcionesComunes.truncateDateToDay(dates.firstDayOfMonth);
         const lastDayOfMonth=funcionesComunes.truncateDateToDay(dates.lastDayOfMonth);
-        window.console.log(firstDayOfMonth);
+        
         const startdate= document.querySelector('#startdate');
         const enddate= document.querySelector('#enddate');
 

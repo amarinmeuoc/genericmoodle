@@ -70,7 +70,7 @@ class ViewCarFormPopup extends \core_form\dynamic_form {
         $mform->addElement('hidden', 'token', $token);
         $mform->setType('token',PARAM_TEXT);   
 
-        $carid = $this->_ajaxformdata['userid'] ?? null;
+        $carid = $this->_ajaxformdata['carid'] ?? null;
         $mform->addElement('hidden', 'carid',  $carid);
         $mform->settype('carid',PARAM_INT);
 
