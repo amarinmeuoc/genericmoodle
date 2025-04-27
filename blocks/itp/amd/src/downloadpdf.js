@@ -28,6 +28,13 @@ export const init = (PDF, user, courses) => {
     
 }
 
+function decodeHTMLEntities(text) {
+    const parser = new DOMParser();
+    const decodedString = parser.parseFromString(text, 'text/html').documentElement.textContent;
+    return decodedString;
+  }
+  
+
 const groupbycodes = (visible, codes, coursetitles, startdates, enddates, counts, att, ass) => 
     codes.reduce((acc, code, index) => {
         // Inicializar el grupo si no existe
@@ -43,7 +50,7 @@ const groupbycodes = (visible, codes, coursetitles, startdates, enddates, counts
 
         // Asignar y agregar valores a los arrays de cada grupo
         acc[code].visible = visible[index];
-        acc[code].titles.push(coursetitles[index]);
+        acc[code].titles.push(decodeHTMLEntities(coursetitles[index]));
         acc[code].startDates.push(startdates[index]);
         acc[code].endDates.push(enddates[index]);
         acc[code].counts.push(counts[index]);

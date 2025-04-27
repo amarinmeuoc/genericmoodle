@@ -8,7 +8,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="category" TYPE="char" LENGTH="250" DEFAULT="" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="hidden" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="true"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -19,7 +19,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="subcategory" TYPE="char" LENGTH="250" SEQUENCE="false" NOTNULL="false"/>
-        <FIELD NAME="hidden" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="true"/>
+        <FIELD NAME="hidden" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
@@ -77,7 +77,7 @@
         <FIELD NAME="phone1" TYPE="char" LENGTH="25" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="email" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="arrival" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
-        <FIELD NAME="departure" TYPE="char" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="departure" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="notes" TYPE="text" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         

@@ -133,12 +133,12 @@ class get_list_families_excel extends \core_external\external_api {
                     'family_firstname'=>$member?->name ?? '',
                     'family_lastname'=>$member?->lastname ?? '',
                     'family_nie'=>$member?->nie ?? '',
-                    'family_birthdate'=>$member?->birthdate ?? 0,
+                    'family_birthdate'=>(int)$member?->birthdate ?? 0,
                     'family_adeslas'=>$member?->adeslas ?? '',
                     'family_phone1'=>$member?->phone1 ?? '',
                     'family_email'=>$member?->email ?? '',
-                    'family_arrival'=>$member?->arrival ?? 0,
-                    'family_departure'=>$member?->departure ?? 0,
+                    'family_arrival'=>(int)$member?->arrival ?? 0,
+                    'family_departure'=>(int)$member?->departure ?? 0,
                     'family_notes'=>$member?->notes ?? '',
                 ];
             };

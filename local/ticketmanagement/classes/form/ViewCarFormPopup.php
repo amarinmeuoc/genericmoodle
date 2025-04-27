@@ -221,7 +221,7 @@ class ViewCarFormPopup extends \core_form\dynamic_form {
             $carid = $data->carid ?? null;
         } else {
             // Si el formulario se está cargando por primera vez, obtener el ticketid desde _ajaxformdata
-            $carid = $this->_ajaxformdata['userid'] ?? null;
+            $carid = $this->_ajaxformdata['carid'] ?? null;
         }
 
 

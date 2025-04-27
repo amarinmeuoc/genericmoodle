@@ -267,12 +267,12 @@ class ViewFamilyFormPopup extends \core_form\dynamic_form {
                 'name'=>$selecteduser->name,
                 'lastname'=>$selecteduser->lastname,
                 'nie'=>$selecteduser->nie,
-                'birthdate'=>$selecteduser->birthdate,
+                'birthdate'=>(int)$selecteduser->birthdate,
                 'adeslas'=>$selecteduser->adeslas,
                 'phone1'=>$selecteduser->phone1,
                 'email'=>$selecteduser->email,
-                'arrival'=>$selecteduser->arrival,
-                'departure'=>$selecteduser->departure,
+                'arrival'=>(int)$selecteduser->arrival,
+                'departure'=>(int)$selecteduser->departure,
                 'notes'=>$selecteduser->notes,
                 
             

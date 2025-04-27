@@ -1,0 +1,31 @@
+<div class="card">
+    <div class="card-header">
+        <h3>{{#str}} previewresults, local_ticketmanagement {{/str}}</h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{#str}} relationship, local_ticketmanagement {{/str}}</th>
+                    <th>{{#str}} name {{/str}}</th>
+                    <th>{{#str}} lastname {{/str}}</th>
+                    <th>{{#str}} nie, local_ticketmanagement {{/str}}</th>
+                    <th>{{#str}} birthdate {{/str}}</th>
+                    <th>{{#str}} userid {{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#records}}
+                <tr>
+                    <td>{{relationship}}</td>
+                    <td>{{name}}</td>
+                    <td>{{lastname}}</td>
+                    <td>{{nie}}</td>
+                    <td>{{#userdate}}{{birthdate}}, %Y-%m-%d{{/userdate}}</td>
+                    <td>{{userid}}</td>
+                </tr>
+                {{/records}}
+            </tbody>
+        </table>
+    </div>
+</div>

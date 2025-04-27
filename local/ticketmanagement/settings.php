@@ -50,6 +50,8 @@ if ($hassiteconfig) {
      $urldeleteticket=new moodle_url('/local/ticketmanagement/admin/delete_ticket.php',[]);
      $settingspageremoveticketbyid = new admin_externalpage('local_ticketmanagement_removeticketbyid', new lang_string('removeticketbyid','local_ticketmanagement'),$urldeleteticket);
 
+     $urluploadfamilycsv=new moodle_url('/local/ticketmanagement/admin/upload_family_csv.php',[]);
+     $settingspageuploadfamilycsv = new admin_externalpage('local_ticketmanagement_uploadfamily_csv', new lang_string('uploadfamilycsv','local_ticketmanagement'),$urluploadfamilycsv);
     //$ADMIN->add('blocksettingitp', $settingitp);
 
     
@@ -57,6 +59,7 @@ if ($hassiteconfig) {
     $ADMIN->add('localpluginsticketmanagement', $settingspagesubcategory);
     $ADMIN->add('localpluginsticketmanagement', $settingspageuploadfamily);
     $ADMIN->add('localpluginsticketmanagement', $settingspageremoveticketbyid);
+    $ADMIN->add('localpluginsticketmanagement', $settingspageuploadfamilycsv);
     
 
     

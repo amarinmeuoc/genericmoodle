@@ -33,17 +33,18 @@ define([
 
         modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
             //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
-            const formElement=document.querySelector('#family_form');
+            const record=document.querySelector('#family_form tr#family_'+e.detail.data.id);
+            
             const role=e.detail.data.relationship;
-            const selrol=formElement.querySelector('select[name="selrole"]');
+            const selrol=record.querySelector('select[name="selrole"]');
             selrol.value=role;
 
             const name=e.detail.data.name;
-            const tefaname=formElement.querySelector('input[name="tefaname"]');
-            tefaname.value=name;
+            const tefaname=record.querySelector('input[name="tefaname"]');
+            tefaname.value=name; 
 
             const lastname=e.detail.data.lastname;
-            const tefalastname=formElement.querySelector('input[name="tefalastname"]');
+            const tefalastname=record.querySelector('input[name="tefalastname"]');
             tefalastname.value=lastname;
             
     
