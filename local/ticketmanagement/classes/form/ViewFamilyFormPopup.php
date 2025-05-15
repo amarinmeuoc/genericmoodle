@@ -53,6 +53,9 @@ class ViewFamilyFormPopup extends \core_form\dynamic_form {
         $mform->addElement('text', 'nie', get_string('NIE', 'local_ticketmanagement'));
         $mform->setType('nie', PARAM_TEXT);
 
+        $mform->addElement('text', 'passport', get_string('passport', 'local_ticketmanagement'));
+        $mform->setType('passport', PARAM_TEXT);
+
         $mform->addElement('date_selector', 'birthdate', get_string('birthdate', 'local_ticketmanagement'),['optional'=>true]);
         
         $mform->addElement('text', 'adeslas', get_string('adeslas', 'local_ticketmanagement'));
@@ -202,6 +205,7 @@ class ViewFamilyFormPopup extends \core_form\dynamic_form {
                 'name' => $data->name,
                 'lastname' => $data->lastname,
                 'nie' => $data->nie,
+                'passport' => $data->passport,
                 'birthdate' => $data->birthdate,
                 'adeslas' => $data->adeslas,
                 'phone1' => $data->phone1,
@@ -267,6 +271,7 @@ class ViewFamilyFormPopup extends \core_form\dynamic_form {
                 'name'=>$selecteduser->name,
                 'lastname'=>$selecteduser->lastname,
                 'nie'=>$selecteduser->nie,
+                'passport'=>$selecteduser->passport,
                 'birthdate'=>(int)$selecteduser->birthdate,
                 'adeslas'=>$selecteduser->adeslas,
                 'phone1'=>$selecteduser->phone1,

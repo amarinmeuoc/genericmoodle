@@ -72,6 +72,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="lastname" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="nie" TYPE="char" LENGTH="25" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="passport" TYPE="char" LENGTH="25" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="birthdate" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="adeslas" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
         <FIELD NAME="phone1" TYPE="char" LENGTH="25" NOTNULL="false"  SEQUENCE="false"/>

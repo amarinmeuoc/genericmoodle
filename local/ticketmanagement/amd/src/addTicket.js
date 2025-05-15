@@ -309,8 +309,8 @@ define(['core_form/modalform',
 
                           const obj={
                             activePage:activePage,
-                            firstDayOfWeek:startdateUnixFormat,
-                            lastDayOfWeek:enddateUnixFormat,
+                            firstDayOfMonth:startdateUnixFormat,
+                            lastDayOfMonth:enddateUnixFormat,
                             order:parseInt(order),
                             orderby:orderby,
                             page:parseInt(page.value),

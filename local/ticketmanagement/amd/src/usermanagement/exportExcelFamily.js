@@ -44,7 +44,7 @@ const prepareDataToSend=(obj, url,token)=>{
     formData.append('wstoken',token);
     formData.append('wsfunction', service);
     formData.append('moodlewsrestformat', 'json');
-    formData.append('params[0][customerid]',obj.customerid);
+    formData.append('params[0][customerid]',obj.customerid); 
     formData.append('params[0][groupid]',obj.groupid);
     formData.append('params[0][order]',obj.order);
     formData.append('params[0][orderby]',obj.orderby);
@@ -149,6 +149,7 @@ const createExcelFromJSON = (res, op) => {
             user.family_firstname,
             user.family_lastname,
             user.family_nie,
+            user.family_passport,
             formatUnixToDateTime(user.family_birthdate),
             user.family_adeslas,
             user.family_phone1,

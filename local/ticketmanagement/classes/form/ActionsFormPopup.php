@@ -40,8 +40,8 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         $ticketid=$this->_ajaxformdata['num_ticket'];
         $role=$this->_ajaxformdata['role'];
 
-        $mform->addElement('static', 'ticketid', get_string('ticketid', 'local_ticketmanagement'), $ticketid);
-
+        $mform->addElement('static', 'ticketid', get_string('ticketid', 'local_ticketmanagement'), $ticketid,['data-name' => $ticketid]);
+        
         $mform->addElement('hidden',  'hiddenticketid',  $ticketid);
 
         $ticket = $DB->get_record('ticket',['id'=>$ticketid],'state,assigned');

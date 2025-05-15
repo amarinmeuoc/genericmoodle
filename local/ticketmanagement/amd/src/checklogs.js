@@ -51,8 +51,8 @@ define([
                 
                 const boexport=formElement.querySelector('button[name="boExcel"]');
                 boexport.addEventListener('click',(e)=>{
-                    const ticketDiv=formElement.querySelector('div[data-name="ticketid"]');
-                    const ticketid=ticketDiv.textContent.trim();
+                    
+                    const ticketid=formElement.querySelector('input[name="hiddenticketid"]').value.trim();
                     loadActions(ticketid,url,token);
                 })
             }).catch((error) => {

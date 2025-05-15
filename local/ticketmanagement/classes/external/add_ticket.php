@@ -2,6 +2,7 @@
 namespace local_ticketmanagement\external;
 require_once($CFG->dirroot . '/user/profile/lib.php');
 
+
 use \core_external\external_function_parameters as external_function_parameters;
 use \core_external\external_multiple_structure as external_multiple_structure;
 use \core_external\external_single_structure as external_single_structure;
@@ -119,7 +120,7 @@ class add_ticket extends \core_external\external_api {
               array($next_id, $record->subcategoryid, $record->dateticket, $record->description, $record->state, $record->priority, 
                     $record->userid, $record->familiarid, $record->assigned, $record->label_field, $record->lastupdate));
 
-        $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid)
+        $DB->execute("INSERT INTO {ticket_action} (action, dateaction, userid, ticketid) 
                 VALUES (?,?,?,?)",
                 array("ticket created by: $madeby->firstname, $madeby->lastname",$record->lastupdate,$record->assigned,$next_id));
 
@@ -128,15 +129,19 @@ class add_ticket extends \core_external\external_api {
         
         $record->familyissue=(intval($record->userid)!==intval($record->familiarid))?'Yes':'No';
         
-        if ($label_field==='' || !$label_field){
-            $record->username="$affectedUser->firstname, $affectedUser->lastname";
-        }else {
-            $record->username="no user attached";
+        // Set familyissue based on label_field
+        $record->familyissue = ($label_field !== '') ? 'No' : $record->familyissue;
+
+        // Set username based on label_field and affectedUser
+        if (empty($label_field)) {
+            $record->username = "$affectedUser->firstname, $affectedUser->lastname";
+        } else {
+            $record->username = "no user attached";
         }
         
         
         //Send email ticket created
-        
+        /*
         $to=$DB->get_record('user',['id'=>$affectedUser->id]);
         $message = "<p>Your ticket has been created. You will shortly receive information.</p>";
         $messageHTML = "
@@ -155,7 +160,40 @@ class add_ticket extends \core_external\external_api {
         
         email_to_user($to,$USER,$subject,$message,$messageHTML);
         
+        */
+
+        $to=$DB->get_record('user',['id'=>$affectedUser->id]);
+        $to=$to->id;
         
+        $message = "<p>Your ticket has been created. You will shortly receive information.</p>";
+        $messageHTML = "
+                <h1 style='background-color:#0f6cbf; color: white; padding: .3em;'>Ticket Created</h1>
+                <p style='font-size:large;'>Your ticket has been created. You will shortly receive more information.</p>
+                <p style='font-size:large;'>You can also see the progress of your ticket by clicking here: <a href=".$_SERVER['SERVER_NAME'].'/local/ticketmanagement'.">Ticket status</a></p>
+                <p style='font-size:large;'>Thank you for using our service.</p>
+                <p style='font-size:large;'><strong>Support Team</strong></p>
+            ";
+        $subject="New Ticket created: $next_id";
+
+        $task = new \local_ticketmanagement\task\send_email_task();
+        $task->set_custom_data([
+            'to' => $to,
+            'subject' => $subject,
+            'message_plain' => $message,
+            'message_html' => $messageHTML,
+            'from' => $USER->id,
+        ]);
+        \core\task\manager::queue_adhoc_task($task);
+
+        $task = new \local_ticketmanagement\task\add_notification_task();
+        $task->set_custom_data([
+            'to' => $to,
+            'subject' => $subject,
+            'message_plain' => $message,
+            'message_html' => $messageHTML,
+            'from' => $USER->id,
+        ]);
+        \core\task\manager::queue_adhoc_task($task);
 
         // Retornar una respuesta (ej. el ID del nuevo ticket creado)
         return (array) $record;

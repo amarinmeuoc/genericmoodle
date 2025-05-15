@@ -225,7 +225,7 @@ const createExcelFromJSON = (res, op) => {
         ]);
         listado = listado.concat(ticketsArray);
     } else if (op==='actionReport') {
-        window.console.log("hola");
+        
         // Generar títulos basados en las claves del primer objeto
         const titles = Object.keys(res[0]);
         listado.push(titles);

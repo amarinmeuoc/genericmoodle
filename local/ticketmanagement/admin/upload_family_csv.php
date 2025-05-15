@@ -44,14 +44,15 @@ if ($mform->is_cancelled()) {
                 2 => 'name',
                 3 => 'lastname',
                 4 => 'nie',
-                5 => 'birthdate',
-                6 => 'adeslas',
-                7 => 'phone1',
-                8 => 'email',
-                9 => 'arrival',
-                10 => 'departure',
-                11 => 'notes',
-                12 => 'userid'
+                5 => 'passport',
+                6 => 'birthdate',
+                7 => 'adeslas',
+                8 => 'phone1',
+                9 => 'email',
+                10 => 'arrival',
+                11 => 'departure',
+                12 => 'notes',
+                13 => 'userid'
             ];
         }
 
@@ -88,7 +89,7 @@ if ($mform->is_cancelled()) {
                 $obj = (object)$record;
 
                 if (empty($formdata->preview)) {
-                    if ($existing = $DB->get_record('family', ['userid' => $obj->userid, 'nie' => $obj->nie])) {
+                    if ($existing = $DB->get_record('family', ['id' => $obj->id])) {
                         $obj->id = $existing->id;
                         $DB->update_record('family', $obj);
                     } else {
