@@ -13,6 +13,8 @@
             <button id="id_exportExcel" class="btn btn-info my-2 my-sm-0" type="button">Export Users</button>
             <button id="id_exportExcelFamily" class="btn btn-info my-2 my-sm-0" type="button">Export Families</button>
             <button id="id_exportExcelVehicles" class="btn btn-info my-2 my-sm-0" type="button">Export Vehicles</button>
+            <button id="id_exportExcelAddresses" class="btn btn-info my-2 my-sm-0" type="button">Export Addresses</button>
+            <button id="id_getBookings" class="btn btn-info my-2 my-sm-0" type="button">Bookings</button>
             <span class="excel_loader p-5 hide">
                 Waiting {{> core/loading }}
             </span>
@@ -56,6 +58,16 @@ require(['local_ticketmanagement/usermanagement/exportExcelFamily', 'xlsx', 'fil
 });
 
 require(['local_ticketmanagement/usermanagement/exportExcelVehicles', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
+    // Inicializar el módulo con las dependencias cargadas
+    module.init(XLSX, saveAs, blobUtil);
+});
+
+require(['local_ticketmanagement/usermanagement/exportExcelAddresses', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
+    // Inicializar el módulo con las dependencias cargadas
+    module.init(XLSX, saveAs, blobUtil);
+});
+
+require(['local_ticketmanagement/usermanagement/exportBookings', 'xlsx', 'filesaver', 'blobutil'], function(module, XLSX, saveAs, blobUtil) {
     // Inicializar el módulo con las dependencias cargadas
     module.init(XLSX, saveAs, blobUtil);
 });

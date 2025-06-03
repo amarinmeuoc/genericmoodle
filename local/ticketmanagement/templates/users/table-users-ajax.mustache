@@ -10,13 +10,14 @@
     <th><a class="orderby" href="#" data-activo="{{#orderbyfirstname}}activo{{/orderbyfirstname}}" data-orderby="firstname">firstname {{#orderbyfirstname}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbyfirstname}}</a></th>
     <th><a class="orderby" href="#" data-activo="{{#orderbylastname}}activo{{/orderbylastname}}" data-orderby="lastname">lastname {{#orderbylastname}}{{#order}}&darr;{{/order}}{{^order}}&uarr;{{/order}}{{/orderbylastname}}</a></th>
     <th>Personal Email</th>
-    <th>phone1</th>
-    <th>phone2 </th>
-    <th>address </th>
-    <th>city </th>
-    <th>edit </th>
-    <th>family </th>
-    <th>cars </th>
+    <th>Phone1</th>
+    <th>Phone2 </th>
+    <th>Address </th>
+    <th>City </th>
+    <th>Edit </th>
+    <th>Family </th>
+    <th>Cars </th>
+    <th>House</th>
     
 </tr>
 </thead>
@@ -48,6 +49,10 @@ require(['local_ticketmanagement/usermanagement/addFamily'],function(module){
 });
 
 require(['local_ticketmanagement/usermanagement/addVehicle'],function(module){
+    module.init();
+});
+
+require(['local_ticketmanagement/usermanagement/addHouse'],function(module){
     module.init();
 });
 {{/js}}

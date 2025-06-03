@@ -21,13 +21,15 @@ class check_reminders extends \core_external\external_api {
         require_capability('local/ticketmanagement:viewreminders', $context);
 
         $time = time();
+        // La siguiente consulta muestra las multas que esten marcadas como pendientes y su fecha de vencimiento sea posterior al 
+        // dia actual y quede menos de 6 dias para que venzan
         $reminders = $DB->get_records_sql("
             SELECT f.id, f.ticketid, f.expiration_date 
             FROM {ticketmanagement_fines} f
             JOIN {ticket} t ON f.ticketid = t.id
             WHERE f.reminder = 1 
             AND f.expiration_date > ?
-            AND f.expiration_date < ? + (3 * 24 * 60 * 60)
+            AND f.expiration_date < ? + (6 * 24 * 60 * 60)
             AND t.assigned = ?
             AND f.status = 'pending'", 
             [$time, $time, $USER->id]);

@@ -29,8 +29,14 @@ define([
         modalForm.show();
    
         modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
-            //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
-            addToast.add(`Ticket: ${e.detail.hiddenticketid} has been updated.`);
+            if (e.detail.status === 'success') {
+                // Refresh the actions list or show success message
+                //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
+                addToast.add(`Ticket: ${e.detail.ticketid} has been updated.`);
+            } else {
+                // Show error message
+                addToast.add(`Something went wrong.`);
+            }
         });
     
         // Listen for the modal LOADED event

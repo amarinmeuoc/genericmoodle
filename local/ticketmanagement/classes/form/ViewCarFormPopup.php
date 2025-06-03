@@ -35,10 +35,7 @@ class ViewCarFormPopup extends \core_form\dynamic_form {
     public function definition() {
         global $DB;
         $mform = $this->_form;
-    
-
-        
-
+  
         $mform->addElement('text', 'brand', get_string('brand', 'local_ticketmanagement'));
         $mform->setType('brand', PARAM_TEXT);
 
@@ -46,7 +43,7 @@ class ViewCarFormPopup extends \core_form\dynamic_form {
         $mform->setType('model', PARAM_TEXT);
 
         $mform->addElement('text', 'color', get_string('color', 'local_ticketmanagement'));
-        $mform->setType('color', PARAM_TEXT);
+        $mform->setType('color', PARAM_TEXT); 
 
         
         
@@ -228,17 +225,16 @@ class ViewCarFormPopup extends \core_form\dynamic_form {
         if ($carid) {
             // Consultar los datos del usuario en la base de datos
             $selecteduser = $DB->get_record('ticketmanagement_cars', ['id' => $carid], '*');
+            
 
             $this->set_data([
-                'id' => $selecteduser->carid,
+                'id' => $selecteduser->id,
                 'brand' => $selecteduser->brand,
                 'model' => $selecteduser->model,
                 'platenumber' => $selecteduser->platenumber,
                 'color' => $selecteduser->color,
                 'delivery_date' => $selecteduser->delivery_date,
                 'refund_date' => $selecteduser->refund_date,
-                
-            
             ]);
         }
 

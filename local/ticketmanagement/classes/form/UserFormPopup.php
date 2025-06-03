@@ -42,7 +42,7 @@ class UserFormPopup extends \core_form\dynamic_form {
         $user = $DB->get_record('user', ['id' => $userid, 'suspended'=>1], 'id, email, firstname, lastname, phone1, phone2, address, city');
     
         // Mostrar información estática del usuario
-        $mform->addElement('static', 'useridtitle', get_string('showuser', 'local_ticketmanagement'), $user->firstname . ' ' . $user->lastname);
+       // $mform->addElement('static', 'useridtitle', get_string('showuser', 'local_ticketmanagement'), $user->firstname . ' ' . $user->lastname);
         $mform->addElement('hidden', 'userid', $userid);
         $mform->setType('userid', PARAM_INT);
     

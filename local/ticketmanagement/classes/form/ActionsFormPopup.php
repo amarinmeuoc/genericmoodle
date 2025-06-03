@@ -37,8 +37,8 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         $mform = $this->_form;
         
 
-        $ticketid=$this->_ajaxformdata['num_ticket'];
-        $role=$this->_ajaxformdata['role'];
+        $ticketid=$this->_ajaxformdata['num_ticket'] ?? '';
+        $role=$this->_ajaxformdata['role'] ?? '';
 
         $mform->addElement('static', 'ticketid', get_string('ticketid', 'local_ticketmanagement'), $ticketid,['data-name' => $ticketid]);
         
@@ -61,7 +61,8 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         
 
         profile_load_custom_fields($USER);
-        if (preg_match('/^(logistic|manager)$/i', $USER->profile['role'])) {
+        $userrole = $USER->profile['role'] ?? '';
+        if (preg_match('/^(logistic|manager)$/i', $userrole)) {
             $mform->addElement('text','internal','Internal message:');
             $mform->addElement('button', 'boExcel', 'Export to Excel');
         }
@@ -101,8 +102,31 @@ class ActionsFormPopup extends \core_form\dynamic_form {
      * by calling $this->optional_param()
      */
     protected function check_access_for_dynamic_submission(): void {
-        return;
+    global $USER;
+    
+
+    try {
+        // Load custom profile fields
+        profile_load_custom_fields($USER);
+        
+        $requiredroles = ['logistic', 'manager', 'student'];
+        $userrole = strtolower($USER->profile['role'] ?? '');
+        
+        if (!in_array($userrole, $requiredroles)) {
+            throw new \moodle_exception('nopermission', 'local_ticketmanagement');
+        }
+        
+        $ticketid=$this->_ajaxformdata['num_ticket']??$this->_ajaxformdata['hiddenticketid'];
+
+        if (empty($ticketid)) {
+            throw new \moodle_exception('missingticketid', 'local_ticketmanagement');
+        }
+        
+    } catch (\Exception $e) {
+        error_log("Form access check failed: " . $e->getMessage());
+        throw $e; // Re-throw after logging
     }
+}
 
     /**
      * Returns form context
@@ -139,21 +163,78 @@ class ActionsFormPopup extends \core_form\dynamic_form {
      * @return mixed
      */
     public function process_dynamic_submission() {
-        
-        global $DB;
-
-        // Obtener los datos enviados del formulario
-        $data = $this->get_data();
+    // Start output buffering to catch any stray output
+    ob_start();
     
-        // Verificar que los datos estén disponibles y obtener el ID del usuario y el ID del ticket
-        if ($data && !empty(trim($data->description))) {
-            $DB->execute("INSERT INTO {ticket_action} (action, internal, dateaction, userid, ticketid)
-                VALUES (?,?,?,?,?)",
-                array($data->description,$data->internal,$data->updated,$data->userid,$data->hiddenticketid));
+    try {
+        global $DB, $USER;
+
+        $data = $this->get_data();
+        
+        // Debugging: Log received data
+        error_log("Form submission data: " . print_r($data, true));
+
+        if (!$data || !is_object($data)) {
+            throw new \Exception('Invalid form data received');
         }
 
-        return $data;
+        // Validate required fields
+        $description = trim($data->description ?? '');
+        if (empty($description)) {
+            throw new \Exception('Description is required');
+        }
+
+        $record = new \stdClass();
+        $record->action = $description;
+        $record->internal = $data->internal ?? '';
+        $record->dateaction = $data->updated ?? time();
+        $record->userid = $data->userid ?? null;
+        $record->ticketid = $data->hiddenticketid ?? null;
+
+        if (empty($record->userid) || empty($record->ticketid)) {
+            throw new \Exception('Missing required identifiers');
+        }
+
+        // Debugging: Log record being inserted
+        error_log("Preparing to insert record: " . print_r($record, true));
+
+        $transaction = $DB->start_delegated_transaction();
+        
+        try {
+            $id = $DB->insert_record('ticket_action', $record);
+            $transaction->allow_commit();
+            
+            // Debugging: Log success
+            error_log("Record inserted successfully with ID: $id");
+            
+            return [
+                'status' => 'success',
+                'message' => 'Action added successfully',
+                'ticketid' => $record->ticketid ?? '',
+                'newid' => $id ?? ''
+            ];
+            
+        } catch (\Exception $e) {
+            $transaction->rollback($e);
+            throw $e;
+        }
+
+    } catch (\Exception $e) {
+        // Log the full error
+        error_log("Form submission error: " . $e->getMessage());
+        
+        // Clean any output buffers
+        ob_end_clean();
+        
+        return [
+            'status' => 'error',
+            'message' => 'Error processing form: ' . $e->getMessage()
+        ];
+    } finally {
+        // Ensure no output remains in buffer
+        ob_end_clean();
     }
+}
 
     /**
      * Load in existing data as form defaults
@@ -165,59 +246,66 @@ class ActionsFormPopup extends \core_form\dynamic_form {
      *     $this->set_data(get_entity($this->_ajaxformdata['id']));
      */
     public function set_data_for_dynamic_submission(): void {
-        global $DB, $USER;
-        $ticketid=$this->_ajaxformdata['num_ticket'];
-        $role=$this->_ajaxformdata['role'];
-
-
-        $actions=$DB->get_records('ticket_action',['ticketid'=>$ticketid],'dateaction ASC','*');
-
-        $mform = $this->_form;
-
-        
-        $mform->addElement('html', '<div class="qheader">');
-        $mform->addElement('html','<div class="action">');
-        $mform->addElement('html', '<div class="date"><strong> Date </strong></div>');
-        $mform->addElement('html', '<div class="description"><strong> Description </strong></div>');
-        $mform->addElement('html', '<div class="addby"><strong> Assigned to: </strong></div>');
-        $mform->addElement('html','</div>');
-    foreach ($actions as $action) {
-        $user=$DB->get_record('user', ['id'=>$action->userid], 'firstname,lastname', IGNORE_MISSING);
-        $formatted_date = userdate($action->dateaction, '%d-%m-%Y %H:%M');
-        // Agregar cada acción en un contenedor HTML con los detalles correspondientes
-        $mform->addElement('html', '<div id="' . $action->id . '" class="action">');
-        $mform->addElement('html', '<div class="date"><strong>' . $formatted_date . '</strong></div>');
-        // Crea el campo de descripción
-$description = '<div class="description">';
-$description .= $action->action;  // Esto es el texto de la descripción
-
-// Si no es un estudiante ni un observador, agrega el valor de 'internal' en un tooltip
-if (!preg_match('/^(student|observer)$/i', $USER->profile['role'])) {
-    if ($action->internal){
-            $description .= '<span class="hiddenmessage" data-tooltip="' . $action->internal . '">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
-        </span>';
-    }
+    global $DB, $USER;
     
-}
-
-$description .= '</div>';
-
-// Añadir el campo de descripción al formulario
-$mform->addElement('html', $description);
+    try {
+        // Load custom profile fields
+        profile_load_custom_fields($USER);
+        $userrole = $USER->profile['role'] ?? '';
         
-        if (preg_match('/webservice/i',$user->firstname)){
-            $user->firstname='Waiting for a controller';
+        $ticketid = $this->_ajaxformdata['num_ticket'] ?? null;
+        if (!$ticketid) {
+            throw new \moodle_exception('missingticketid', 'local_ticketmanagement');
         }
 
-        $mform->addElement('html', '<div class="addedby">' .$user->firstname . '</div>');
-        $mform->addElement('html', '</div>');
+        $mform = $this->_form;
+        
+        // Start actions container
+        $html = '<div class="ticket-actions-container">';
+        $html .= '<div class="actions-header">';
+        $html .= '<div class="date"><strong>Date</strong></div>';
+        $html .= '<div class="description"><strong>Description</strong></div>';
+        $html .= '<div class="addedby"><strong>Assigned to</strong></div>';
+        $html .= '</div>';
+        
+        $actions = $DB->get_records('ticket_action', ['ticketid' => $ticketid], 'dateaction ASC');
+        
+        foreach ($actions as $action) {
+            $user = $DB->get_record('user', ['id' => $action->userid], 'firstname, lastname', IGNORE_MISSING);
+            $formatted_date = userdate($action->dateaction, '%d-%m-%Y %H:%M');
+            
+            $html .= '<div class="action-item">';
+            $html .= '<div class="date">' . $formatted_date . '</div>';
+            
+            $description = '<div class="description">' . s($action->action);
+            
+            if (!preg_match('/^(student|observer)$/i', $userrole) && !empty($action->internal)) {
+                $description .= '<span class="hiddenmessage" data-tooltip="' . s($action->internal) . '">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                </span>';
+            }
+            
+            $description .= '</div>';
+            $html .= $description;
+            
+            $username = preg_match('/webservice/i', $user->firstname) 
+                ? 'Waiting for a controller' 
+                : fullname($user);
+                
+            $html .= '<div class="addedby">' . $username . '</div>';
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
+        $mform->addElement('html', $html);
+        
+    } catch (\Exception $e) {
+        $mform = $this->_form;
+        // Log error and show user-friendly message
+        error_log("Error loading action form data: " . $e->getMessage());
+        $mform->addElement('html', '<div class="alert alert-danger">Error loading actions</div>');
     }
-    $mform->addElement('html', '</div>');
-
-
-
-    }
+}
 
     public function get_description_text_options() : array {
         global $CFG;

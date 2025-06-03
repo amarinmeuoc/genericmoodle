@@ -1,27 +1,7 @@
 <?php 
 
 $functions = [
-     // The name of your web service function, as discussed above.
-     'local_ticketmanagement_remove_ticketcategory' => [
-        // The name of the namespaced class that the function is located in.
-        'classname'   => '\local_ticketmanagement\external\remove_ticketcategory',
-
-        // A brief, human-readable, description of the web service function.
-        'description' => 'Remove ticket category.',
-
-        // Options include read, and write.
-        'type'        => 'write',
-
-        // Whether the service is available for use in AJAX calls from the web.
-        'ajax'        => true,
-
-        // An optional list of services where the function will be included.
-        'services' => [
-            'NAVANTIA_SERVICES',
-            MOODLE_OFFICIAL_MOBILE_SERVICE
-        ]
-        
-    ],
+     
         // The name of your web service function, as discussed above.
     'local_ticketmanagement_add_ticketcategory' => [
         // The name of the namespaced class that the function is located in.
@@ -61,27 +41,7 @@ $functions = [
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
     ],
-    // The name of your web service function, as discussed above.
-    'local_ticketmanagement_remove_ticketsubcategory' => [
-        // The name of the namespaced class that the function is located in.
-        'classname'   => '\local_ticketmanagement\external\remove_ticketsubcategory',
-
-        // A brief, human-readable, description of the web service function.
-        'description' => 'Remove ticket subcategory.',
-
-        // Options include read, and write.
-        'type'        => 'write',
-
-        // Whether the service is available for use in AJAX calls from the web.
-        'ajax'        => true,
-
-        // An optional list of services where the function will be included.
-        'services' => [
-            'NAVANTIA_SERVICES',
-            MOODLE_OFFICIAL_MOBILE_SERVICE
-        ]
-        
-    ],
+   
     // The name of your web service function, as discussed above.
     'local_ticketmanagement_get_ticketsubcategory' => [
         // The name of the namespaced class that the function is located in.
@@ -720,6 +680,60 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
         'loginrequired' => true
+    ],
+    // The name of your web service function, as discussed above.
+    'local_ticketmanagement_remove_house' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\remove_house',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Remove address from a user.',
+
+        // Options include read, and write.
+        'type'        => 'write',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+     // The name of your web service function, as discussed above.
+     'local_ticketmanagement_get_list_addresses_excel' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\get_list_addresses_excel',
+
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Getting all actions from date to date.',
+
+        // Options include read, and write.
+        'type'        => 'read',
+
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
+        
+    ],
+    'local_ticketmanagement_get_bookings' => [
+        'classname' => '\local_ticketmanagement\external\get_bookings',
+        'description' => 'Get all internal bookings with room occupancy status',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'local/ticketmanagement:view',
+        // An optional list of services where the function will be included.
+        'services' => [
+            'NAVANTIA_SERVICES',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
     ]
     
 ];
@@ -727,10 +741,9 @@ $functions = [
 $services = [
     'NAVANTIA_SERVICES' => [
         'functions' => [
-            'local_ticketmanagement_remove_ticketcategory', // Aquí se incluye la función en el nuevo servicio
+            
             'local_ticketmanagement_add_ticketcategory',
             'local_ticketmanagement_add_ticketsubcategory',
-            'local_ticketmanagement_remove_ticketsubcategory',
             'local_ticketmanagement_get_ticketsubcategory',
             'local_ticketmanagement_edit_ticketcategory',
             'local_ticketmanagement_edit_ticketsubcategory',
@@ -760,7 +773,10 @@ $services = [
             'local_ticketmanagement_get_list_cars_excel',
             'local_ticketmanagement_remove_fine',
             'local_ticketmanagement_edit_fine',
-            'local_ticketmanagement_check_reminders'
+            'local_ticketmanagement_check_reminders',
+            'local_ticketmanagement_remove_house',
+            'local_ticketmanagement_get_list_addresses_excel',
+            'local_ticketmanagement_get_bookings'
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado

@@ -21,6 +21,7 @@ class removeticketformbyid extends \moodleform {
         $attributes=[];
 
         $mform->addElement('text', 'ticketid', get_string('ticketid', 'local_ticketmanagement'), $attributes);
+        $mform->setType('ticketid', PARAM_TEXT);
 
         // Añadir botones de 'Save changes' y 'Cancel'
         $this->add_action_buttons(true, 'Save changes');

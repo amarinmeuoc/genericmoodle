@@ -1,7 +1,0 @@
-#barchartpanel .hide {
-    display: none !important;
-}
-
-#barchartpanel .show {
-    display: block;
-}

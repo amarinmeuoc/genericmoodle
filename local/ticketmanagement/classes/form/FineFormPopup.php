@@ -219,6 +219,7 @@ class FineFormPopup extends \core_form\dynamic_form {
                     'status' => $data->status,
                     'expiration_date' => $data->expiration_date,
                     'payment_date' => $data->payment_date,
+                    'reminder' => 0, //Default to 0 (not active)
                     
                 ]);
 

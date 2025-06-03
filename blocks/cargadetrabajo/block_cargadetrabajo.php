@@ -86,7 +86,7 @@ class block_cargadetrabajo extends block_base {
             $assignedCount = $counts['Assigned'];
             $assignedCounts[] = $assignedCount;
 
-    
+            $user = \core_user::get_user($user->id);
             $userTicketData[] = [
                 'userid' => $user->id,
                 'fullname' => fullname($user),

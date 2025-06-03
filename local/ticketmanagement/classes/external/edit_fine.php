@@ -42,7 +42,8 @@ class edit_fine extends \core_external\external_api {
         $reminder=$request['params'][0]['reminder'];   
         $ticketId=$request['params'][0]['ticketId'];   
         $status=$request['params'][0]['status'];
-        
+
+                
         // now security checks
         $context = \context_system::instance();
         self::validate_context($context);
@@ -70,7 +71,7 @@ class edit_fine extends \core_external\external_api {
         $ObjReturn=[
             'listadoFine'=>[
                 'id'=>$record->id,
-                'ticketId'=>$record->ticketId,
+                'ticketId'=>$record->ticketid,
                 'status'=>$record->status,
                 'reminder'=>$record->reminder,
             ]

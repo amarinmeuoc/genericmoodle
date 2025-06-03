@@ -1,6 +1,7 @@
 define([
-    'core_form/modalform'
-],function(ModalForm){
+    'core_form/modalform',
+    'local_ticketmanagement/funciones_comunes',
+],function(ModalForm,funcionesComunes){
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
     const token=document.querySelector('input[name="token"]').value;
     
@@ -47,10 +48,14 @@ define([
         });
 
         modalForm.addEventListener(modalForm.events.LOADED, (e) => {
-            
-            // Obtener el formulario modal después de que se ha cargado
             const formElement = e.target;
-               
+            funcionesComunes.areElementsLoaded('input[name="address"]', formElement).then((elements) => {
+            // Obtener el formulario modal después de que se ha cargado
+            const address=formElement.querySelector('input[name="address"]');
+            const city=formElement.querySelector('input[name="city"]');
+            address.disabled=true;
+            city.disabled=true;
+            });
         });
         modalForm.show();
     }

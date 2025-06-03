@@ -262,10 +262,6 @@ class TicketFormPopup extends \core_form\dynamic_form {
         
         // Guardar la actualización en la base de datos.
         $DB->update_record('ticket', $ticket);
-
-        
-        
-        
         return $this->get_data();
         
     }

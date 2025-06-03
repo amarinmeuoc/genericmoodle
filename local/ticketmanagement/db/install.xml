@@ -125,5 +125,27 @@
         <KEY NAME="fk_carid" TYPE="foreign" FIELDS="carid" REFTABLE="car" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="ticketmanagement_address" COMMENT="user Address">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="address" TYPE="char" LENGTH="255" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="house" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="floor" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="block" TYPE="char" LENGTH="100" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="door" TYPE="char" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="number" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="town" TYPE="char" LENGTH="255" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="entry_date" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="departure_date" TYPE="int" LENGTH="10" NOTNULL="false"  SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        
+      </KEYS>
+    </TABLE>
   </TABLES>
 </XMLDB>

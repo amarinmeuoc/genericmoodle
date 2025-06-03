@@ -1,4 +1,8 @@
 <?php
+namespace local_ticketmanagement\task;
+
+defined('MOODLE_INTERNAL') || die();
+
 class check_fine_reminders extends \core\task\scheduled_task {
     public function get_name() {
         return get_string('checkfinereminders', 'local_ticketmanagement');
