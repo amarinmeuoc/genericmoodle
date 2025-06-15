@@ -198,7 +198,7 @@ const onProgressFunction=(event) =>{
 const createExcelFromJSON = (res, op) => {
     let listado = [];
     
-    if (op==='ticketReport'){
+    if (op==='ticketReport' && (typeof res.listadoTickets[0]!=='undefined')){
         // Generar títulos basados en las claves del primer objeto
         const titles = Object.keys(res.listadoTickets[0]);
         listado.push(titles);
@@ -224,7 +224,7 @@ const createExcelFromJSON = (res, op) => {
             ticket.assigned
         ]);
         listado = listado.concat(ticketsArray);
-    } else if (op==='actionReport') {
+    } else if (op==='actionReport' && (typeof res[0]!=='undefined')) {
         
         // Generar títulos basados en las claves del primer objeto
         const titles = Object.keys(res[0]);
