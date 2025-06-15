@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,15 +16,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Boost.
+ * MOODLE VERSION INFORMATION
  *
- * @package    local_ticketmagement
- * @copyright  2016 Alberto Marín
+ * This file defines the current version of the local_emails plugin code being used.
+ * This is compared against the values stored in the database to determine
+ * whether upgrades should be performed (see lib/db/*.php)
+ *
+ * @package    local_emails
+ * @copyright  2024 Alberto Marín Mendoza (http://myhappycoding.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+ $capabilities = [
+    'local/emails:access' => [ // Cambia 'access' según lo que represente
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
 
-$plugin->version   = 2025042819;
-$plugin->requires  = 2024041600;
-$plugin->component = 'local_ticketmanagement';
+];

@@ -1,0 +1,19 @@
+<?php
+$string['pluginname']='Tool for sending emails';
+$string['emails:access']='Access to send emails to users';
+$string['subject'] = 'Subject';
+$string['message'] = 'Message';
+$string['attachments'] = 'Attachments';
+$string['send'] = 'Send Email';
+$string['emailsent'] = 'Email has been sent successfully';
+$string['emailnotsent'] = 'There was a problem sending the email';
+$string['erroremptysubject'] = 'Subject is required';
+$string['erroremptymessage'] = 'Message is required';
+$string['nouser'] = 'No users selected';
+$string['eventemailviewed'] = 'Email plugin viewed';
+$string['eventemailviewed_desc'] = 'The user has viewed the email plugin';
+$string['eventemailsent'] = 'Sent email';
+$string['selectproject'] = 'Select project';
+$string['selectvessel'] = 'Choose group or vessel';
+$string['user'] = 'User:';
+$string['emailcheck'] = 'Show user email';

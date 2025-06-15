@@ -17,13 +17,13 @@
 /**
  * Boost.
  *
- * @package    local_ticketmagement
+ * @package    local_email
  * @copyright  2016 Alberto Marín
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025042819;
+$plugin->version   = 2025030202;
 $plugin->requires  = 2024041600;
-$plugin->component = 'local_ticketmanagement';
+$plugin->component = 'local_emails';
