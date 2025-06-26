@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025030202;
+$plugin->version   = 2025030205;
 $plugin->requires  = 2024041600;
 $plugin->component = 'local_emails';

@@ -37,7 +37,6 @@ class get_logistic_users extends \core_external\external_api {
         $context = \context_system::instance();
         self::validate_context($context);
         require_capability('webservice/rest:use', $context);
-
          
 
 $sql='SELECT u.id,username,firstname, lastname,email,

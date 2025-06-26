@@ -17,7 +17,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'gantt_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -26,14 +26,14 @@ $functions = [
 ];
 
 $services = [
-    'NAVANTIA_SERVICES' => [
+    'gantt_navantiaservices' => [
         'functions' => [
             'block_gantt_diagram_get_gantt', // Aquí se incluye la función en el nuevo servicio
            
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado
-        'shortname' => 'NAVANTIA_SERVICES',
+        'shortname' => 'gantt_navantiaservices',
         'downloadfiles' => 0, // Permitir la descarga de archivos
         'uploadfiles' => 0, // No permitir la subida de archivos
     ],

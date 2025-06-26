@@ -29,7 +29,7 @@
 
  defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024020801.13;
+$plugin->version = 2024020801.16;
 $plugin->requires = 2023100903.11;
 $plugin->component = 'block_itp';
 

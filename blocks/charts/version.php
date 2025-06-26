@@ -17,7 +17,7 @@
 /**
  * Boost.
  *
- * @package    block_graphical_events
+ * @package    block_charts
  * @copyright  2025 Alberto Marín
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2024042200.4;
 $plugin->requires  = 2024041600;
-$plugin->component = 'block_graphical_events';
+$plugin->component = 'block_charts';
 
 $plugin->dependencies = array(
     'local_ticketmanagement' => ANY_VERSION,   // The block ITP must be present (any version).

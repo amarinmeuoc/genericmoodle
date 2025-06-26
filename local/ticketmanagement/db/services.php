@@ -18,7 +18,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
     ],
@@ -37,7 +37,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
     ],
@@ -58,7 +58,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -79,7 +79,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -100,7 +100,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -121,7 +121,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -142,7 +142,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -163,7 +163,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -184,7 +184,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -205,7 +205,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -226,7 +226,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -247,7 +247,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -268,7 +268,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -289,7 +289,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -310,7 +310,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -331,7 +331,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -352,7 +352,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -373,7 +373,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -394,7 +394,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -415,7 +415,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -436,7 +436,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -457,7 +457,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -478,7 +478,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -499,7 +499,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -520,7 +520,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -541,7 +541,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -562,7 +562,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -583,7 +583,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -604,7 +604,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -625,7 +625,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -646,7 +646,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -667,7 +667,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -697,7 +697,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -718,7 +718,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -731,7 +731,7 @@ $functions = [
         'capabilities' => 'local/ticketmanagement:view',
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
     ]
@@ -739,7 +739,7 @@ $functions = [
 ];
 
 $services = [
-    'NAVANTIA_SERVICES' => [
+    'ticket_navantiaservices' => [
         'functions' => [
             
             'local_ticketmanagement_add_ticketcategory',
@@ -780,7 +780,7 @@ $services = [
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado
-        'shortname' => 'NAVANTIA_SERVICES',
+        'shortname' => 'ticket_navantiaservices',
         'downloadfiles' => 0, // Permitir la descarga de archivos
         'uploadfiles' => 0, // No permitir la subida de archivos
     ],

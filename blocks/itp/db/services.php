@@ -17,7 +17,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -38,7 +38,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
     ],
@@ -58,7 +58,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -79,7 +79,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -100,7 +100,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -121,7 +121,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -142,7 +142,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -163,7 +163,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -184,7 +184,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -205,7 +205,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -226,7 +226,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -247,7 +247,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -268,7 +268,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -289,7 +289,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -310,7 +310,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'itp_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
         
@@ -319,7 +319,7 @@ $functions = [
 ];
 
 $services = [
-    'NAVANTIA_SERVICES' => [
+    'itp_navantiaservices' => [
         'functions' => [
             'block_itp_remove_client', // Aquí se incluye la función en el nuevo servicio
             'block_itp_add_client',
@@ -339,7 +339,7 @@ $services = [
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado
-        'shortname' => 'NAVANTIA_SERVICES',
+        'shortname' => 'itp_navantiaservices',
         'downloadfiles' => 0, // Permitir la descarga de archivos
         'uploadfiles' => 0, // No permitir la subida de archivos
     ],
