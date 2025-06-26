@@ -40,8 +40,8 @@ class block_cargadetrabajo extends block_base {
      */
     public function get_content() {
         global $OUTPUT, $USER, $DB;
-
-        $context=context_block::instance($this->instance->id);
+    
+	$context=context_block::instance($this->instance->id);
         if (!has_capability('block/cargadetrabajo:view',$context)){          
             return null;
         }
@@ -86,7 +86,7 @@ class block_cargadetrabajo extends block_base {
             $assignedCount = $counts['Assigned'];
             $assignedCounts[] = $assignedCount;
 
-            $user = \core_user::get_user($user->id);
+    
             $userTicketData[] = [
                 'userid' => $user->id,
                 'fullname' => fullname($user),
