@@ -6,13 +6,13 @@ define([
 ], function(Templates,shared,pdf) {
 
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
-    const token=document.querySelector('input[name="token"]').value;
+    const token=document.querySelector('#char-token').value;
 
 
     const init = () => {
         
         shared.areElementsLoaded('#id_chart_boclick, #id_chart_export_pdf, #myBarChartTickets').then((elements)=>{
-            console.log("TODO: START chart bar loaded");
+            
             loadProjectOptions(url,token).then(()=>{
                 reloadGraph();
             });

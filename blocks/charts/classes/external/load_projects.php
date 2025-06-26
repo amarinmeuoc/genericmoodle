@@ -24,11 +24,13 @@ class load_projects extends \core_external\external_api {
      * @return array Return a array of courses
      */
     public static function execute() {
-        global $DB;
+        global $DB,$USER;
 
         // Validate the context and capabilities if needed
-        $context = \context_system::instance();
+        $context = \context_user::instance($USER->id);
         self::validate_context($context);
+        require_capability('webservice/rest:use', $context);
+
 
         // Query the database to fetch project shortnames
         // Assuming the table is `mdl_customer` and the column for shortnames is `shortname`

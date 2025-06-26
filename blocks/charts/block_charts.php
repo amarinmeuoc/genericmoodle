@@ -57,15 +57,28 @@ class block_charts extends block_base {
         $this->page->requires->js_call_amd('block_charts/init', 'init');
 
         //Se obtiene el token del usuario y se guarda en un campo oculto
-        $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
-                                    INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                                    WHERE username=:username LIMIT 1", ['username'=>'logisticwebservice']);
-        $token=$token->token;
+        $token = $DB->get_record_sql("
+            SELECT t.token
+            FROM {external_tokens} t
+            INNER JOIN {external_services} s ON s.id = t.externalserviceid
+            INNER JOIN {user} u ON u.id = t.userid
+            WHERE u.username = :username
+            AND s.shortname = :servicename
+            LIMIT 1",
+        [
+            'username' => 'logisticwebservice',
+            'servicename' => 'block_charts_services'
+        ]);
 
+        $token = $token->token;
+
+        
+        
         // Add logic here to define your template data or any other content.
         $data = [
             'token'=>$token
         ];
+
 
         $this->content->text = $OUTPUT->render_from_template('block_charts/content', $data);
 
