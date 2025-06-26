@@ -47,7 +47,7 @@ if (!has_capability('report/coursereportadmin:view',$context)){
     echo html_writer::div($message);
     echo html_writer::div('<a class="btn btn-primary" href="'.$CFG->wwwroot.'">Go back</a>');       
     echo $OUTPUT->footer();   
-    return;
+    return; 
 }
 
 echo $OUTPUT->header();
@@ -55,9 +55,18 @@ echo $OUTPUT->heading(get_string('titlelegend', 'report_coursereportadmin'));
 $clientes=$DB->get_records('customer', [], '', 'id,shortname', 0, 0);
 $clientes=array_values($clientes);
 
-$token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
-                            INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
+$token = $DB->get_record_sql("
+            SELECT t.token
+            FROM {external_tokens} t
+            INNER JOIN {external_services} s ON s.id = t.externalserviceid
+            INNER JOIN {user} u ON u.id = t.userid
+            WHERE u.username = :username
+            AND s.shortname = :servicename
+            LIMIT 1",
+        [
+            'username' => 'webserviceuser',
+            'servicename' => 'report_coursereportadmin_service'
+        ]);
 
 $data = [ 
     'token'=>($token)?$token->token:'',

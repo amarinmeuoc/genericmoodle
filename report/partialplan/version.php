@@ -29,7 +29,7 @@
 
  defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024020801.03;
+$plugin->version = 2024020802;
 $plugin->requires = 2023100902.06;
 $plugin->component = 'report_partialplan';
 

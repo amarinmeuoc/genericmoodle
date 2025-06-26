@@ -17,7 +17,7 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'report_dailyattendance_service',
             MOODLE_OFFICIAL_MOBILE_SERVICE,
         ]
     ],
@@ -37,21 +37,21 @@ $functions = [
 
         // An optional list of services where the function will be included.
         'services' => [
-            'NAVANTIA_SERVICES',
+            'report_dailyattendance_service',
             MOODLE_OFFICIAL_MOBILE_SERVICE,
         ]
     ],
 ];
 
 $services = [
-    'NAVANTIA_SERVICES' => [
+    'report_dailyattendance_service' => [
         'functions' => [
             'report_dailyattendance_get_list_courses', // Aquí se incluye la función en el nuevo servicio
             'report_dailyattendance_get_list_group',
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado
-        'shortname' => 'NAVANTIA_SERVICES',
+        'shortname' => 'report_dailyattendance_service',
         'downloadfiles' => 0, // Permitir la descarga de archivos
         'uploadfiles' => 0, // No permitir la subida de archivos
     ],

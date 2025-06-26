@@ -36,7 +36,7 @@ class get_group_list extends \core_external\external_api {
         // now security checks
         $context = \context_system::instance();
         self::validate_context($context);
-        require_capability('webservice/rest:use', $context); 
+        require_capability('webservice/rest:use', $context);
 
         // Extract parameters
         $customerid=$request['params'][0]['customerid'];

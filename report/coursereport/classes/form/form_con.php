@@ -119,10 +119,21 @@ class form_con extends \moodleform {
 
         $mform->addElement('button', 'bosubmit', get_string('send','report_coursereport'));
 
-        //Se obtiene el token del usuario y se guarda en un campo oculto
-        $token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
-                            INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
+        //Se obtiene el token del usuario y se guarda en un campo oculto 
+                
+        $token = $DB->get_record_sql("
+            SELECT t.token
+            FROM {external_tokens} t
+            INNER JOIN {external_services} s ON s.id = t.externalserviceid
+            INNER JOIN {user} u ON u.id = t.userid
+            WHERE u.username = :username
+            AND s.shortname = :servicename
+            LIMIT 1",
+        [
+            'username' => 'webserviceuser',
+            'servicename' => 'report_coursereport_service'
+        ]);
+
         $token=$token->token;
 
         $mform->addElement('hidden', 'token', $token);

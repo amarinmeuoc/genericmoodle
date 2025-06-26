@@ -99,9 +99,18 @@ $pages=$attendance->getDailyAttendance()[1];
 
 $userSessionId=\core\session\manager::get_login_token();
 
-$token=$DB->get_record_sql("SELECT token FROM mdl_external_tokens 
-                            INNER JOIN mdl_user ON mdl_user.id=mdl_external_tokens.userid
-                            WHERE username=:username LIMIT 1", ['username'=>'webserviceuser']);
+$token = $DB->get_record_sql("
+            SELECT t.token
+            FROM {external_tokens} t
+            INNER JOIN {external_services} s ON s.id = t.externalserviceid
+            INNER JOIN {user} u ON u.id = t.userid
+            WHERE u.username = :username
+            AND s.shortname = :servicename
+            LIMIT 1",
+        [
+            'username' => 'webserviceuser',
+            'servicename' => 'report_dailyattendance_service'
+        ]);
    
 
 echo $OUTPUT->header();
