@@ -5,13 +5,12 @@ define([
 ], function(Templates,shared,pdf) {
 
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
-    const token=document.querySelector('input[name="token"]').value;
+    const token=document.querySelector('#chart_responsetime-token').value;
 
 
     const init = () => {
         
         shared.areElementsLoaded('#id_chart_responsetime_boclick, #id_chart_responsetime_export_pdf, #myLineChart').then((elements)=>{
-            console.log("TODO: START chart line loaded");
             loadProjectOptions(url,token).then(()=>{
                 
                 reloadLineGraph();
