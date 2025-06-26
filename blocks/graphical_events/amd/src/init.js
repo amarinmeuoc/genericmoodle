@@ -5,12 +5,12 @@ define([
 ], function(Templates,shared,pdf) {
 
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
-    const token=document.querySelector('input[name="token"]').value;
+    const token=document.querySelector('#graphical_event-token').value;
 
     const init = (userIdFromPHP) => {
         
         shared.areElementsLoaded('#layer').then((elements)=>{
-            console.log("TODO: START");
+            
             const itemPanel=document.querySelectorAll('#graphpanel li');
             
             itemPanel.forEach((item)=>{
@@ -155,7 +155,7 @@ define([
     }
     
 
-    const loadVesselOptions=(url,token,resolve,reject)=>{
+    const loadVesselOptions=async (url,token,resolve,reject)=>{
         const projectid=document.querySelector('#id_graph_project').value;
         let xhr = new XMLHttpRequest();
         
