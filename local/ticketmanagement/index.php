@@ -11,10 +11,6 @@ $PAGE->set_context(context_system::instance());
 //Si es logistico cargamos un formulario de creación de ticket y de búsqueda de tickets
 $role=$USER->profile['role'];
 
-
-
-
-
 if (preg_match('/(logistic|manager)/i',$role)){
     //Muestra formulario para logistic
     $mform=new \local_ticketmanagement\form\manageticket_log();
@@ -31,7 +27,7 @@ if (preg_match('/(logistic|manager)/i',$role)){
     echo $OUTPUT->footer();   
     return;
 }
-$PAGE->requires->css(new moodle_url('/local/ticketmanagement/css/styles.scss'));
+$PAGE->requires->css(new moodle_url('/local/ticketmanagement/css/styles.css'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('manageticket', 'local_ticketmanagement'));
 $mform->display();

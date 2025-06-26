@@ -45,7 +45,7 @@ class get_ticketsubcategory extends \core_external\external_api {
          
 
          //Se comprueba que la categoria sea unica
-         $result=$DB->get_records('ticket_subcategory',['categoryid'=>$categoryid]);
+         $result=$DB->get_records('ticket_subcategory',['categoryid'=>$categoryid],'subcategory ASC');
 
                   
         return $result;

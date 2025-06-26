@@ -37,14 +37,35 @@ class sync_address extends \core\task\scheduled_task {
                     mtrace("User with ID {$address->userid} not found, skipping...");
                     continue;
                 }
+
+                $pattern="/Carraca -Cuatro Torres-/i";
+                $pattern2="/Carraca -Houses-/i";
+
+                if (preg_match($pattern,$address->address)){
+                    // Prepare address components
+                    $full_address = trim(implode(' ', [
+                        $address->address.', ',
+                        'Floor: '.$address->floor,
+                        'Number: '.$address->number
+                    ]));
+                } elseif (preg_match($pattern2,$address->address)){
+                    // Prepare address components
+                    // Prepare address components
+                    $full_address = trim(implode(' ', [
+                        $address->address.', ',
+                        'House: '.$address->house+1,
+                        'Number: '.$address->number
+                    ]));
+                } else {
+                    // Prepare address components
+                    $full_address = trim(implode(' ', [
+                        $address->address.', ',
+                        'Bloque: '.$address->block,
+                        'Door: '.$address->door,
+                        'Number: '.$address->number
+                    ]));
+                }
                 
-                // Prepare address components
-                $full_address = trim(implode(' ', [
-                    $address->address,
-                    $address->house,
-                    $address->floor,
-                    $address->number
-                ]));
                 
                 // Only update if there are changes
                 if ($user->address !== $full_address || $user->city !== $address->town) {

@@ -104,7 +104,7 @@ define([
             e.stopPropagation();
             const userid=e.target.dataset.userid;
             const carid=e.target.dataset.id;
-            window.console.log(userid);
+            
             const getUsername= function(userid) {
                 return ajax.call([{
                     methodname: 'core_user_get_users_by_field',
@@ -220,7 +220,7 @@ define([
                 if (xhr.response) {
                     const response = JSON.parse(xhr.response);
                     if (response) {
-                        window.console.log(response);
+                        
                         addToast.add(`Fine updated.`);
 
                         // Find the wrapper and override z-index

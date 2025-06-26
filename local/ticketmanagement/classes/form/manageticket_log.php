@@ -12,7 +12,7 @@ public function definition() {
     //Se añaden javascript y CSS
     //Se añade javascript
     $PAGE->requires->js('/local/ticketmanagement/js/manage_ticket_formJS.js', false);
-    $PAGE->requires->css('/local/ticketmanagement/css/styles.scss');
+    $PAGE->requires->css('/local/ticketmanagement/css/styles.css');
     
     $mform = $this->_form; // Don't forget the underscore!
     $mform->disable_form_change_checker();
@@ -91,7 +91,7 @@ public function definition() {
 
     
 
-    $category=$DB->get_records('ticket_category',[],'id ASC','id,category');
+    $category=$DB->get_records('ticket_category',[],'category ASC','id,category');
 
     $category_arr=[];
     foreach ($category as $key => $cat) {
@@ -110,7 +110,7 @@ public function definition() {
         $firstcategoryid=0;
 
         
-    $subcategory=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstcategoryid],'id ASC','id,subcategory');
+    $subcategory=$DB->get_records('ticket_subcategory', ['categoryid'=>$firstcategoryid],'subcategory ASC','id,subcategory');
 
     
     $subcategory_arr=[];

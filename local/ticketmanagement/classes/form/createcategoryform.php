@@ -12,7 +12,7 @@ class createcategoryform extends \moodleform {
         //Se añaden javascript y CSS
         //Se añade javascript
         $PAGE->requires->js(new \moodle_url('/local/ticketmanagement/js/category_formJS.js'), false);
-        $PAGE->requires->css(new \moodle_url('/local/ticketmanagement/css/styles.scss'));
+        $PAGE->requires->css(new \moodle_url('/local/ticketmanagement/css/styles.css'));
         
         $mform = $this->_form; // Don't forget the underscore!
         $mform->disable_form_change_checker();
@@ -20,7 +20,7 @@ class createcategoryform extends \moodleform {
         $mform->_attributes['id']="categoryformid";
 
         //Se carga la lista de categorias ya creadas
-        $category=$DB->get_records('ticket_category');
+        $category=$DB->get_records('ticket_category',[],'category ASC');
         $category_list=array_values($category);
 
         $options=array();

@@ -116,7 +116,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     
 
     boremove.addEventListener('click',(e)=>{
-        //removeProyect(selectText.value, token,url);
+        const selectText=document.querySelector('#id_categorySelect');
+        const selectedOption=selectText.options[selectText.selectedIndex];
+        removeProyect(selectText.value, token,url);
         window.console.log("El borrado no ha sido implementado aún.");
     });
 
@@ -176,6 +178,59 @@ function handleCategoryChange(e) {
         boedit.disabled = false;
     } else {
         categoryname.value = "";
+    }
+}
+
+const removeProyect=(categoryid, token, url)=>{
+    let xhr=new XMLHttpRequest();
+    
+    //Se prepara el objeto a enviar
+    const formData= new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'local_ticketmanagement_remove_ticketcategory');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[0][id]',categoryid);
+    
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        processRemoveAnswer(xhr,categoryid);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const processRemoveAnswer=(xhr,categoryid)=>{
+    if (xhr.readyState=== 4 && xhr. status === 200){
+        if (xhr.response){
+            const response=JSON.parse(xhr.response);
+            if (response.ok===0){
+                const errMsg=document.querySelector('#error-message');
+                const msg="Operation has not been completed. Verify that the category is not used by any ticket.";
+                const categoryname=document.querySelector('#id_categoryname');
+                categoryname.focus();
+                categoryname.select();
+                showMessage(errMsg,msg);
+            } else { //suponiendo que todo haya ido bien
+                const selectText=document.querySelector('#id_categorySelect');
+                const selectedOption=selectText.options[selectText.selectedIndex];
+                selectText.remove(selectedOption.index);
+                const categoryname=document.querySelector('#id_categoryname');  
+                categoryname.value="";
+                const boedit=document.querySelector('#id_boedit');
+                boedit.disabled=true;
+                const checkbox=document.getElementById('id_hiddencategory');
+                checkbox.checked=false;
+                checkbox.value=0;
+                const errMsg=document.querySelector('#error-message');
+                const msg="Category has been removed successfully.";
+                showMessage(errMsg,msg);
+            }
+        }
     }
 }
 

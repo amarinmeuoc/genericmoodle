@@ -12,7 +12,7 @@ public function definition() {
     //Se añaden javascript y CSS
     //Se añade javascript
     $PAGE->requires->js('/local/ticketmanagement/js/users_formJS.js', false);
-    $PAGE->requires->css('/local/ticketmanagement/css/styles.scss');
+    $PAGE->requires->css('/local/ticketmanagement/css/styles.css');
     
     $mform = $this->_form; // Don't forget the underscore!
     $mform->disable_form_change_checker();

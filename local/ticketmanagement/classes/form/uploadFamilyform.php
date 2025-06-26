@@ -12,7 +12,7 @@ class uploadFamilyform extends \moodleform {
         //Se añaden javascript y CSS
         //Se añade javascript
         $PAGE->requires->js(new \moodle_url('/local/ticketmanagement/js/family_formJS.js'), false);
-        $PAGE->requires->css(new \moodle_url('/local/ticketmanagement/css/styles.scss'));
+        $PAGE->requires->css(new \moodle_url('/local/ticketmanagement/css/styles.css'));
         
         $mform = $this->_form; // Don't forget the underscore!
         $mform->disable_form_change_checker();

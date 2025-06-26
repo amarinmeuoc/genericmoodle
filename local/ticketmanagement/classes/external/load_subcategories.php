@@ -42,9 +42,9 @@ class load_subcategories extends \core_external\external_api {
 
          //Se listan todos los grupos del cliente seleccionado
          if ($role==='controller'){
-            $result=$DB->get_records('ticket_subcategory', ['categoryid'=>$categoryid], 'id ASC', 'id,subcategory');
+            $result=$DB->get_records('ticket_subcategory', ['categoryid'=>$categoryid], 'subcategory ASC', 'id,subcategory');
          } elseif ($role==='student') {
-            $result=$DB->get_records('ticket_subcategory', ['categoryid'=>$categoryid,'hidden'=>0], 'id ASC', 'id,subcategory');
+            $result=$DB->get_records('ticket_subcategory', ['categoryid'=>$categoryid,'hidden'=>0], 'subcategory ASC', 'id,subcategory');
          }
          
          
