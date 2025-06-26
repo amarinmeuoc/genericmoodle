@@ -114,7 +114,7 @@ const updateListofUsers=(customerid, vesselid,  token)=>{
 
 const reqHandlerGetListTrainees=(xhr)=>{
   document.querySelector('#fitem_id_userlist>div:nth-child(2)>div:nth-child(5)').innerHTML='';
-  window.console.log("reload");
+  
   if (xhr.response){
     const response=JSON.parse(xhr.response);
     const selUserlist=document.querySelector('#id_userlist');
@@ -143,22 +143,9 @@ const reqHandlerGetListTrainees=(xhr)=>{
             const padre=document.querySelector('#fitem_id_userlist .felement .form-autocomplete-selection');
             padre.innerHTML='';
             const newSpan=document.createElement('span');
-            if (optionsUsers[0]){
-              const span=document.createElement('span');
-              span.setAttribute('aria-hidden',true);
-              span.textContent="× "
-              newSpan.innerHTML="";
-              newSpan.dataset.value=optionsUsers[0].id;
-              newSpan.setAttribute('data-active-selection',true);
-              newSpan.setAttribute('role','option');
-              newSpan.setAttribute('aria-selected',true);
-              newSpan.style.fontSize='100%';
-              newSpan.appendChild(span);
-              newSpan.classList.add('badge','bg-secondary','text-dark','m-1');
-              newSpan.innerHTML+= optionsUsers[0].groupname+"_"+optionsUsers[0].billid+" "+optionsUsers[0].firstname+", "+optionsUsers[0].lastname;
-            } else {
+            
               newSpan.innerHTML="No user selected";
-            }
+            
             
             padre.appendChild(newSpan);
             selUserlist.selectedIndex=-1;

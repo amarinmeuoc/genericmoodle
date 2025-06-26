@@ -17,3 +17,4 @@ $string['selectproject'] = 'Select project';
 $string['selectvessel'] = 'Choose group or vessel';
 $string['user'] = 'User:';
 $string['emailcheck'] = 'Show user email';
+$string['copyof']= 'Copy of: ';

@@ -115,46 +115,92 @@ function send_emails_to_users($formdata, $itemid) {
     }
    
     $success = true;
+    $recipient_list=[];
+    $failed_list = [];
+
     foreach ($userids as $userid) {
-        $user = $DB->get_record('user', array('id' => $userid));
+        $user = $DB->get_record('user', ['id' => $userid]);
         
         if (!$user) {
-            continue;
+            $failed_list[] = "Unknown user ID: $userid";
+            $success=false;
+            continue; // Skip invalid users
         }
-        $emailcheck=($formdata->emailcheck==0)?false:true;
 
-        // Determinar el remitente basado en $emailcheck
+        $recipient_list[] = fullname($user) . " ({$user->email})";
+
+        $emailcheck = ($formdata->emailcheck == 0) ? false : true;
         $from = $emailcheck ? $USER : \core_user::get_noreply_user();
         
-        // Send email
+        // Send email to recipient
         $emailresult = email_to_user(
             $user,
             $from,
             $subject,
             html_to_text($message),
             $message,
-            $attachments ?? '',  // string con path o vacío
-            $attachmentname ?? '' // nombre si hay adjunto
+            $attachments ?? '',
+            $attachmentname ?? ''
         );
 
-        
-        
         if (!$emailresult) {
+            $failed_list[] = fullname($user) . " ({$user->email})";
             $success = false;
-        } else {
-            // Después de comprobar login y configurar la página
-            $event = \local_emails\event\email_sent::create(array(
-                'context' => \context_system::instance(),
-                'other' => array(
-                    'sent_by' => $USER->email, // Si necesitas pasar información adicional
-                    'subject' => $subject
-                )
-            ));
-            $event->trigger();
+            continue;
+        } 
 
-           
-        }
+         // ✅ Trigger event per recipient
+        \local_emails\event\email_sent::create([
+            'objectid' => $user->id, // Or null if you don't need it
+            'relateduserid' => $user->id,
+            'userid' => $USER->id,
+            'context' => \context_system::instance(),
+            'other' => [
+                'recipientid' => $user->id,
+                'subject' => $subject,
+            ],
+        ])->trigger();
+
     }
+
+    if (!empty($recipient_list) || !empty($failed_list)) {
+        $copy_subject = $success ? "Copy: $subject" : "⚠ Some emails failed: $subject";
+
+        // Format successful recipients
+        $recipient_summary = "<h3 style='background-color:#0f6cbf;color:white;padding:.3em'>Email sent to:</h3><ul>";
+        foreach ($recipient_list as $recipient) {
+            $recipient_summary .= "<li>" . $recipient . "</li>";
+        }
+        $recipient_summary .= "</ul>";
+
+        // Format failures if any
+        $failure_summary = '';
+        if (!empty($failed_list)) {
+            $failure_summary = "<h3 style='background-color:#dc3545;color:white;padding:.3em'>Failed to send to:</h3><ul>";
+            foreach ($failed_list as $fail) {
+                $failure_summary .= "<li>" . $fail . "</li>";
+            }
+            $failure_summary .= "</ul>";
+        }
+
+        // Final message
+        $copy_message = "<h3 style='background-color:#0f6cbf;color:white;padding:.3em'>Original message:</h3><div>{$message}</div><hr>"
+            . $recipient_summary
+            . $failure_summary;
+
+        email_to_user(
+            $USER,
+            \core_user::get_noreply_user(),
+            $copy_subject,
+            html_to_text($copy_message),
+            $copy_message,
+            $attachments ?? '',
+            $attachmentname ?? ''
+        );
+    }
+
+
+    
     
     // Limpiar archivos temporales
     if (!empty($attachments) && file_exists($attachments)) {

@@ -10,7 +10,7 @@ public function definition() {
     global $PAGE, $DB,$USER;
    
     $PAGE->requires->js('/local/emails/js/manage_formJS.js', false);
-    $PAGE->requires->css('/local/emails/css/styles.scss');
+    $PAGE->requires->css('/local/emails/css/styles.css');
     
     $mform = $this->_form; // Don't forget the underscore!
     $mform->disable_form_change_checker();
@@ -144,12 +144,18 @@ public function definition() {
 
     private function get_logistic_token() {
         global $DB;
-        $token = $DB->get_record_sql(
-            "SELECT token FROM mdl_external_tokens 
-             INNER JOIN mdl_user ON mdl_user.id = mdl_external_tokens.userid
-             WHERE username = :username LIMIT 1", 
-            ['username' => 'logisticwebservice']
-        );
+        $token = $DB->get_record_sql("
+            SELECT t.token
+            FROM {external_tokens} t
+            INNER JOIN {external_services} s ON s.id = t.externalserviceid
+            INNER JOIN {user} u ON u.id = t.userid
+            WHERE u.username = :username
+            AND s.shortname = :servicename
+            LIMIT 1",
+        [
+            'username' => 'logisticwebservice',
+            'servicename' => 'email_navantiaservices'
+        ]);
         return $token ? $token->token : '';
     }
 
