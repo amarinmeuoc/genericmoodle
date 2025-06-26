@@ -6,7 +6,7 @@ define([
 ], function(addToast,Templates,shared,pdf) {
 
     const url=M.cfg.wwwroot+'/webservice/rest/server.php';
-    const token=document.querySelector('input[name="token"]').value;
+    const token=document.querySelector('#pie-token').value;
 
 
     const init = () => {
