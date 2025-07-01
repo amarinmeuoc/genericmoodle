@@ -124,9 +124,70 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
 
     boremove.addEventListener('click',(e)=>{
-        //removeProyect(selectText.value, token,url);
-        window.console.log("Pendiente de implementar");
+        const selectText=document.querySelector('#id_subcategorySelect');
+        const selectedOption=selectText.options[selectText.selectedIndex];
+        removeProyect(selectText.value, token,url);
+        //window.console.log("Pendiente de implementar");
     });
+
+    const removeProyect=(subcategoryid, token, url)=>{
+    let xhr=new XMLHttpRequest();
+    
+    //Se prepara el objeto a enviar
+    const formData= new FormData();
+    formData.append('wstoken',token);
+    formData.append('wsfunction', 'local_ticketmanagement_remove_ticketcategory');
+    formData.append('moodlewsrestformat', 'json');
+    formData.append('params[][subcategoryId]',subcategoryid);
+    
+
+    xhr.open('POST',url,true);
+    xhr.send(formData);
+
+    xhr.onload = (ev)=> {
+        processRemoveAnswer(xhr,subcategoryid);
+    }
+
+    xhr.onerror = ()=> {
+        rejectAnswer(xhr);
+    }
+}
+
+const processRemoveAnswer=(xhr,categoryid)=>{
+    if (xhr.readyState=== 4 && xhr. status === 200){
+        if (xhr.response){
+            const response=JSON.parse(xhr.response);
+            if (response.ok===0){
+                const errMsg=document.querySelector('#error-message');
+                const msg="Operation has not been completed. Verify that the category is not used by any ticket.";
+                const categoryname=document.querySelector('#id_subcategoryname');
+                categoryname.focus();
+                categoryname.select();
+                showMessage(errMsg,msg);
+            } else { //suponiendo que todo haya ido bien
+                const selectText=document.querySelector('#id_subcategorySelect');
+                if (selectText.selectedIndex===-1){
+                    const errMsg=document.querySelector('#error-message');
+                    const msg="There is no category selected. Please, select a category to remove.";
+                    showMessage(errMsg,msg);
+                    return;
+                }
+                const selectedOption=selectText.options[selectText.selectedIndex];
+                selectText.remove(selectedOption.index);
+                const categoryname=document.querySelector('#id_subcategoryname');  
+                categoryname.value="";
+                const boedit=document.querySelector('#id_boedit');
+                boedit.disabled=true;
+                const checkbox=document.getElementById('id_hiddencategory');
+                checkbox.checked=false;
+                checkbox.value=0;
+                const errMsg=document.querySelector('#error-message');
+                const msg="Category has been removed successfully.";
+                showMessage(errMsg,msg);
+            }
+        }
+    }
+}
 
     boaddnew.addEventListener('click',(e)=>{
         let hasErrors=false;
@@ -139,7 +200,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         //Si no hay errores se añade el cliente
         if (!hasErrors){
             const categoryid=document.querySelector("#id_categorySelect").value;
-            
+            ifhidden=checkbox.checked ? 1 : 0;
             addproyect(ifhidden,subcategoryname.value,categoryid,token, url);
         }
             
@@ -217,6 +278,7 @@ const processEditAnswer=(xhr,categoryid,categoryname)=>{
     if (xhr.readyState=== 4 && xhr. status === 200){
         if (xhr.response){
             const response=JSON.parse(xhr.response);
+            
             if (response===0){
                 const errMsg=document.querySelector('#error-message');
                 const msg="Operation has not been completed. Verify that the category name is not duplicated.";
@@ -335,6 +397,7 @@ const processAnswer=(xhr,subcategoryname,categoryid)=>{
             const response=JSON.parse(xhr.response);
             
             if (response.ok===0){
+
                 const errMsg=document.querySelector('#error-message');
                 const msg="Operation has not been completed. Verify that there are not duplicates for the subcategory.";
                 const subcategory=document.querySelector('#id_subcategoryname');
@@ -345,7 +408,7 @@ const processAnswer=(xhr,subcategoryname,categoryid)=>{
                 const selectText=document.querySelector('#id_subcategorySelect');
                 const option=document.createElement('option');
                 option.text=subcategoryname.toUpperCase();
-                option.value=response;
+                option.value=response.ok;
                 option.dataset.hidden=response.ifhidden;
                 if (response.ifhidden===1){
                     option.classList.add('bg-warning');

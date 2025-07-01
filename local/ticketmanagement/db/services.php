@@ -734,6 +734,21 @@ $functions = [
             'ticket_navantiaservices',
             MOODLE_OFFICIAL_MOBILE_SERVICE
         ]
+        ],
+    'local_ticketmanagement_remove_ticketcategory' => [
+        // The name of the namespaced class that the function is located in.
+        'classname'   => '\local_ticketmanagement\external\remove_ticketcategory',
+        // A brief, human-readable, description of the web service function.
+        'description' => 'Remove ticket category.',
+        // Options include read, and write.
+        'type'        => 'write',
+        // Whether the service is available for use in AJAX calls from the web.
+        'ajax'        => true,
+        // An optional list of services where the function will be included.
+        'services' => [
+            'ticket_navantiaservices',
+            MOODLE_OFFICIAL_MOBILE_SERVICE
+        ]
     ]
     
 ];
@@ -776,7 +791,8 @@ $services = [
             'local_ticketmanagement_check_reminders',
             'local_ticketmanagement_remove_house',
             'local_ticketmanagement_get_list_addresses_excel',
-            'local_ticketmanagement_get_bookings'
+            'local_ticketmanagement_get_bookings',
+            'local_ticketmanagement_remove_ticketcategory'
         ],
         'restrictedusers' => 1, // 0 = disponible para todos los usuarios, 1 = restringido
         'enabled' => 1, // 1 = habilitado, 0 = deshabilitado

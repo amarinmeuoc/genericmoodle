@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         const selectText=document.querySelector('#id_categorySelect');
         const selectedOption=selectText.options[selectText.selectedIndex];
         removeProyect(selectText.value, token,url);
-        window.console.log("El borrado no ha sido implementado aún.");
+        
     });
 
     boaddnew.addEventListener('click',(e)=>{
@@ -189,7 +189,7 @@ const removeProyect=(categoryid, token, url)=>{
     formData.append('wstoken',token);
     formData.append('wsfunction', 'local_ticketmanagement_remove_ticketcategory');
     formData.append('moodlewsrestformat', 'json');
-    formData.append('params[0][id]',categoryid);
+    formData.append('params[][categoryId]',categoryid);
     
 
     xhr.open('POST',url,true);

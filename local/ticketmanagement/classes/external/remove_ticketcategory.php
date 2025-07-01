@@ -89,7 +89,7 @@ class remove_ticketcategory extends \core_external\external_api {
             
             if ($itemid) {
                 $fs = get_file_storage();
-                $contextid = context_system::instance()->id;
+                $contextid = \context_system::instance()->id;
                 $files = $fs->get_area_files($contextid, 'local_ticketmanagement', 'sharedfiles', $itemid, 'sortorder', false);
                 
                 foreach ($files as $file) {
@@ -141,7 +141,7 @@ class remove_ticketcategory extends \core_external\external_api {
                 
                 if ($itemid) {
                     $fs = get_file_storage();
-                    $contextid = context_system::instance()->id;
+                    $contextid = \context_system::instance()->id;
                     $files = $fs->get_area_files($contextid, 'local_ticketmanagement', 'sharedfiles', $itemid, 'sortorder', false);
                     
                     foreach ($files as $file) {
