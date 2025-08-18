@@ -140,6 +140,7 @@ define(['core_form/modalform',
                         if (response.id) {
                             
                             addToast.add('Ticket created successfully: ' + response.id);
+
               
                             // Actualiza el número de tickets y las páginas
                             let numRecords = parseInt(document.querySelector('#num_total_records').textContent.trim()) + 1;
@@ -325,6 +326,21 @@ define(['core_form/modalform',
                       });
                       
                     }).catch((error)=>displayException(error));
+
+                    //Scroll hasta el nuevo ticket añadido
+                    const newTicketElement = document.querySelector('.tickets:last-child');
+                    if (newTicketElement) {
+                        newTicketElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+
+                    if (typeof tinymce !== 'undefined') {
+                      const ed = tinymce.get('id_description'); // el ID del textarea original
+                      if (ed) {
+                          ed.setContent('');
+                      }
+                    }
+
+
                   }).catch((error)=>{
                     addToast.add("En el formulario falta por rellenar alguna opción. Operación no completada");
                   });

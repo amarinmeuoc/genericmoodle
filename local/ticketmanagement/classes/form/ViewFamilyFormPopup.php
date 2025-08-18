@@ -30,6 +30,7 @@
 namespace local_ticketmanagement\form;
 
 
+
 class ViewFamilyFormPopup extends \core_form\dynamic_form {
     // Define the form structure
     public function definition() {
@@ -128,12 +129,16 @@ class ViewFamilyFormPopup extends \core_form\dynamic_form {
         if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = get_string('emailinvalid', 'local_ticketmanagement');
         }
-
-        // Validar número de teléfono
-        if (!empty($data['phone1']) && !preg_match('/^[0-9]{9}$/', $data['phone1'])) {
-            $errors['phone1'] = get_string('phoneinvalid', 'local_ticketmanagement');
+        
+        if (!empty($data['phone1'])) {
+            // Basic international phone validation (adjust as needed)
+            $pattern = '/^\+?[0-9\s\-\(\)]{6,20}$/';
+            
+            if (!preg_match($pattern, $data['phone1'])) {
+                $errors['phone1'] = get_string('phoneinvalid', 'local_ticketmanagement');
+            }
         }
-
+        
         // Validar que la fecha de llegada sea anterior a la de salida
         if (!empty($data['arrival']) && !empty($data['departure']) && $data['arrival'] > $data['departure']) {
             $errors['departure'] = get_string('departureinvalid', 'local_ticketmanagement');

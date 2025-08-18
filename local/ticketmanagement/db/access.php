@@ -28,11 +28,18 @@
  */
 
  $capabilities = [
-    'local/ticketmanagement:managetickets' => [ // Cambia 'managetickets' según lo que represente
+    'local/ticketmanagement:managetickets' => [ // Permite modificar tickets
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
             'user' => CAP_ALLOW,
+        ],
+    ],
+    'local/ticketmanagement:editalltickets' => [ // Permite modificar tickets
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
         ],
     ],
     'local/ticketmanagement:edituserprofile' => [

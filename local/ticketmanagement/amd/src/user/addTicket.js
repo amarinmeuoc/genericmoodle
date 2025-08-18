@@ -92,7 +92,12 @@ define(['core/modal',
 
                   if (response) {
                       
-                      addToast.add('Ticket created successfully: ' + response.id);
+                      const toast=addToast.add('Ticket created successfully: ' + response.id);
+
+                      // Esperar a que el toast se oculte
+                      setTimeout(function() {
+                          window.location.href = M.cfg.wwwroot + '/my'; // Redirige al dashboard
+                      },3000); // 3 segundos de espera
 
                       // Actualiza el número de tickets y las páginas
                       let numRecords = parseInt(document.querySelector('#num_records').textContent.trim()) + 1;
@@ -243,6 +248,19 @@ define(['core/modal',
                 });
                 
               }).catch((error)=>displayException(error));
+
+               //Scroll hasta el nuevo ticket añadido
+                const newTicketElement = document.querySelector('.tickets:last-child');
+                if (newTicketElement) {
+                    newTicketElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                if (typeof tinymce !== 'undefined') {
+                  const ed = tinymce.get('id_description'); // el ID del textarea original
+                  if (ed) {
+                      ed.setContent('');
+                  }
+                }
             }).catch((error)=>displayException(error));
           }
 

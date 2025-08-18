@@ -168,7 +168,7 @@ async function createPDFAcroField(PDF, user, result){
     let formattedEndDate=`${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
     
     
-    const textBody=`Below is a detailed list of the grades obtained by the trainee: ${user.firstname}, ${user.lastname} with billid: ${user.billid}, in the training programme of Navantia which started in ${formattedStartDate} to ${formattedEndDate}.`
+    const textBody=`Below is a detailed list of the grades obtained by the trainee: ${user.firstname}, ${user.lastname} with BILLID: ${user.billid}, in the training programme of Navantia which started in ${formattedStartDate} to ${formattedEndDate}.`
     const textBodySize=14;
     const textBodyWidth = font.widthOfTextAtSize(textBody, textBodySize);
     const textBodyHeight = font.heightAtSize(textBodySize);

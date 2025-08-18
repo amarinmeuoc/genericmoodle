@@ -6,7 +6,7 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
 use \core_external\external_function_parameters as external_function_parameters;
 use \core_external\external_multiple_structure as external_multiple_structure;
 use \core_external\external_single_structure as external_single_structure;
-use \core_external\external_value as external_value;
+use \core_external\external_value as external_value; 
 
 
 
@@ -53,6 +53,16 @@ class add_ticket extends \core_external\external_api {
         $userCreatedTicket=$ticket['gestorid'];
         $label_field = $ticket['label_field'] ?? '';  // Si no se pasa, se asigna una cadena vacía
 
+        // Obtener todos los usuarios con el rol 'logistics'
+        $logistics_users = $DB->get_records_sql("
+            SELECT u.id 
+            FROM {user} u
+            JOIN {role_assignments} ra ON ra.userid = u.id
+            JOIN {role} r ON r.id = ra.roleid
+            JOIN {context} ctx ON ctx.id = ra.contextid AND ctx.contextlevel = ?
+            WHERE r.shortname = 'logistic' AND u.deleted = 0 AND u.suspended = 0
+        ", [CONTEXT_SYSTEM]);
+
         
         $madeby=$DB->get_record('user', ['id'=>$userCreatedTicket], 'firstname,lastname');
 
@@ -62,8 +72,10 @@ class add_ticket extends \core_external\external_api {
         } else {
             $affectedUser=$DB->get_record('user', ['username'=>'logisticwebservice'],'id,username,firstname,lastname');
         }
+
         
-        
+
+             
         if ($affectedUser) {
             \profile_load_custom_fields($affectedUser);
             $customer = $affectedUser->profile['customer'] ?? '';
@@ -127,7 +139,7 @@ class add_ticket extends \core_external\external_api {
         //Borramos etiquetas HTML
         $record->description=strip_tags($record->description);
         
-        $record->familyissue=(intval($record->userid)!==intval($record->familiarid))?'Yes':'No';
+        $record->familyissue=(intval($record->userid)!==intval($record->familiarid) && empty($label_field))?'Yes':'No';
         
         // Set familyissue based on label_field
         $record->familyissue = ($label_field !== '') ? 'No' : $record->familyissue;
@@ -138,30 +150,14 @@ class add_ticket extends \core_external\external_api {
         } else {
             $record->username = "no user attached";
         }
+
+        $ticket_url = new \moodle_url('/local/ticketmanagement');
+        $ticket_url->set_anchor($next_id);
+        $ticket_link = \html_writer::link($ticket_url, 'Gestión de Tickets');
+        $ticket_link_user = \html_writer::link($ticket_url, 'Tickets Status');
         
         
         //Send email ticket created
-        /*
-        $to=$DB->get_record('user',['id'=>$affectedUser->id]);
-        $message = "<p>Your ticket has been created. You will shortly receive information.</p>";
-        $messageHTML = "
-                <h1 style='background-color:#0f6cbf; color: white; padding: .3em;'>Ticket Created</h1>
-                <p style='font-size:large;'>Your ticket has been created. You will shortly receive more information.</p>
-                <p style='font-size:large;'>You can also see the progress of your ticket by clicking here: <a href=".$_SERVER['SERVER_NAME'].'/local/ticketmanagement'.">Ticket status</a></p>
-                <p style='font-size:large;'>Thank you for using our service.</p>
-                <p style='font-size:large;'><strong>Support Team</strong></p>
-            ";
-        $subject="New Ticket created: $next_id";
-
-        // Obtén el objeto de usuario "no-reply" configurado en Moodle
-        $noreplyuser = "no-reply@ksatraining.navantia.es";
-
-
-        
-        email_to_user($to,$USER,$subject,$message,$messageHTML);
-        
-        */
-
         $to=$DB->get_record('user',['id'=>$affectedUser->id]);
         $to=$to->id;
         
@@ -169,12 +165,13 @@ class add_ticket extends \core_external\external_api {
         $messageHTML = "
                 <h1 style='background-color:#0f6cbf; color: white; padding: .3em;'>Ticket Created</h1>
                 <p style='font-size:large;'>Your ticket has been created. You will shortly receive more information.</p>
-                <p style='font-size:large;'>You can also see the progress of your ticket by clicking here: <a href=".$_SERVER['SERVER_NAME'].'/local/ticketmanagement'.">Ticket status</a></p>
+                <p style='font-size:large;'>You can also see the progress of your ticket by clicking here: ".$ticket_link_user."</p>
                 <p style='font-size:large;'>Thank you for using our service.</p>
                 <p style='font-size:large;'><strong>Support Team</strong></p>
             ";
         $subject="New Ticket created: $next_id";
 
+        //Send email and notification to the person in charge of the ticket
         $task = new \local_ticketmanagement\task\send_email_task();
         $task->set_custom_data([
             'to' => $to,
@@ -194,6 +191,52 @@ class add_ticket extends \core_external\external_api {
             'from' => $USER->id,
         ]);
         \core\task\manager::queue_adhoc_task($task);
+
+        
+
+        
+
+        // NUEVO CÓDIGO: Notificar a todos los usuarios con rol 'logistics'
+        if (!empty($logistics_users)) {
+            foreach ($logistics_users as $logistics_user) {
+                // Mensaje modificado para el equipo de logística
+                $logistics_message = "<p>Se ha creado un nuevo ticket que puede requerir su atención.</p>";
+                $logistics_messageHTML = "
+                    <h1 style='background-color:#0f6cbf; color: white; padding: .3em;'>Nuevo Ticket Creado</h1>
+                    <p style='font-size:large;'>Se ha creado un nuevo ticket que puede requerir su atención:</p>
+                    <ul>
+                        <li><strong>ID Ticket:</strong> $next_id</li>
+                        <li><strong>Usuario:</strong> {$affectedUser->firstname} {$affectedUser->lastname}</li>
+                        <li><strong>Prioridad:</strong> {$record->priority}</li>
+                    </ul>
+                    <p style='font-size:large;'>Puede ver el ticket aquí: $ticket_link</p>
+                ";
+                
+                $logistics_subject = "Nuevo Ticket: $next_id";
+                
+                // Enviar email
+                $logistics_task = new \local_ticketmanagement\task\send_email_task();
+                $logistics_task->set_custom_data([
+                    'to' => $logistics_user->id,
+                    'subject' => $logistics_subject,
+                    'message_plain' => $logistics_message,
+                    'message_html' => $logistics_messageHTML,
+                    'from' => $USER->id,
+                ]);
+                \core\task\manager::queue_adhoc_task($logistics_task);
+                
+                // Enviar notificación interna
+                $logistics_notification = new \local_ticketmanagement\task\add_notification_task();
+                $logistics_notification->set_custom_data([
+                    'to' => $logistics_user->id,
+                    'subject' => $logistics_subject,
+                    'message_plain' => $logistics_message,
+                    'message_html' => $logistics_messageHTML,
+                    'from' => $USER->id,
+                ]);
+                \core\task\manager::queue_adhoc_task($logistics_notification);
+            }
+        }
 
         // Retornar una respuesta (ej. el ID del nuevo ticket creado)
         return (array) $record;

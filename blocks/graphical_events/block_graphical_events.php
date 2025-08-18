@@ -75,6 +75,7 @@ class block_graphical_events extends block_base {
         $data = [
             'token'=>$token
         ];
+        
 
         $this->content->text = $OUTPUT->render_from_template('block_graphical_events/content', $data);
 

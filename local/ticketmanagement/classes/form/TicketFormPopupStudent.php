@@ -106,12 +106,16 @@ class TicketFormPopupStudent extends \core_form\dynamic_form {
 
         $mform->addElement('hidden',  'userid',  $userid);
 
-        $mform->addElement(
-            'filemanager',
-            'attachments',
-            get_string('attachment', 'local_ticketmanagement'),
-            null,
-            [
+        // --- Configuración de área de archivos ---
+        $context = \context_system::instance();
+        $filearea = 'sharedfiles';
+        $component = 'local_ticketmanagement';
+        $itemid = $ticket->dateticket; // constante por ticket
+        $maxbytes = 10485760; // Límite de 10MB
+
+        // Configurar opciones del filemanager
+
+        $fileoptions=[
                 'subdirs' => 0,
                 'maxbytes' => $maxbytes,
                 'areamaxbytes' => 10485760,
@@ -119,8 +123,28 @@ class TicketFormPopupStudent extends \core_form\dynamic_form {
                 'accepted_types' => ['document','.jpg', '.jpeg', '.png', '.gif'],
                 'return_types' => 1 | 2,
                 'filearea'=>'sharedfiles'
-            ]
+        ];
+
+         // --- Preparar draft para filemanager ---
+        $draftitemid = file_get_submitted_draft_itemid('attachments');
+        file_prepare_draft_area(
+            $draftitemid,
+            $context->id,
+            $component,
+            $filearea,
+            $itemid,
+            $fileoptions
         );
+
+        $mform->addElement(
+            'filemanager',
+            'attachments',
+            get_string('attachment', 'local_ticketmanagement'),
+            null,
+            $fileoptions
+        );
+
+        $mform->addElement('hidden',  'hiddenstate',  $ticket->state);
         
     }
 
@@ -187,52 +211,71 @@ class TicketFormPopupStudent extends \core_form\dynamic_form {
      * @return mixed
      */
     public function process_dynamic_submission() {
-        global $DB;
+        global $DB, $USER;
 
-        // Obtener los datos enviados del formulario.
         $data = $this->get_data();
         if (!$data) {
-            return false; // Si no hay datos, finalizar el proceso.
-        }
+                throw new \moodle_exception('nodata', 'local_ticketmanagement');
+            }
 
-        // Asumimos que `ticketid` es un campo oculto en el formulario que identifica el ticket actual.
         $ticketid = $data->ticketid;
+        $originalticket = $DB->get_record('ticket', ['id' => $ticketid], '*', MUST_EXIST);
 
-        // Obtener el registro del ticket desde la base de datos para actualizarlo.
-        $ticket = $DB->get_record('ticket', ['id' => $ticketid], '*', MUST_EXIST);
+        $haschanges = false;
+        $changes = [];
+        $updateticket = new \stdClass();
+        $updateticket->id = $ticketid;
 
-        // Configurar las opciones para el filemanager.
-        $fileoptions = [
-            'subdirs' => 0,
-            'maxbytes' => 10485760,  // Límite de 10MB
-            'maxfiles' => 50,
-        ];
-
-        // Configurar el contexto de destino para los archivos.
-        $context = \context_system::instance(); // Cambiar si se requiere otro contexto.
+        
+        // Archivos adjuntos
+        $context = \context_system::instance();
         $filearea = 'sharedfiles';
         $component = 'local_ticketmanagement';
-        $itemid=$ticket->lastupdate;
+        $itemid = $originalticket->dateticket; // constante por ticket
 
-        // Guardar los archivos en la ubicación final usando file_save_draft_area_files.
+        $fs = get_file_storage();
+
+        // Obtener archivos previos (excluyendo el directorio)
+        $pre_savedfiles = array_filter($fs->get_area_files($context->id, $component, $filearea, $itemid), function($file) {
+            return $file->get_filename() != '.';
+        });
+
         file_save_draft_area_files(
-            $data->attachments,  // `draftitemid` del área de borrador.
-            $context->id,        // ID del contexto final.
-            $component,          // Nombre del componente de Moodle.
-            $filearea,           // Área de archivo en la que se guardarán.
-            $itemid,           // `itemid` (generalmente un ID relacionado con el contexto de archivo).
-            $fileoptions         // Opciones de archivo.
+            $data->attachments,
+            $context->id,
+            $component,
+            $filearea,
+            $itemid,
+            ['subdirs' => 0, 'maxbytes' => 10485760, 'maxfiles' => 50]
         );
 
-        // Actualizar el `fileid` en el registro del ticket con el `draftitemid` final.
-        // Esto permite que el ticket mantenga la referencia a los archivos.
-        //$ticket->fileid = $itemid; // El nuevo `draftitemid` asignado.
-        
-        // Guardar la actualización en la base de datos.
-        $DB->update_record('ticket', $ticket);
+        // Obtener archivos posteriores (excluyendo el directorio)
+        $post_savedfiles = array_filter($fs->get_area_files($context->id, $component, $filearea, $itemid), function($file) {
+            return $file->get_filename() != '.';
+        });
 
-        return true; // Retornar `true` para indicar que el procesamiento fue exitoso.
-    }
+        // Calcular diferencia correctamente
+        $savedfiles = count($post_savedfiles) - count($pre_savedfiles);
+
+        if ($savedfiles != 0) {
+            $haschanges = true;
+            $changes['attachments'] = true;
+        }
+
+        return [
+            'success' => true,
+            'haschanges' => $haschanges,
+            'changes' => $changes,
+            'ticketid' => $ticketid,
+            'cancelled' => $data->cancelled,
+            'hiddenstate' => $data->hiddenstate,
+            'close' => $data->close,
+            'subcategory' => $data->subcategory,
+            'priority' => $data->priority,
+            'saved_files_count' => $savedfiles, // Opcional: también puedes incluir el nuevo itemid
+            'userid' => $USER->id, // ID del usuario que está haciendo la actualización
+        ];
+}
 
     
 
@@ -269,43 +312,34 @@ class TicketFormPopupStudent extends \core_form\dynamic_form {
         }
         $userid = $ticket->userid;
 
-        // Initialize file options for the file manager
-        $fileoptions = [
-            'subdirs' => 0,
-            'maxbytes' => 10485760,  // 10MB limit
-            'maxfiles' => 50,
-        ];
-
-        // Retrieve the files associated with this ticket
         $context = \context_system::instance();
-        
-        $filearea = 'sharedfiles';
-        $component = 'local_ticketmanagement';
-        $itemid=$ticket->lastupdate;
+    $filearea = 'sharedfiles';
+    $component = 'local_ticketmanagement';
+    $itemid = $ticket->dateticket; // constante por ticket
 
-        // Usar el `fileid` del ticket o generar uno nuevo si no existe.
-       /* $draftitemid = $ticket->fileid ?? file_get_unused_draft_itemid();
-        
-        \file_prepare_draft_area(
-            $draftitemid,
-            $context->id,
-            $component,
-            $filearea,
-            $itemid,
-            $fileoptions
-        );
-        */
-        $draftitemid = file_get_submitted_draft_itemid('attachments');
-        \file_prepare_draft_area(
-            $draftitemid,
-            $context->id,
-            $component,
-            $filearea,
-            $itemid,
-            $fileoptions
-        );
+    $fileoptions = [
+        'subdirs' => 0,
+        'maxbytes' => 10485760,
+        'maxfiles' => 50,
+    ];
 
-        $this->set_data(['attachments'=>$draftitemid]);
+    $draftitemid = file_get_submitted_draft_itemid('attachments');
+    file_prepare_draft_area(
+        $draftitemid,
+        $context->id,
+        $component,
+        $filearea,
+        $itemid,
+        $fileoptions
+    );
+
+    $this->set_data([
+        'attachments' => $draftitemid,
+        'priority' => $ticket->priority,
+        'close' => ($ticket->state === 'Closed') ? 1 : 0,
+        'cancelled' => ($ticket->state === 'Cancelled') ? 1 : 0,
+        'state' => $ticket->state,
+    ]);
         
 
     }

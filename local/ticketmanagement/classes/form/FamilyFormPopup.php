@@ -153,8 +153,52 @@ class FamilyFormPopup extends \core_form\dynamic_form {
 
     // Custom validation if needed
     public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        // Add any custom validation if necessary
+        $errors = [];
+
+        // Validar que el rol es obligatorio
+        if (empty($data['role'])) {
+            $errors['role'] = get_string('required', 'local_ticketmanagement');
+        }
+
+        // Validar que el nombre no esté vacío y tenga al menos 2 caracteres
+        if (empty($data['name']) || strlen($data['name']) < 2) {
+            $errors['name'] = get_string('namerequired', 'local_ticketmanagement');
+        }
+
+        // Validar que el apellido no esté vacío
+        if (empty($data['lastname'])) {
+            $errors['lastname'] = get_string('lastnamerequired', 'local_ticketmanagement');
+        }
+
+        // Validar NIE (puede incluir longitud o formato específico)
+        if (empty($data['nie']) || !preg_match('/^[A-Z0-9]+$/i', $data['nie'])) {
+            $errors['nie'] = get_string('nierequired', 'local_ticketmanagement');
+        }
+
+        // Validar que la fecha de nacimiento no sea futura
+        if (!empty($data['birthdate']) && $data['birthdate'] > time()) {
+            $errors['birthdate'] = get_string('birthdateinvalid', 'local_ticketmanagement');
+        }
+
+        // Validar el email
+        if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = get_string('emailinvalid', 'local_ticketmanagement');
+        }
+        
+        if (!empty($data['phone1'])) {
+            // Basic international phone validation (adjust as needed)
+            $pattern = '/^\+?[0-9\s\-\(\)]{6,20}$/';
+            
+            if (!preg_match($pattern, $data['phone1'])) {
+                $errors['phone1'] = get_string('phoneinvalid', 'local_ticketmanagement');
+            }
+        }
+        
+        // Validar que la fecha de llegada sea anterior a la de salida
+        if (!empty($data['arrival']) && !empty($data['departure']) && $data['arrival'] > $data['departure']) {
+            $errors['departure'] = get_string('departureinvalid', 'local_ticketmanagement');
+        }
+
         return $errors;
     }
 

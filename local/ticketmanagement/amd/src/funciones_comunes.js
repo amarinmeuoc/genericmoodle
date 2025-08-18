@@ -351,14 +351,22 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                 const formElement=e.target;
                 const subcategoryValue = formElement.querySelector('select[name="subcategory"]')?.value;
                 
+
                 //Se captura el valor subcategory porque como campo de formulario aparece la categoria, pero no la subcategoria
                 if (subcategoryValue) {
                     e.detail.subcategory = subcategoryValue;
                 } 
-    
-                if (role==='controller'){
+
+                
+                e.detail.eventoCat=eventoCat;
+                e.detail.eventoSubCat=eventoSubCat;
+                e.detail.eventoPriority=eventoPriority;
+               
+                
+                window.console.log(`subcategoryValue: ${e.detail}`);
+                 
                     self.updateTicket(e.detail,token,url,role);
-                }
+                
                 
             });
     
@@ -412,6 +420,13 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
                         bosave.disabled=true;
                         cancelledbox.disabled=true;
                         }
+                    } else if (role==='student'){
+                        const hiddenstate=formElement.querySelector("input[type='hidden'][name='hiddenstate']");
+                        const bosave=formElement.querySelector(".btn-primary");
+                        if (hiddenstate.value==='Cancelled' || hiddenstate.value==='Closed'){
+                            bosave.disabled=true;
+                        }
+                        
                     }
                     
     
@@ -424,30 +439,43 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
             modalForm.show();
         },
         updateTicket: function (obj,token,url,role) {
+            
             const self=this;
             let xhr = new XMLHttpRequest();
-            const service=(role==='controller')?'local_ticketmanagement_edit_ticket':'local_ticketmanagement_edit_ticket_byUser';
+            const service='local_ticketmanagement_edit_ticket';
             //Se prepara el objeto a enviar
             const formData= new FormData();
             formData.append('wstoken',token);
             formData.append('wsfunction', service);
             formData.append('moodlewsrestformat', 'json');
             formData.append('params[0][ticketid]',obj.ticketid);
-            formData.append('params[0][fileid]',obj.attachments);
-            formData.append('params[0][cancelled]',obj.cancelled);
+            const cancelled = ('cancelled' in obj && obj.cancelled != null) 
+                 ? obj.cancelled 
+                 : obj.hiddenstate === 'Cancelled' ? 1 : 0;
+            formData.append('params[0][cancelled]', cancelled);
+            
             formData.append('params[0][state]',obj.hiddenstate);
             formData.append('params[0][priority]',obj.priority);
-            formData.append('params[0][closed]',obj.close);
-            formData.append('params[0][category]',obj.subcategory);
-            formData.append('params[0][eventoCat]',eventoCat);
-            formData.append('params[0][eventoSubCat]',eventoSubCat);
-            formData.append('params[0][eventoPriority]',eventoPriority);
-        
+
+            const closed = ('close' in obj && obj.close != null) 
+                ? obj.close 
+                : obj.hiddenstate === 'Closed' ? 1 : 0;
+
+            formData.append('params[0][closed]',closed);
+            formData.append('params[0][subcategory]',obj.subcategory);
+            formData.append('params[0][saved_files_count]',obj.saved_files_count);
+            formData.append('params[0][eventoCat]',obj.eventoCat);
+            formData.append('params[0][eventoSubCat]',obj.eventoSubCat);
+            formData.append('params[0][eventoPriority]',obj.eventoPriority);
+            formData.append('params[0][userid]',obj.userid);
+            formData.append('params[0][haschanges]',obj.haschanges ? 1 : 0);
+            
+            
             xhr.open('POST',url,true);
             xhr.send(formData);
         
             xhr.onload = (ev)=> {
-                self.reqHandlerUpdateTicket(xhr);
+                self.reqHandlerUpdateTicket(xhr,role);
             }
         
             xhr.onerror = ()=> {
@@ -455,15 +483,17 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
             }
         
         },
-        reqHandlerUpdateTicket: function(xhr){
+        reqHandlerUpdateTicket: function(xhr,role){
             if (xhr.readyState=== 4 && xhr. status === 200){
                 if (xhr.response){
                     const response=JSON.parse(xhr.response);
                     
                     if (response){
                     
-                    const ticket=response.ticket;
-                    this.updateTemplate(ticket);
+                        const ticket=response.ticket;
+                        if (role==='controller'){
+                            this.updateTemplate(ticket);
+                        }
                     }
                     
                 }
@@ -654,7 +684,7 @@ define(['core/modal','core/templates','core_form/modalform','core/toast'],functi
         
             modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e)=>{
                 //Se actualiza la pagina principal con los nuevos valores y se envia email de notificación
-                addToast.add(`Ticket: ${e.detail.hiddenticketid} has been updated. Your message has been recieved by the support team.`);
+                addToast.add(`Ticket: ${e.detail.ticketid} has been updated. Your message has been recieved by the support team.`);
             });
         
             // Listen for the modal LOADED event

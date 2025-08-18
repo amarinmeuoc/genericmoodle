@@ -184,11 +184,22 @@ class ActionsFormPopup extends \core_form\dynamic_form {
             throw new \Exception('Description is required');
         }
 
+        $user= $DB->get_record('user', ['id' => $data->userid], 'id, firstname, lastname', IGNORE_MISSING);
+
+        $description .= ' - ' . $user->firstname . ', ' . $user->lastname;
+
+        $ticket= $DB->get_record('ticket', ['id' => $data->hiddenticketid], 'id, state, assigned', IGNORE_MISSING);
+        if (!$ticket) {
+            throw new \Exception('Ticket not found');
+        }
+
+        // Prepare the record to be inserted
+
         $record = new \stdClass();
         $record->action = $description;
         $record->internal = $data->internal ?? '';
         $record->dateaction = $data->updated ?? time();
-        $record->userid = $data->userid ?? null;
+        $record->userid = $ticket->assigned ?? $USER->id;
         $record->ticketid = $data->hiddenticketid ?? null;
 
         if (empty($record->userid) || empty($record->ticketid)) {
@@ -206,6 +217,9 @@ class ActionsFormPopup extends \core_form\dynamic_form {
             
             // Debugging: Log success
             error_log("Record inserted successfully with ID: $id");
+
+            //Notify the user about the successful action
+            $this->notify_user();
             
             return [
                 'status' => 'success',
@@ -234,6 +248,106 @@ class ActionsFormPopup extends \core_form\dynamic_form {
         // Ensure no output remains in buffer
         ob_end_clean();
     }
+}
+
+//Notify the user about the successful action
+private function notify_user() {
+    global $DB, $USER;
+
+    $ticketid = $this->_ajaxformdata['num_ticket'] ?? $this->_ajaxformdata['hiddenticketid'];
+    if (!$ticketid) {
+        throw new \moodle_exception('missingticketid', 'local_ticketmanagement');
+    }
+
+    // Get the ticket details
+    $ticket = $DB->get_record('ticket', ['id' => $ticketid], '*', IGNORE_MISSING);
+    if (!$ticket) {
+        throw new \moodle_exception('ticketnotfound', 'local_ticketmanagement');
+    }
+
+    // Notify the user about the action
+    // This could be an email, a message, or any other notification method
+    // For simplicity, we will just log it here
+    error_log("User {$USER->id} added an action to ticket {$ticket->id}");
+
+    $ticket_url = new \moodle_url('/local/ticketmanagement');
+        $ticket_url->set_anchor($ticketid);
+        $ticket_link = \html_writer::link($ticket_url, 'Ticket management');
+        $ticket_link_user = \html_writer::link($ticket_url, 'Tickets Status');
+        
+        
+        //Send email ticket created
+        $to=$DB->get_record('user',['id'=>$ticket->userid]);
+        $to=$to->id;
+        
+        $message = "<p>You've got a new Notification. Your ticket has been updated.</p>";
+        $messageHTML = "
+                <h1 style='background-color:#0f6cbf; color: white; padding: .3em;'>Ticket updated</h1>
+                <p style='font-size:large;'>Please, go to the {$ticket_link_user} and check the ticket with ID: <strong>{$ticket->id}</strong>.</p>
+                <p style='font-size:large;'>Your ticket has been updated with a new action.</p>
+                <p style='font-size:large;'>Thank you for using our service.</p>
+                <p style='font-size:large;'><strong>Support Team</strong></p>
+            ";
+        $subject="Ticket {$ticket->id} requires your attention";
+
+        //Send email and notification to the person in charge of the ticket
+        $task = new \local_ticketmanagement\task\send_email_task();
+        $task->set_custom_data([
+            'to' => $to,
+            'subject' => $subject,
+            'message_plain' => $message,
+            'message_html' => $messageHTML,
+            'from' => $ticket->assigned,
+        ]);
+        \core\task\manager::queue_adhoc_task($task);
+
+        $task = new \local_ticketmanagement\task\add_notification_task();
+        $task->set_custom_data([
+            'to' => $to,
+            'subject' => $subject,
+            'message_plain' => $message,
+            'message_html' => $messageHTML,
+            'from' => $USER->id,
+        ]);
+        \core\task\manager::queue_adhoc_task($task);
+
+        // Notify the assigned user about the action in case the user is not a logistic or manager
+        if (!preg_match('/^(logistic|manager)$/i', $USER->profile['role'] ?? '')) {
+            $message = "<p>You've got a new Notification. A new action has been added to the ticket ID: {$ticket->id}.</p>";
+            $messageHTML = "
+                <h1 style='background-color:#0f6cbf; color: white; padding: .3em;'>Ticket updated with a new action</h1>
+                <p style='font-size:large;'>Please, go to the {$ticket_link} and check the ticket with ID: <strong>{$ticket->id}</strong>.</p>
+                <p style='font-size:large;'>A new action has been added to the ticket.</p>
+                <p style='font-size:large;'>Thank you for using our service.</p>
+                <p style='font-size:large;'><strong>Support Team</strong></p>
+            ";
+            $subject = "New action added in Ticket {$ticket->id}.";
+
+            //Send email and notification to the assigned user
+            $task = new \local_ticketmanagement\task\send_email_task();
+            $task->set_custom_data([
+                'to' => $ticket->assigned,
+                'subject' => $subject,
+                'message_plain' => $message,
+                'message_html' => $messageHTML,
+                'from' => $USER->id,
+            ]);
+            \core\task\manager::queue_adhoc_task($task);
+
+            $task = new \local_ticketmanagement\task\add_notification_task();
+            $task->set_custom_data([
+                'to' => $ticket->assigned,
+                'subject' => $subject,
+                'message_plain' => $message,
+                'message_html' => $messageHTML,
+                'from' => $USER->id,
+            ]);
+            \core\task\manager::queue_adhoc_task($task);
+        }
+
+        
+
+        
 }
 
     /**

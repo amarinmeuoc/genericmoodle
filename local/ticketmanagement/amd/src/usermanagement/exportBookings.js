@@ -283,20 +283,23 @@ const createRoomTypeSheet = (wb, response, roomType, sheetName) => {
     const excelData = [headers];
     
     // Procesar cada usuario
-    response.users.forEach(user => {
+    response.users.forEach((user) => {
         const row = [
-            user.userid,
-            user.firstname,
-            user.lastname,
-            user.email,
-            user.customer,
-            user.group,
-            user.billid
+            user.userid, user.firstname, user.lastname, 
+            user.email, user.customer, user.group, user.billid
         ];
         
-        // Añadir estado de ocupación
-        rooms.forEach(room => {
-            row.push(user.rooms[room] ? 'OCCUPIED' : '');
+        rooms.forEach((room) => {
+            // Check for floor and house keys
+            const floorKey = `floor_${room}`;
+            const houseKey = `house_${room}`;
+            
+            // Prioritize floor if both exist (or vice versa)
+            const isOccupied = 
+                (user.rooms[floorKey] && roomType === 'floor') || 
+                (user.rooms[houseKey] && roomType === 'house' && !user.rooms[floorKey]);
+            
+            row.push(isOccupied ? "OCCUPIED" : "");
         });
         
         excelData.push(row);
@@ -304,7 +307,7 @@ const createRoomTypeSheet = (wb, response, roomType, sheetName) => {
     
     const ws = XLSX.utils.aoa_to_sheet(excelData);
     
-    // Aplicar formato condicional
+    // Aplicar formato condicional (same as before)
     const range = XLSX.utils.decode_range(ws['!ref']);
     for (let row = 1; row <= range.e.r; row++) {
         for (let col = 7; col <= range.e.c; col++) {
@@ -341,8 +344,9 @@ const createSummarySheet = (wb, response) => {
     response.users.forEach(user => {
         // Buscar habitaciones ocupadas
         Object.entries(user.rooms).forEach(([roomNumber, isOccupied]) => {
+            roomNumber = parseInt(roomNumber.match(/\d+/)[0]);
             if (isOccupied) {
-                const roomInfo = getRoomInfo(response.room_types, parseInt(roomNumber));
+                const roomInfo = getRoomInfo(response.room_types, roomNumber);
                 
                 excelData.push([
                     user.userid,
