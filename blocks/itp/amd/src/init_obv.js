@@ -6,7 +6,7 @@ export const loadITP = () => {
     //Aseguramos que el token esté cargado
     areElementsLoaded('#filteritpform input, #filteritpform select, #id_list_trainees, #id_tegroup').then((elements) => {
         //Se obtienen los valores de los campos necesarios
-        const token = document.querySelector('input[name="token"]').value;
+        const token = document.querySelector('#filteritpform input[name="token"]').value;
         const compacted = document.querySelector('#id_compacted').value;
         const orderby = document.querySelector('input[name="orderby"]');
         const order = document.querySelector('input[name="order"]');
