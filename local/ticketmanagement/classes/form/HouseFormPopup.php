@@ -125,7 +125,7 @@ class HouseFormPopup extends \core_form\dynamic_form {
      
 
         // 3. Select dropdown (for Cuatro torres value)
-        $mform->addElement('select', 'floor', get_string('floor', 'local_ticketmanagement'), ['Ground Floor', 'First Floor', 'Second Floor'], []);
+        $mform->addElement('select', 'floor', get_string('floor', 'local_ticketmanagement'), ['First Floor', 'Second Floor', 'Third Floor'], []);
         $mform->hideIf('floor', 'internal_address', 'neq', '0'); // Show only when "Cuatro torres" (0) is selected
         $mform->hideIf('floor', 'type', 'neq', '0'); // Show only when "Cuatro torres" (0) is selected
 

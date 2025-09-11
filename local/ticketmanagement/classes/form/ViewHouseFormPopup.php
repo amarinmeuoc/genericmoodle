@@ -88,7 +88,7 @@ class ViewHouseFormPopup extends \core_form\dynamic_form {
         
         // Pisos (solo para Cuatro torres)
         $mform->addElement('select', 'floor', get_string('floor', 'local_ticketmanagement'), 
-            ['Ground Floor', 'First Floor', 'Second Floor'], []);
+            ['First Floor', 'Second Floor', 'Third Floor'], []);
         $mform->hideIf('floor', 'internal_address', 'neq', '0'); // Show only when "Cuatro torres" (0) is selected
         $mform->hideIf('floor', 'type', 'neq', '0'); // Show only when "Cuatro torres" (0) is selected
         

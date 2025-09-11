@@ -201,3 +201,4 @@ $string['niedate'] = 'NIE renovation date';
 $string['ticketmanagement:viewbookings'] = 'View bookings';
 $string['ticketmanagement:viewreminders'] = 'View reminders';
 $string['messageprovider:ticket_notification'] = 'Ticket update notifications';
+$string['attachedfiles']= 'Attached files';

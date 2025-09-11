@@ -14,6 +14,7 @@
     <th>Phone2 </th>
     <th>Address </th>
     <th>City </th>
+    <th>Files </th>
     <th>Edit </th>
     <th>Family </th>
     <th>Cars </th>
@@ -40,6 +41,10 @@
 
 
 {{#js}}
+require(['local_ticketmanagement/usermanagement/addFiles'],function(module){
+    module.init();
+});
+
 require(['local_ticketmanagement/usermanagement/editUser'],function(module){
     module.init();
 });
