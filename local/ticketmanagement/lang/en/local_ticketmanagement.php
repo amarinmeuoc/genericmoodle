@@ -202,3 +202,7 @@ $string['ticketmanagement:viewbookings'] = 'View bookings';
 $string['ticketmanagement:viewreminders'] = 'View reminders';
 $string['messageprovider:ticket_notification'] = 'Ticket update notifications';
 $string['attachedfiles']= 'Attached files';
+$string['task_notify_logistics'] = 'Notify logistics of upcoming departures';
+$string['task_notify_logistics_desc'] = 'This task checks for users with a departure date in 14 days and notifies all users with the logistics role.';
+$string['departure_notification'] = 'User departure notification';
+$string['departure_notification_desc'] = 'Notifies logistics users when a user is scheduled to depart in 14 days.';

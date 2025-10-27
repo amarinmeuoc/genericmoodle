@@ -21,5 +21,14 @@ $tasks = array(
         'month' => '*',
         'dayofweek' => '*',
         'disabled' => 0
+    ),
+    array (
+        'classname' => 'local_ticketmanagement\task\notify_logistics',
+        'blocking'  => 0,
+        'minute'    => 'R',
+        'hour'      => '3',
+        'day'       => '*',
+        'month'     => '*',
+        'dayofweek' => '*',
     )
     );

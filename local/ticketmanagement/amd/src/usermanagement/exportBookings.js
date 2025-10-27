@@ -271,11 +271,10 @@ const createRoomTypeSheet = (wb, response, roomType, sheetName) => {
     
     // Procesar las habitaciones de este tipo
     Object.entries(roomDef.rooms).forEach(([key, roomNumbers]) => {
-        const incrementedKey = Number(key) + 1;
         roomNumbers.forEach(room => {
             const roomLabel = roomType === 'floor' 
-                ? `F${incrementedKey}-${room}` 
-                : `H${incrementedKey}-${room}`;
+                ? `F${key}-${room}` 
+                : `H${key}-${room}`;
             headers.push(roomLabel);
             rooms.push(room);
         });
@@ -345,11 +344,9 @@ const createSummarySheet = (wb, response) => {
     response.users.forEach(user => {
         // Buscar habitaciones ocupadas
         Object.entries(user.rooms).forEach(([roomNumber, isOccupied]) => {
-            type=roomNumber.split('_')[0];
             roomNumber = parseInt(roomNumber.match(/\d+/)[0]);
-
             if (isOccupied) {
-                const roomInfo = getRoomInfo(type, response.room_types, roomNumber);
+                const roomInfo = getRoomInfo(response.room_types, roomNumber);
                 
                 excelData.push([
                     user.userid,
@@ -380,25 +377,20 @@ const createSummarySheet = (wb, response) => {
 };
 
 // Función auxiliar para obtener información de la habitación
-const getRoomInfo = (type, roomDefinitions, roomNumber) => {
-    if (type==='floor'){
-        // Buscar en plantas
-        for (const [floor, rooms] of Object.entries(roomDefinitions.floor.rooms)) {
-            if (rooms.includes(roomNumber)) {
-                return { type: 'floor', key: floor+1 };
-            }
+const getRoomInfo = (roomDefinitions, roomNumber) => {
+    // Buscar en plantas
+    for (const [floor, rooms] of Object.entries(roomDefinitions.floor.rooms)) {
+        if (rooms.includes(roomNumber)) {
+            return { type: 'floor', key: floor+1 };
         }
     }
     
-    if (type==='house'){
-        // Buscar en casas
-        for (const [house, rooms] of Object.entries(roomDefinitions.house.rooms)) {
-            if (rooms.includes(roomNumber)) {
-                return { type: 'house', key: house+1 };
-            }
+    // Buscar en casas
+    for (const [house, rooms] of Object.entries(roomDefinitions.house.rooms)) {
+        if (rooms.includes(roomNumber)) {
+            return { type: 'house', key: house+1 };
         }
     }
-    
     
     return { type: 'unknown', key: '' };
 };

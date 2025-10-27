@@ -147,5 +147,13 @@
         
       </KEYS>
     </TABLE>
+    <TABLE NAME="local_departurealert" COMMENT="Users already notified of departure">
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="User whose departure was notified"/>
+        <FIELD NAME="departuredate" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Departure timestamp"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
+    </TABLE>
   </TABLES>
 </XMLDB>

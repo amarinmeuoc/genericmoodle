@@ -243,7 +243,6 @@ public static function execute_returns() {
                             'floor_120' => new external_value(PARAM_BOOL, 'Room 120 in floor', VALUE_OPTIONAL),
                             'floor_121' => new external_value(PARAM_BOOL, 'Room 121 in floor', VALUE_OPTIONAL),
                             'floor_122' => new external_value(PARAM_BOOL, 'Room 122 in floor', VALUE_OPTIONAL),
-
                             'floor_201' => new external_value(PARAM_BOOL, 'Room 201 in floor', VALUE_OPTIONAL),
                             'floor_202' => new external_value(PARAM_BOOL, 'Room 202 in floor', VALUE_OPTIONAL),
                             'floor_203' => new external_value(PARAM_BOOL, 'Room 203 in floor', VALUE_OPTIONAL),
@@ -274,7 +273,6 @@ public static function execute_returns() {
                             'floor_228' => new external_value(PARAM_BOOL, 'Room 228 in floor', VALUE_OPTIONAL),
                             'floor_229' => new external_value(PARAM_BOOL, 'Room 229 in floor', VALUE_OPTIONAL),
                             'floor_230' => new external_value(PARAM_BOOL, 'Room 230 in floor', VALUE_OPTIONAL),
-                            
                             'floor_301' => new external_value(PARAM_BOOL, 'Room 301 in floor', VALUE_OPTIONAL),
                             'floor_302' => new external_value(PARAM_BOOL, 'Room 302 in floor', VALUE_OPTIONAL),
                             'floor_303' => new external_value(PARAM_BOOL, 'Room 303 in floor', VALUE_OPTIONAL),
@@ -313,17 +311,20 @@ public static function execute_returns() {
                             'floor_336' => new external_value(PARAM_BOOL, 'Room 336 in floor', VALUE_OPTIONAL),
                             'floor_337' => new external_value(PARAM_BOOL, 'Room 337 in floor', VALUE_OPTIONAL),
                             'floor_338' => new external_value(PARAM_BOOL, 'Room 338 in floor', VALUE_OPTIONAL),
-                            
                             'house_111' => new external_value(PARAM_BOOL, 'Room 111 in house', VALUE_OPTIONAL),
                             'house_112' => new external_value(PARAM_BOOL, 'Room 112 in house', VALUE_OPTIONAL),
                             'house_113' => new external_value(PARAM_BOOL, 'Room 113 in house', VALUE_OPTIONAL),
                             'house_114' => new external_value(PARAM_BOOL, 'Room 114 in house', VALUE_OPTIONAL),
-                            
+                            'house_115' => new external_value(PARAM_BOOL, 'Room 115 in house', VALUE_OPTIONAL),
+                            'house_116' => new external_value(PARAM_BOOL, 'Room 116 in house', VALUE_OPTIONAL),
+                            'house_117' => new external_value(PARAM_BOOL, 'Room 117 in house', VALUE_OPTIONAL),
+                            'house_118' => new external_value(PARAM_BOOL, 'Room 118 in house', VALUE_OPTIONAL),
+                            'house_119' => new external_value(PARAM_BOOL, 'Room 119 in house', VALUE_OPTIONAL),
+                            'house_120' => new external_value(PARAM_BOOL, 'Room 120 in house', VALUE_OPTIONAL),
                             'house_121' => new external_value(PARAM_BOOL, 'Room 121 in house', VALUE_OPTIONAL),
                             'house_122' => new external_value(PARAM_BOOL, 'Room 122 in house', VALUE_OPTIONAL),
                             'house_123' => new external_value(PARAM_BOOL, 'Room 123 in house', VALUE_OPTIONAL),
                             'house_124' => new external_value(PARAM_BOOL, 'Room 124 in house', VALUE_OPTIONAL),
-                            
                             'house_211' => new external_value(PARAM_BOOL, 'Room 211 in house', VALUE_OPTIONAL),
                             'house_212' => new external_value(PARAM_BOOL, 'Room 212 in house', VALUE_OPTIONAL),
                             'house_213' => new external_value(PARAM_BOOL, 'Room 213 in house', VALUE_OPTIONAL),
@@ -332,7 +333,6 @@ public static function execute_returns() {
                             'house_222' => new external_value(PARAM_BOOL, 'Room 222 in house', VALUE_OPTIONAL),
                             'house_223' => new external_value(PARAM_BOOL, 'Room 223 in house', VALUE_OPTIONAL),
                             'house_224' => new external_value(PARAM_BOOL, 'Room 224 in house', VALUE_OPTIONAL),
-                            
                             'house_311' => new external_value(PARAM_BOOL, 'Room 311 in house', VALUE_OPTIONAL),
                             'house_312' => new external_value(PARAM_BOOL, 'Room 312 in house', VALUE_OPTIONAL),
                             'house_313' => new external_value(PARAM_BOOL, 'Room 313 in house', VALUE_OPTIONAL),
@@ -347,7 +347,6 @@ public static function execute_returns() {
                             'house_422' => new external_value(PARAM_BOOL, 'Room 422 in house', VALUE_OPTIONAL),
                             'house_423' => new external_value(PARAM_BOOL, 'Room 423 in house', VALUE_OPTIONAL),
                             'house_424' => new external_value(PARAM_BOOL, 'Room 424 in house', VALUE_OPTIONAL),
-                            
                             'house_511' => new external_value(PARAM_BOOL, 'Room 511 in house', VALUE_OPTIONAL),
                             'house_512' => new external_value(PARAM_BOOL, 'Room 512 in house', VALUE_OPTIONAL),
                             'house_513' => new external_value(PARAM_BOOL, 'Room 513 in house', VALUE_OPTIONAL),
@@ -356,7 +355,6 @@ public static function execute_returns() {
                             'house_522' => new external_value(PARAM_BOOL, 'Room 522 in house', VALUE_OPTIONAL),
                             'house_523' => new external_value(PARAM_BOOL, 'Room 523 in house', VALUE_OPTIONAL),
                             'house_524' => new external_value(PARAM_BOOL, 'Room 524 in house', VALUE_OPTIONAL),
-                            
                             'house_611' => new external_value(PARAM_BOOL, 'Room 611 in house', VALUE_OPTIONAL),
                             'house_612' => new external_value(PARAM_BOOL, 'Room 612 in house', VALUE_OPTIONAL),
                             'house_613' => new external_value(PARAM_BOOL, 'Room 613 in house', VALUE_OPTIONAL),
@@ -373,7 +371,6 @@ public static function execute_returns() {
                             'house_722' => new external_value(PARAM_BOOL, 'Room 722 in house', VALUE_OPTIONAL),
                             'house_723' => new external_value(PARAM_BOOL, 'Room 723 in house', VALUE_OPTIONAL),
                             'house_724' => new external_value(PARAM_BOOL, 'Room 724 in house', VALUE_OPTIONAL),
-                            
                             'house_811' => new external_value(PARAM_BOOL, 'Room 811 in house', VALUE_OPTIONAL),
                             'house_812' => new external_value(PARAM_BOOL, 'Room 812 in house', VALUE_OPTIONAL),
                             'house_813' => new external_value(PARAM_BOOL, 'Room 813 in house', VALUE_OPTIONAL),

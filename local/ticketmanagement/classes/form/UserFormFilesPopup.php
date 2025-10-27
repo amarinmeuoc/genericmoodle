@@ -51,7 +51,7 @@ class UserFormFilesPopup extends \core_form\dynamic_form {
 
 
         // Add action buttons (submit and cancel)
-        //$this->add_action_buttons(true, get_string('savechanges')); 
+       // $this->add_action_buttons(true, get_string('savechanges')); 
         
     }
     

@@ -96,10 +96,11 @@ class TicketFormPopup extends \core_form\dynamic_form {
         $mform->addElement('static',  'description',  get_string('description', 'local_ticketmanagement'), $description);
 
         $familyid=$ticket->familiarid;
+        
 
         //Get familiar name
         $familiar=$DB->get_record('family',['id'=>$familyid],'*');
-        if ($familiar)
+        if ($familiar && $familyid!=$userid && empty($ticket->label_field))
             $familiarString="$familiar->relationship: $familiar->name, $familiar->lastname";
         else
             $familiarString="No family issue";

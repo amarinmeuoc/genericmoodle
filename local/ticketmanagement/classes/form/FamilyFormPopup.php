@@ -170,7 +170,7 @@ class FamilyFormPopup extends \core_form\dynamic_form {
             $errors['lastname'] = get_string('lastnamerequired', 'local_ticketmanagement');
         }
 
-        
+
 
         // Validar que la fecha de nacimiento no sea futura
         if (!empty($data['birthdate']) && $data['birthdate'] > time()) {

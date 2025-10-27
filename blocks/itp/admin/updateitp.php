@@ -88,9 +88,10 @@ if ($mform->is_cancelled()) {
         }
 
         $startdate = \DateTime::createFromFormat('d/m/Y', $row['startdate']);
+        
         $enddate = \DateTime::createFromFormat('d/m/Y', $row['enddate']);
         if (!$startdate || !$enddate) {
-            $errors[] = "Error en línea {$processed_lines}: Formato de fecha incorrecto.";
+            $errors[] = "Error en línea {$processed_lines}: Formato de fecha incorrecto. Usa dd/mm/yyyy.";
             break;
         }
 

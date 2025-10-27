@@ -137,6 +137,15 @@ if ($mform->is_cancelled()) {
         
     } catch (Exception $e) {
         echo $OUTPUT->notification("Error: " . $e->getMessage(), 'notifyproblem');
+        // Log detallado con más información
+        error_log("EXCEPCIÓN BD: " . $e->getMessage());
+        error_log("Archivo: " . $e->getFile() . " Línea: " . $e->getLine());
+        error_log("Trace: " . $e->getTraceAsString());
+        
+        // Si es una excepción de base de datos, obtener más detalles
+        if ($e instanceof dml_exception) {
+            echo $OUTPUT->notification("Error: " . $e->getMessage() .'SQL: ' . $e->debuginfo, 'notifyproblem');
+        }
         $mform->display(); // Volver a mostrar el formulario
     }
     
